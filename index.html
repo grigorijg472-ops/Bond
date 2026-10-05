@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Яков Григорьевич — Web Developer</title>
+    <meta name="description" content="Создаю современные веб-приложения, лендинги и автоматизацию для бизнеса. JavaScript, React, Python.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #030509;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Particle Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #030509;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(34, 211, 238, 0.3);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(34, 211, 238, 0.5);
+        }
+
+        ::selection {
+            background: rgba(34, 211, 238, 0.3);
+            color: white;
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .fade-in:nth-child(1) { animation-delay: 0.2s; }
+        .fade-in:nth-child(2) { animation-delay: 0.4s; }
+        .fade-in:nth-child(3) { animation-delay: 0.6s; }
+        .fade-in:nth-child(4) { animation-delay: 0.8s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .project-card {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .project-card:nth-child(1) { animation-delay: 1s; }
+        .project-card:nth-child(2) { animation-delay: 1.1s; }
+        .project-card:nth-child(3) { animation-delay: 1.2s; }
+        .project-card:nth-child(4) { animation-delay: 1.3s; }
+        .project-card:nth-child(5) { animation-delay: 1.4s; }
+        .project-card:nth-child(6) { animation-delay: 1.5s; }
+        .project-card:nth-child(7) { animation-delay: 1.6s; }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen">
+    <!-- Particle Background Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Noise Texture Overlay -->
+    <div class="fixed inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none z-10"
+         style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');">
+    </div>
+
+    <!-- Main Content -->
+    <div class="relative z-20">
+        <!-- Hero Section -->
+        <section class="min-h-screen flex items-center justify-center px-4 md:px-8 py-20">
+            <div class="max-w-7xl w-full">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <!-- Left Column -->
+                    <div class="space-y-8">
+                        <div class="fade-in inline-flex items-center gap-2 px-4 py-2 text-xs font-light tracking-widest uppercase border border-cyan-500/20 text-cyan-400 rounded-full bg-cyan-500/5 backdrop-blur-sm">
+                            <span>✨</span> WEB DEVELOPER
+                        </div>
+
+                        <h1 class="fade-in text-6xl md:text-8xl font-light tracking-tight leading-none">
+                            Яков<br/>
+                            <span class="gradient-text">Григорьевич</span>
+                        </h1>
+
+                        <p class="fade-in text-xl text-gray-400 max-w-lg leading-relaxed">
+                            Создаю современные веб-приложения, лендинги и автоматизацию для бизнеса.
+                            Специализируюсь на JavaScript, React и Python.
+                        </p>
+
+                        <div class="fade-in flex flex-wrap gap-4">
+                            <a href="#projects"
+                               class="group px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-black rounded-full font-medium transition-all duration-300 flex items-center gap-2 hover:scale-105">
+                                Смотреть работы
+                                <span class="group-hover:translate-x-1 transition-transform">→</span>
+                            </a>
+                            <a href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer"
+                               class="px-8 py-4 border border-white/10 hover:border-cyan-500/50 rounded-full font-medium transition-all duration-300 flex items-center gap-2 hover:bg-white/5">
+                                Связаться
+                                <span>📧</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Contact Card -->
+                    <div class="fade-in relative">
+                        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-3xl blur-3xl"></div>
+                        <div class="relative bg-white/[0.03] backdrop-blur-xl border border-cyan-500/20 p-8 rounded-3xl shadow-[0_22px_40px_rgba(0,0,0,0.4)]">
+                            <div class="space-y-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-2xl">
+                                        💻
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-400 uppercase tracking-wider">Stack</p>
+                                        <p class="text-lg font-medium">Full-Stack Developer</p>
+                                    </div>
+                                </div>
+
+                                <div class="h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
+
+                                <div class="space-y-4">
+                                    <a href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer"
+                                       class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                                        <span class="text-2xl group-hover:scale-110 transition-transform">📱</span>
+                                        <div>
+                                            <p class="text-sm text-gray-400">Telegram</p>
+                                            <p class="font-medium">@Bond8848</p>
+                                        </div>
+                                    </a>
+
+                                    <a href="mailto:grigorijg472@gmail.com"
+                                       class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                                        <span class="text-2xl group-hover:scale-110 transition-transform">✉️</span>
+                                        <div>
+                                            <p class="text-sm text-gray-400">Email</p>
+                                            <p class="font-medium">grigorijg472@gmail.com</p>
+                                        </div>
+                                    </a>
+
+                                    <a href="https://github.com/grigorijg472-ops" target="_blank" rel="noopener noreferrer"
+                                       class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                                        <span class="text-2xl group-hover:scale-110 transition-transform">💻</span>
+                                        <div>
+                                            <p class="text-sm text-gray-400">GitHub</p>
+                                            <p class="font-medium">grigorijg472-ops</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 px-4 md:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <p class="text-cyan-400 uppercase tracking-widest text-sm mb-4">Portfolio</p>
+                    <h2 class="text-5xl md:text-6xl font-light">Избранные проекты</h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Project Card Template -->
+                    <a href="projects/3d-portfolio/index.html" target="_blank" rel="noopener noreferrer"
+                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
+                        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
+                        <div class="relative space-y-4">
+                            <div class="text-4xl">🌌</div>
+                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">3D Interactive Portfolio</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Интерактивное портфолио с Three.js: звездное поле, вращающаяся сфера и анимированные частицы на WebGL
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Three.js</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">WebGL</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">GSAP</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
+                                Открыть проект
+                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="projects/telegram-bot/index.html" target="_blank" rel="noopener noreferrer"
+                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
+                        <div class="relative space-y-4">
+                            <div class="text-4xl">🤖</div>
+                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">AI Chat Bot</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Симуляция чат-бота с нейросетью, реалистичный UI, автоответы и генерация текстов
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">JavaScript</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Chat UI</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">AI Simulation</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
+                                Открыть проект
+                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="projects/habits-tracker/index.html" target="_blank" rel="noopener noreferrer"
+                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
+                        <div class="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
+                        <div class="relative space-y-4">
+                            <div class="text-4xl">📊</div>
+                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">Habits Tracker</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Веб-приложение для отслеживания привычек с прогресс-барами и подробной статистикой
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">React</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">LocalStorage</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Animations</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
+                                Открыть проект
+                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="projects/resume-generator/index.html" target="_blank" rel="noopener noreferrer"
+                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
+                        <div class="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
+                        <div class="relative space-y-4">
+                            <div class="text-4xl">📄</div>
+                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">Resume Generator</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Генератор резюме с экспортом в PDF, реальным предпросмотром и валидацией форм
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">HTML5</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Print API</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Form Validation</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
+                                Открыть проект
+                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="projects/interactive-map/index.html" target="_blank" rel="noopener noreferrer"
+                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
+                        <div class="absolute inset-0 bg-gradient-to-br from-violet-500 to-purple-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
+                        <div class="relative space-y-4">
+                            <div class="text-4xl">🗺️</div>
+                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">Interactive Map</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Canvas-карта с маркерами, плавным зумом, панорамированием и фильтрацией локаций
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Canvas API</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">JavaScript</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Interaction</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
+                                Открыть проект
+                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="projects/dev-cost-calculator.html" target="_blank" rel="noopener noreferrer"
+                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
+                        <div class="relative space-y-4">
+                            <div class="text-4xl">💰</div>
+                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">Dev Cost Calculator</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Калькулятор стоимости разработки с выбором типа проекта, функционала и сроков
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">JavaScript</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">UI/UX</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Calculator</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
+                                Открыть проект
+                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="projects/proposal-generator.html" target="_blank" rel="noopener noreferrer"
+                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
+                        <div class="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
+                        <div class="relative space-y-4">
+                            <div class="text-4xl">⚡</div>
+                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">Proposal Generator</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Генератор коммерческих предложений с печатью, копированием и автоподсчетом
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">JavaScript</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Print API</span>
+                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Automation</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
+                                Открыть проект
+                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer id="contact" class="py-12 px-4 border-t border-white/5">
+            <div class="max-w-7xl mx-auto text-center">
+                <p class="text-gray-400">
+                    © 2026 Яков Григорьевич. Сделано с 💙 для клиентов.
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Particle Canvas Animation
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let nodes = [];
+        let beams = [];
+        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*()'.split('');
+        let mouse = { x: -1000, y: -1000 };
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            ctx.scale(dpr, dpr);
+        }
+
+        window.addEventListener('resize', () => {
+            resize();
+            initParticles();
+        });
+
+        window.addEventListener('mousemove', e => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        function initParticles() {
+            nodes = Array.from({ length: 90 }).map(() => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vy: (Math.random() * 0.4) + 0.1,
+                char: chars[Math.floor(Math.random() * chars.length)]
+            }));
+
+            beams = Array.from({ length: 25 }).map(() => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                length: Math.random() * 100 + 50,
+                speed: (Math.random() * 6) + 3,
+                opacity: Math.random() * 0.5 + 0.3
+            }));
+        }
+
+        resize();
+        initParticles();
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Beams
+            beams.forEach(b => {
+                b.y -= b.speed;
+                if (b.y + b.length < 0) {
+                    b.y = height + 100;
+                    b.x = Math.random() * width;
+                }
+                let g = ctx.createLinearGradient(b.x, b.y, b.x, b.y + b.length);
+                g.addColorStop(0, `rgba(96, 165, 250, ${b.opacity})`);
+                g.addColorStop(1, 'transparent');
+                ctx.strokeStyle = g;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(b.x, b.y);
+                ctx.lineTo(b.x, b.y + b.length);
+                ctx.stroke();
+            });
+
+            // Nodes
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.lineWidth = 0.5;
+
+            for(let i = 0; i < nodes.length; i++) {
+                let n1 = nodes[i];
+                for(let j = i + 1; j < nodes.length; j++) {
+                    let n2 = nodes[j];
+                    let d = Math.hypot(n1.x - n2.x, n1.y - n2.y);
+                    if(d < 120) {
+                        ctx.strokeStyle = `rgba(156, 163, 175, ${0.15 * (1 - d/120)})`;
+                        ctx.beginPath();
+                        ctx.moveTo(n1.x, n1.y);
+                        ctx.lineTo(n2.x, n2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            nodes.forEach(n => {
+                n.y += n.vy;
+                if(n.y > height + 20) {
+                    n.y = -20;
+                    n.x = Math.random() * width;
+                }
+
+                let dist = Math.hypot(mouse.x - n.x, mouse.y - n.y);
+                if (dist < 180 || Math.random() > 0.98) {
+                    n.char = chars[Math.floor(Math.random() * chars.length)];
+                }
+
+                if (dist < 180) {
+                    ctx.strokeStyle = `rgba(96, 165, 250, ${0.5 * (1 - dist/180)})`;
+                    ctx.beginPath();
+                    ctx.moveTo(n.x, n.y);
+                    ctx.lineTo(mouse.x, mouse.y);
+                    ctx.stroke();
+                }
+
+                ctx.fillStyle = dist < 180 ? '#60A5FA' : 'rgba(156, 163, 175, 0.4)';
+                ctx.fillText(n.char, n.x, n.y);
+            });
+
+            requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
+</body>
+</html>
+
