@@ -2,7 +2,7 @@
 
 Сайт, который показывает погоду в любом городе и подсказывает, как одеться: верхняя одежда, верх, низ, обувь и аксессуары. Данные о погоде настоящие, обновляются каждые 15 минут.
 
-**Сайт:** https://bond-ten-eta.vercel.app/projects/weather-outfit/
+**Сайт:** https://grigorijg472-ops.github.io/Bond/projects/weather-outfit/
 
 ## Что умеет
 
