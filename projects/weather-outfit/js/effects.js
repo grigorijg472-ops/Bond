@@ -3,14 +3,37 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- Небо ---------- */
+  // Телефоны и слабые устройства: меньше частиц, 30 кадров в секунду, без ретины для фона
+  const mobile = window.matchMedia('(hover: none), (max-width: 700px)').matches;
+  const weak = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+  const LITE = mobile || weak;
+  if (LITE) document.documentElement.classList.add('lite');
+
   const Sky = {
+    sprite: null, last: 0,
     canvas: null, ctx: null, particles: [], mode: 'clear', isDay: true, raf: 0, w: 0, h: 0, flash: 0,
 
     init() {
       this.canvas = document.getElementById('sky');
       this.ctx = this.canvas.getContext('2d');
       this.resize();
-      window.addEventListener('resize', () => this.resize());
+      // Облако рисуем один раз в спрайт, а не создаём градиент на каждом кадре
+      const sp = document.createElement('canvas');
+      sp.width = sp.height = 128;
+      const sc = sp.getContext('2d');
+      const g = sc.createRadialGradient(64, 64, 0, 64, 64, 64);
+      g.addColorStop(0, 'rgba(255,255,255,1)');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      sc.fillStyle = g;
+      sc.fillRect(0, 0, 128, 128);
+      this.sprite = sp;
+      let rw = window.innerWidth;
+      window.addEventListener('resize', () => {
+        // На телефоне адресная строка меняет высоту при прокрутке, пересоздавать фон из-за этого не нужно
+        if (LITE && window.innerWidth === rw) return;
+        rw = window.innerWidth;
+        this.resize();
+      });
       document.addEventListener('visibilitychange', () => {
         if (document.hidden) cancelAnimationFrame(this.raf);
         else this.loop();
@@ -19,7 +42,7 @@
     },
 
     resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = LITE ? 1 : Math.min(window.devicePixelRatio || 1, 2);
       this.w = window.innerWidth;
       this.h = window.innerHeight;
       this.canvas.width = this.w * dpr;
@@ -35,7 +58,7 @@
     },
 
     spawn() {
-      const area = (this.w * this.h) / 12000;
+      const area = (this.w * this.h) / (LITE ? 26000 : 12000);
       const P = [];
       const r = Math.random;
       const m = this.mode;
@@ -49,7 +72,7 @@
         for (let i = 0; i < area * 1.2; i++) P.push({ k: 'star', x: r() * this.w, y: r() * this.h * 0.8, s: r() * 1.6 + 0.3, p: r() * Math.PI * 2 });
       }
       if (m === 'clouds' || m === 'fog' || m === 'rain' || m === 'storm' || m === 'snow' || m === 'sleet') {
-        const n = m === 'fog' ? 9 : 5;
+        const n = LITE ? (m === 'fog' ? 5 : 3) : (m === 'fog' ? 9 : 5);
         for (let i = 0; i < n; i++) P.push({ k: 'cloud', x: r() * this.w, y: r() * this.h * (m === 'fog' ? 1 : 0.5), s: 120 + r() * 220, v: 0.08 + r() * 0.25, a: m === 'fog' ? 0.07 : 0.05 + r() * 0.05 });
       }
       this.particles = P;
@@ -62,8 +85,8 @@
 
     loop() {
       cancelAnimationFrame(this.raf);
-      const step = () => {
-        this.draw();
+      const step = (now = performance.now()) => {
+        if (!LITE || now - this.last >= 32) { this.last = now; this.draw(); }
         if (!reduceMotion) this.raf = requestAnimationFrame(step);
       };
       step();
@@ -89,14 +112,15 @@
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(p.x - p.l * 0.25, p.y + p.l);
           ctx.stroke();
-          p.y += p.v; p.x -= p.v * 0.25;
+          const k = LITE ? 2 : 1;
+          p.y += p.v * k; p.x -= p.v * 0.25 * k;
           if (p.y > h) { p.y = -20; p.x = Math.random() * (w + 100); }
         } else if (p.k === 'snow') {
           ctx.fillStyle = `rgba(255,255,255,${p.a})`;
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
           ctx.fill();
-          p.y += p.v; p.x += Math.sin(t + p.d) * 0.5;
+          p.y += p.v * (LITE ? 2 : 1); p.x += Math.sin(t + p.d) * 0.5;
           if (p.y > h + 5) { p.y = -5; p.x = Math.random() * w; }
         } else if (p.k === 'star') {
           const a = 0.35 + Math.sin(t * 1.5 + p.p) * 0.35;
@@ -105,13 +129,9 @@
           ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
           ctx.fill();
         } else if (p.k === 'cloud') {
-          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.s);
-          g.addColorStop(0, `rgba(255,255,255,${p.a})`);
-          g.addColorStop(1, 'rgba(255,255,255,0)');
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.globalAlpha = p.a;
+          ctx.drawImage(this.sprite, p.x - p.s, p.y - p.s, p.s * 2, p.s * 2);
+          ctx.globalAlpha = 1;
           p.x += p.v;
           if (p.x - p.s > w) p.x = -p.s;
         }
@@ -203,5 +223,5 @@
     setTimeout(() => s.remove(), 600);
   }
 
-  window.Effects = { Sky, flyOut, flyAway, sparkle, ripple, reduceMotion };
+  window.Effects = { Sky, flyOut, flyAway, sparkle, ripple, reduceMotion, LITE };
 })();

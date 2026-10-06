@@ -162,7 +162,8 @@
   // Вылет значков из точки по дуге с гравитацией
   function burst(x, y, glyphs, o = {}) {
     if (reduce) return;
-    const n = o.n || 12;
+    const lite = document.documentElement.classList.contains('lite');
+    const n = Math.ceil((o.n || 12) * (lite ? 0.6 : 1));
     for (let i = 0; i < n; i++) {
       const s = document.createElement('span');
       s.className = 'particle';

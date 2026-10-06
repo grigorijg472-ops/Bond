@@ -313,6 +313,22 @@ body.is-loading .hero, body.is-loading .hourly-card { opacity: .7; transition: o
 .warmth__bar span::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent); transform: translateX(-100%); animation: bar-shine 2.8s 1s ease-in-out infinite; }
 @keyframes bar-shine { 60%, 100% { transform: translateX(100%); } }
 
+
+/* ============ Облегчённый режим для телефонов ============ */
+/* Размытие под стеклом пересчитывается на каждом кадре фона, на телефонах это главный источник фризов */
+.lite .card, .lite .search, .lite .segmented, .lite .error { backdrop-filter: none; -webkit-backdrop-filter: none; }
+.lite .card { background: rgba(14, 18, 42, .62); box-shadow: 0 12px 30px -16px rgba(0,0,0,.5); }
+.lite .search, .lite .segmented { background: rgba(14, 18, 42, .7); }
+.lite .search__results { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgb(22, 26, 52); }
+.lite .glow { filter: none; animation: none; opacity: .35; background: radial-gradient(circle, var(--accent) 0%, transparent 65%); }
+.lite .glow--b { background: radial-gradient(circle, var(--accent-2) 0%, transparent 65%); opacity: .25; }
+.lite .hero__icon, .lite .wi-cloud, .lite .wi-moon, .lite .wi-bolt, .lite .particle, .lite .item__emoji, .lite .hcurve__line, .lite .ring { filter: none; box-shadow: none; }
+.lite .wi-rays { animation-duration: 20s; }
+.lite .hour .wi *, .lite .day:not(.is-active) .wi * { animation: none; }
+.lite .warmth__bar span::after { animation: none; display: none; }
+.lite .btn--primary:hover { animation: none; }
+.lite .item { will-change: auto; }
+
 /* ============ Адаптив ============ */
 @media (max-width: 900px) {
   .topbar { grid-template-columns: 1fr auto; }
