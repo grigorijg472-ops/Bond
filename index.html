@@ -34,9 +34,9 @@ img,svg{display:block}
 .skip:focus{top:var(--sp-4)}
 .icon{font-size:20px;line-height:1;flex:none;display:inline-block}
 
-#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
-.glow{position:fixed;z-index:0;pointer-events:none;width:700px;height:700px;border-radius:50%;filter:blur(120px);opacity:.18}
-.glow.a{background:#0891b2;top:-250px;right:-200px}.glow.b{background:#1d4ed8;bottom:-300px;left:-250px;opacity:.12}
+#bg{position:fixed;top:0;left:0;z-index:0;pointer-events:none;contain:strict}
+.glow{position:fixed;z-index:0;pointer-events:none;width:1100px;height:1100px;border-radius:50%}
+.glow.a{background:radial-gradient(closest-side,rgba(8,145,178,.2),rgba(8,145,178,.08) 45%,transparent);top:-450px;right:-400px}.glow.b{background:radial-gradient(closest-side,rgba(29,78,216,.14),rgba(29,78,216,.05) 45%,transparent);bottom:-500px;left:-450px}
 main,header,footer{position:relative;z-index:1}
 
 /* Nav */
@@ -159,7 +159,7 @@ footer nav{display:flex;gap:var(--sp-1)}
 @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.dot{animation:none}}
 
 @media (max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}.stack{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:860px){.hero-grid{grid-template-columns:1fr}.hero{min-height:auto;padding-top:var(--sp-12)}.nav-links{display:none}}
+@media (max-width:860px){.nav.scrolled{background:rgba(5,7,12,.94);backdrop-filter:none;-webkit-backdrop-filter:none}.card-contact{backdrop-filter:none;-webkit-backdrop-filter:none;background:#0b1019}.hero-grid{grid-template-columns:1fr}.hero{min-height:auto;padding-top:var(--sp-12)}.nav-links{display:none}}
 @media (max-width:640px){.container{padding:0 var(--sp-4)}.grid,.stack{grid-template-columns:1fr}.svc{grid-template-columns:40px 1fr;gap:var(--sp-2) var(--sp-4)}.svc p{grid-column:2}.svc .icon{display:none}section{padding:var(--sp-16) 0}.cta .btn{flex:1 1 100%}.sec-head{margin-bottom:var(--sp-8)}.contact{padding:var(--sp-12) var(--sp-4)}}
 
 /* Nav underline */
@@ -376,7 +376,7 @@ footer nav{display:flex;gap:var(--sp-1)}
   }));
 
   // Card spotlight
-  document.querySelectorAll('.project').forEach(card => card.addEventListener('pointermove', e => {
+  if (matchMedia('(hover: hover)').matches) document.querySelectorAll('.project').forEach(card => card.addEventListener('pointermove', e => {
     const r = card.getBoundingClientRect();
     card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
     card.style.setProperty('--my', (e.clientY - r.top) + 'px');
@@ -428,55 +428,67 @@ footer nav{display:flex;gap:var(--sp-1)}
     else show('Не удалось скопировать');
   }));
 
-  // Background: falling glyphs + network (как в исходной версии)
-  const canvas = document.getElementById('bg'), ctx = canvas.getContext('2d');
+  // Background: falling glyphs + network (как в исходной версии, оптимизировано для телефонов)
+  const canvas = document.getElementById('bg'), ctx = canvas.getContext('2d', { alpha: true });
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*()'.split('');
-  let width, height, nodes = [], beams = [], raf = null;
+  const isSmall = () => window.innerWidth < 768;
+  let width = 0, height = 0, nodes = [], beams = [], raf = null;
   const mouse = { x: -1000, y: -1000 };
+  const ALPHA_STEPS = 6; // линии группируются по прозрачности: меньше вызовов отрисовки
   function resize() {
     width = window.innerWidth; height = window.innerHeight;
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = width * dpr; canvas.height = height * dpr;
+    const dpr = Math.min(window.devicePixelRatio || 1, isSmall() ? 1.5 : 2);
+    canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
     canvas.style.width = width + 'px'; canvas.style.height = height + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
+  function makeBeam() {
+    const length = Math.random() * 100 + 50, opacity = Math.random() * 0.5 + 0.3;
+    const g = ctx.createLinearGradient(0, 0, 0, length); // градиент создаётся один раз
+    g.addColorStop(0, `rgba(96, 165, 250, ${opacity})`); g.addColorStop(1, 'rgba(96, 165, 250, 0)');
+    return { x: Math.random() * width, y: Math.random() * height, length, speed: (Math.random() * 6) + 3, g };
+  }
   function initParticles() {
-    nodes = Array.from({ length: 90 }).map(() => ({
+    const small = isSmall();
+    nodes = Array.from({ length: small ? 60 : 90 }).map(() => ({
       x: Math.random() * width, y: Math.random() * height,
       vy: (Math.random() * 0.4) + 0.1,
       char: chars[Math.floor(Math.random() * chars.length)]
     }));
-    beams = Array.from({ length: 25 }).map(() => ({
-      x: Math.random() * width, y: Math.random() * height,
-      length: Math.random() * 100 + 50,
-      speed: (Math.random() * 6) + 3,
-      opacity: Math.random() * 0.5 + 0.3
-    }));
+    beams = Array.from({ length: small ? 18 : 25 }).map(makeBeam);
   }
-  function draw() {
+  let last = performance.now();
+  function draw(now) {
+    const k = Math.min(3, (now - last) / 16.67) || 1; last = now; // скорость не зависит от FPS
     ctx.clearRect(0, 0, width, height);
-    beams.forEach(b => {
-      b.y -= b.speed;
+    ctx.lineWidth = 1.5;
+    for (const b of beams) {
+      b.y -= b.speed * k;
       if (b.y + b.length < 0) { b.y = height + 100; b.x = Math.random() * width; }
-      const g = ctx.createLinearGradient(b.x, b.y, b.x, b.y + b.length);
-      g.addColorStop(0, `rgba(96, 165, 250, ${b.opacity})`);
-      g.addColorStop(1, 'transparent');
-      ctx.strokeStyle = g; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.x, b.y + b.length); ctx.stroke();
-    });
-    ctx.font = '12px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineWidth = 0.5;
+      ctx.save(); ctx.translate(b.x, b.y); ctx.strokeStyle = b.g;
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, b.length); ctx.stroke(); ctx.restore();
+    }
+    ctx.lineWidth = 0.5;
+    const buckets = Array.from({ length: ALPHA_STEPS }, () => []);
     for (let i = 0; i < nodes.length; i++) {
       const n1 = nodes[i];
       for (let j = i + 1; j < nodes.length; j++) {
-        const n2 = nodes[j], d = Math.hypot(n1.x - n2.x, n1.y - n2.y);
-        if (d < 120) {
-          ctx.strokeStyle = `rgba(156, 163, 175, ${0.15 * (1 - d / 120)})`;
-          ctx.beginPath(); ctx.moveTo(n1.x, n1.y); ctx.lineTo(n2.x, n2.y); ctx.stroke();
-        }
+        const n2 = nodes[j], dx = n1.x - n2.x, dy = n1.y - n2.y;
+        if (dx > 120 || dx < -120 || dy > 120 || dy < -120) continue;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 120) buckets[Math.min(ALPHA_STEPS - 1, Math.floor((d / 120) * ALPHA_STEPS))].push(n1.x, n1.y, n2.x, n2.y);
       }
     }
-    nodes.forEach(n => {
-      n.y += n.vy;
+    buckets.forEach((arr, idx) => {
+      if (!arr.length) return;
+      ctx.strokeStyle = `rgba(156, 163, 175, ${0.15 * (1 - (idx + 0.5) / ALPHA_STEPS)})`;
+      ctx.beginPath();
+      for (let q = 0; q < arr.length; q += 4) { ctx.moveTo(arr[q], arr[q + 1]); ctx.lineTo(arr[q + 2], arr[q + 3]); }
+      ctx.stroke();
+    });
+    ctx.font = '12px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (const n of nodes) {
+      n.y += n.vy * k;
       if (n.y > height + 20) { n.y = -20; n.x = Math.random() * width; }
       const dist = Math.hypot(mouse.x - n.x, mouse.y - n.y);
       if (dist < 180 || Math.random() > 0.98) n.char = chars[Math.floor(Math.random() * chars.length)];
@@ -486,17 +498,28 @@ footer nav{display:flex;gap:var(--sp-1)}
       }
       ctx.fillStyle = dist < 180 ? '#60A5FA' : 'rgba(156, 163, 175, 0.4)';
       ctx.fillText(n.char, n.x, n.y);
-    });
+    }
     raf = requestAnimationFrame(draw);
   }
   resize(); initParticles(); raf = requestAnimationFrame(draw);
-  window.addEventListener('resize', () => { resize(); initParticles(); });
-  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  // На телефоне при прокрутке скрывается адресная строка и меняется высота окна.
+  // Раньше на каждое такое событие частицы пересоздавались и canvas перерисовывался: отсюда фризы.
+  let lastW = window.innerWidth, rt;
+  window.addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      const wChanged = window.innerWidth !== lastW;
+      if (!wChanged && Math.abs(window.innerHeight - height) < 160) return; // адресная строка: ничего не делаем
+      lastW = window.innerWidth; resize();
+      if (wChanged) initParticles(); else beams.forEach(b => { b.g = makeBeam().g; });
+    }, 150);
+  });
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
   window.addEventListener('touchmove', e => { const t = e.touches[0]; if (t) { mouse.x = t.clientX; mouse.y = t.clientY; } }, { passive: true });
-  // Пауза только когда вкладка скрыта: экономит батарею, на вид не влияет
+  window.addEventListener('touchend', () => { mouse.x = -1000; mouse.y = -1000; }, { passive: true });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) { cancelAnimationFrame(raf); raf = null; }
-    else if (!raf) raf = requestAnimationFrame(draw);
+    else if (!raf) { last = performance.now(); raf = requestAnimationFrame(draw); }
   });
 })();
 </script>
