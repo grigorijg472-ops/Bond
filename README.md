@@ -2,7 +2,7 @@
 
 Я веб-разработчик из Беларуси. Делаю лендинги, веб-приложения и автоматизацию для бизнеса на JavaScript, React и Python.
 
-Сайт: [bond-ten-eta.vercel.app](https://bond-ten-eta.vercel.app)
+Сайт: [grigorijg472-ops.github.io/Bond](https://grigorijg472-ops.github.io/Bond)
 
 ## Проекты
 
@@ -10,13 +10,13 @@
 
 | Проект | Что делает | Технологии |
 | --- | --- | --- |
-| [3D Interactive Portfolio](https://bond-ten-eta.vercel.app/projects/3d-portfolio/index.html) | Звёздное поле и вращающаяся сфера, частицы реагируют на курсор | Three.js, WebGL |
-| [AI Chat Bot](https://bond-ten-eta.vercel.app/projects/telegram-bot/index.html) | Демо чат-бота: автоответы и тексты для соцсетей | JavaScript |
-| [Habits Tracker](https://bond-ten-eta.vercel.app/projects/habits-tracker/index.html) | Трекер привычек с сериями дней и недельной статистикой | JavaScript, LocalStorage |
-| [Resume Generator](https://bond-ten-eta.vercel.app/projects/resume-generator/index.html) | Редактор резюме с живым предпросмотром и экспортом в PDF | HTML5, Print API |
-| [Interactive Map](https://bond-ten-eta.vercel.app/projects/interactive-map/index.html) | Карта на Canvas: маркеры, зум, перетаскивание, поиск | Canvas API |
-| [Dev Cost Calculator](https://bond-ten-eta.vercel.app/projects/dev-cost-calculator.html) | Считает стоимость и сроки разработки сайта | JavaScript |
-| [Proposal Generator](https://bond-ten-eta.vercel.app/projects/proposal-generator.html) | Собирает коммерческое предложение с подсчётом суммы | JavaScript, Print API |
+| [3D Interactive Portfolio](https://grigorijg472-ops.github.io/Bond/projects/3d-portfolio/index.html) | Звёздное поле и вращающаяся сфера, частицы реагируют на курсор | Three.js, WebGL |
+| [AI Chat Bot](https://grigorijg472-ops.github.io/Bond/projects/telegram-bot/index.html) | Демо чат-бота: автоответы и тексты для соцсетей | JavaScript |
+| [Habits Tracker](https://grigorijg472-ops.github.io/Bond/projects/habits-tracker/index.html) | Трекер привычек с сериями дней и недельной статистикой | JavaScript, LocalStorage |
+| [Resume Generator](https://grigorijg472-ops.github.io/Bond/projects/resume-generator/index.html) | Редактор резюме с живым предпросмотром и экспортом в PDF | HTML5, Print API |
+| [Interactive Map](https://grigorijg472-ops.github.io/Bond/projects/interactive-map/index.html) | Карта на Canvas: маркеры, зум, перетаскивание, поиск | Canvas API |
+| [Dev Cost Calculator](https://grigorijg472-ops.github.io/Bond/projects/dev-cost-calculator.html) | Считает стоимость и сроки разработки сайта | JavaScript |
+| [Proposal Generator](https://grigorijg472-ops.github.io/Bond/projects/proposal-generator.html) | Собирает коммерческое предложение с подсчётом суммы | JavaScript, Print API |
 
 ## Структура
 
@@ -44,7 +44,7 @@ projects/
 
 ## Откат к прошлой версии
 
-Версия сайта до редизайна сохранена в ветке `backup-original` (коммит `ba8a191`). Чтобы вернуть её, создайте Pull Request из `backup-original` в `main` или выберите эту ветку как Production Branch в настройках Vercel.
+Версия сайта до редизайна сохранена в ветке `backup-original` (коммит `ba8a191`). Чтобы вернуть её, создайте Pull Request из `backup-original` в `main` или в Settings → Pages выберите ветку `backup-original`.
 
 ## Контакты
 
