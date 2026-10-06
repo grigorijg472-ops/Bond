@@ -149,7 +149,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing:
 .hero__place p { font-size: .92rem; margin-top: 4px; text-transform: none; }
 .hero__place p::first-letter { text-transform: uppercase; }
 .hero__temp { display: flex; align-items: center; gap: 16px; margin: 14px 0 4px; }
-.hero__icon { font-size: clamp(64px, 10vw, 96px); line-height: 1; filter: drop-shadow(0 10px 24px rgba(0,0,0,.25)); animation: bob 4s ease-in-out infinite; }
+.hero__icon { width: clamp(84px, 12vw, 120px); height: clamp(84px, 12vw, 120px); flex: none; cursor: pointer; filter: drop-shadow(0 12px 24px rgba(0,0,0,.28)); animation: bob 4s ease-in-out infinite; }
+.hero__icon .wi { width: 100%; height: 100%; }
 @keyframes bob { 50% { transform: translateY(-8px) rotate(-3deg); } }
 .hero__deg { font-family: var(--font-display); font-weight: 800; font-size: clamp(4.5rem, 12vw, 7.5rem); line-height: 1; letter-spacing: -.05em; }
 .hero__deg sup { font-size: .45em; vertical-align: top; position: relative; top: .15em; margin-left: 2px; }
@@ -166,16 +167,16 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing:
 body.is-loading .hero, body.is-loading .hourly-card { opacity: .7; transition: opacity .3s; }
 
 /* ============ Почасовой ============ */
-.hourly { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.3) transparent; }
+.hourly { display: block; position: relative; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.3) transparent; }
 .hourly::-webkit-scrollbar { height: 6px; }
 .hourly::-webkit-scrollbar-thumb { background: rgba(255,255,255,.3); border-radius: 6px; }
 .hour { flex: none; width: 74px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 6px; border-radius: 18px; background: rgba(255,255,255,.07); scroll-snap-align: start; animation: rise .5s both; }
 .hour--now { background: rgba(255,255,255,.2); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); }
 .hour__time { font-size: .8rem; color: var(--muted); font-weight: 600; }
 .hour--now .hour__time { color: var(--text); }
-.hour__icon { font-size: 1.6rem; }
-.hour__bar { width: 6px; height: 42px; border-radius: 6px; background: rgba(255,255,255,.12); position: relative; overflow: hidden; }
-.hour__bar i { position: absolute; left: 0; right: 0; bottom: 0; height: max(14%, var(--p)); border-radius: 6px; background: linear-gradient(to top, var(--accent-2), var(--accent)); }
+.hour__icon { width: 36px; height: 36px; }
+.hour__icon .wi { width: 100%; height: 100%; }
+.hour__plot { height: 54px; width: 100%; }
 .hour__temp { font-size: 1rem; }
 .hour__pop { font-size: .72rem; color: #a5e1ff; min-height: 1em; }
 
@@ -196,7 +197,8 @@ body.is-loading .hero, body.is-loading .hourly-card { opacity: .7; transition: o
 .day:hover { transform: translateY(-3px); background: rgba(255,255,255,.14); }
 .day.is-active { background: #fff; color: #1a1a2e; box-shadow: 0 12px 26px -10px rgba(0,0,0,.4); transform: translateY(-3px); }
 .day__label { font-size: .82rem; font-weight: 700; text-transform: capitalize; }
-.day__icon { font-size: 1.5rem; }
+.day__icon { width: 34px; height: 34px; margin: 2px 0; }
+.day__icon .wi { width: 100%; height: 100%; }
 .day__temp { font-size: .78rem; font-weight: 600; opacity: .8; white-space: nowrap; }
 
 .stage { position: relative; padding-top: 8px; }
@@ -243,6 +245,73 @@ body.is-loading .hero, body.is-loading .hourly-card { opacity: .7; transition: o
 .toast { position: fixed; left: 50%; bottom: 28px; z-index: 50; transform: translate(-50%, 40px); opacity: 0; padding: 12px 20px; border-radius: 14px; background: rgba(20,22,45,.92); border: 1px solid var(--border); font-weight: 600; transition: transform .4s cubic-bezier(.34,1.56,.64,1), opacity .3s; pointer-events: none; }
 .toast.is-shown { transform: translate(-50%, 0); opacity: 1; }
 .footer { text-align: center; font-size: .82rem; color: var(--muted); padding: 10px 0 0; }
+
+
+/* ============ Анимированные иконки погоды ============ */
+.wi { overflow: visible; }
+.wi-rays { stroke: #ffd257; stroke-width: 3; stroke-linecap: round; animation: wi-spin 14s linear infinite; }
+.wi-core { animation: wi-pulse 3s ease-in-out infinite; }
+.wi-sun--peek .wi-rays { stroke-width: 2.4; }
+.wi-cloud { animation: wi-drift 6s ease-in-out infinite; filter: drop-shadow(0 4px 6px rgba(0,0,0,.18)); }
+.wi-cloud--back { animation-duration: 8s; animation-direction: reverse; }
+.wi-cloud--small { animation-duration: 5s; }
+.wi-moon { animation: wi-rock 6s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(255,248,214,.55)); }
+.wi-stars path { fill: #fff7c2; animation: wi-twinkle 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.wi-stars path:nth-child(2) { animation-delay: 1.1s; }
+.wi-drops line { stroke: #7cc8ff; stroke-width: 3; stroke-linecap: round; animation: wi-fall 1s linear infinite; }
+.wi-flakes g { stroke: #fff; stroke-width: 1.8; stroke-linecap: round; fill: none; animation: wi-snow 2.2s linear infinite; transform-box: fill-box; transform-origin: center; }
+.wi-bolt { animation: wi-flash 2.6s ease-in-out infinite; filter: drop-shadow(0 0 6px #ffd54f); }
+.wi-fog line { stroke: rgba(255,255,255,.85); stroke-width: 3; stroke-linecap: round; animation: wi-fog 4s ease-in-out infinite alternate; }
+.wi-fog line:nth-child(2) { animation-delay: -2s; }
+@keyframes wi-spin { to { transform: rotate(360deg); } }
+@keyframes wi-pulse { 50% { transform: scale(1.07); } }
+@keyframes wi-drift { 50% { transform: translateX(3px); } }
+@keyframes wi-rock { 50% { transform: rotate(-8deg); } }
+@keyframes wi-twinkle { 50% { opacity: .25; transform: scale(.6); } }
+@keyframes wi-fall { 0% { transform: translateY(-4px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(8px); opacity: 0; } }
+@keyframes wi-snow { 0% { transform: translateY(-4px) rotate(0); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(9px) rotate(120deg); opacity: 0; } }
+@keyframes wi-flash { 0%, 40%, 48%, 100% { opacity: 1; } 44%, 52% { opacity: .2; } }
+@keyframes wi-fog { to { transform: translateX(6px); } }
+/* В почасовом и днях иконки спокойные, оживают при наведении */
+.hour:not(.hour--now) .wi *, .day:not(.is-active):not(:hover) .wi * { animation-play-state: paused; }
+.hour:hover .wi * { animation-play-state: running; }
+.hour { transition: transform var(--dur) var(--ease-spring), background-color var(--dur-fast); }
+.hour:hover { transform: translateY(-4px); background: rgba(255,255,255,.14); }
+.day.is-active .day__icon, .day:hover .day__icon { animation: icon-hop .6s var(--ease-spring); }
+@keyframes icon-hop { 40% { transform: translateY(-6px) scale(1.12); } }
+
+/* ============ Барабан температуры ============ */
+.odo { display: inline-flex; align-items: flex-start; }
+.odo__slot { display: inline-block; height: 1em; overflow: hidden; line-height: 1; }
+.odo__col { display: flex; flex-direction: column; transition: transform 1.1s cubic-bezier(.2,.9,.25,1.08); }
+.odo__digit, .odo__sign { display: block; height: 1em; line-height: 1; }
+.odo__digit, .odo__sign, .hero__deg sup { background: linear-gradient(180deg, #fff 35%, var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* ============ График температуры ============ */
+.hourly__track { position: relative; display: flex; gap: 10px; width: max-content; padding-bottom: 2px; }
+.hourly__track .hour { position: relative; z-index: 1; }
+.hcurve { position: absolute; left: 0; z-index: 2; pointer-events: none; overflow: visible; }
+.hcurve__line { filter: drop-shadow(0 3px 6px rgba(0,0,0,.25)); }
+.hcurve__dot { fill: #fff; stroke: var(--accent-2); stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: dot-pop .45s var(--ease-spring) both; }
+.hcurve__dot.is-now { fill: var(--accent); stroke: #fff; animation: dot-pop .45s var(--ease-spring) both, dot-pulse 2s 1s ease-in-out infinite; }
+@keyframes dot-pop { from { transform: scale(0); } }
+@keyframes dot-pulse { 50% { transform: scale(1.5); } }
+
+/* ============ Частицы и кнопки ============ */
+.particle { position: fixed; z-index: 120; pointer-events: none; line-height: 1; will-change: transform, opacity; filter: drop-shadow(0 4px 6px rgba(0,0,0,.25)); }
+.ring { position: fixed; z-index: 110; width: 44px; height: 44px; border-radius: 50%; pointer-events: none; border: 2px solid var(--accent); box-shadow: 0 0 18px var(--accent); }
+.btn--primary { translate: var(--mx, 0px) var(--my, 0px); transition: translate .25s var(--ease-out), transform var(--dur) var(--ease-spring), box-shadow var(--dur); }
+.btn--primary:hover { animation: glow-pulse 1.6s ease-in-out infinite; }
+@keyframes glow-pulse { 50% { box-shadow: 0 18px 44px -8px var(--accent-2), 0 0 0 6px rgba(255,255,255,.12), inset 0 1px 0 rgba(255,255,255,.5); } }
+.btn--secondary:hover .btn__ico { transform: rotate(-20deg) scale(1.15); }
+#replayBtn:hover .btn__ico { transform: rotate(-200deg); }
+#shareBtn:hover .btn__ico { animation: share-pop .6s var(--ease-spring); }
+@keyframes share-pop { 40% { transform: scale(1.3) rotate(10deg); } }
+.icon-btn:hover svg { animation: icon-hop .6s var(--ease-spring); }
+.word { display: inline-block; }
+.warmth__bar span { position: relative; overflow: hidden; }
+.warmth__bar span::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent); transform: translateX(-100%); animation: bar-shine 2.8s 1s ease-in-out infinite; }
+@keyframes bar-shine { 60%, 100% { transform: translateX(100%); } }
 
 /* ============ Адаптив ============ */
 @media (max-width: 900px) {

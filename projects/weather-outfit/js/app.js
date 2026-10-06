@@ -2,6 +2,7 @@
 (function () {
   const { Sky, flyOut, flyAway, sparkle, ripple } = window.Effects;
   const fmt = window.Outfits.fmt;
+  const FX = window.FX;
   const $ = (id) => document.getElementById(id);
 
   const DEFAULT_PLACE = { name: 'Минск', region: 'Беларусь', lat: 53.9, lon: 27.5667 };
@@ -60,15 +61,22 @@
     const dateStr = new Date(c.time.slice(0, 10) + 'T12:00').toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
     $('cityMeta').textContent = [state.place.region, `${dateStr}, ${localTime}`].filter(Boolean).join(' · ');
 
-    $('weatherIcon').textContent = d.icon;
-    countTo($('temperature'), Math.round(c.temp));
+    const iconChanged = FX.setIcon($('weatherIcon'), c.code, c.isDay, d.text);
+    FX.odometer($('temperature'), Math.round(c.temp));
     $('weatherDesc').textContent = d.text;
-    $('feelsLike').textContent = fmt(c.feels);
-    $('minMax').textContent = `↑${fmt(today.max)} ↓${fmt(today.min)}`;
-    $('wind').textContent = `${Math.round(c.wind)} м/с` + (c.gusts >= c.wind + 3 ? ` · до ${Math.round(c.gusts)}` : '');
-    $('humidity').textContent = `${c.humidity}%`;
-    $('precip').textContent = `${Math.round(c.popNext)}%`;
-    $('uv').textContent = uvLabel(today.uv);
+    FX.countText($('feelsLike'), fmt(c.feels));
+    FX.countText($('minMax'), `↑${fmt(today.max)} ↓${fmt(today.min)}`);
+    FX.countText($('wind'), `${Math.round(c.wind)} м/с` + (c.gusts >= c.wind + 3 ? ` · до ${Math.round(c.gusts)}` : ''));
+    FX.countText($('humidity'), `${c.humidity}%`);
+    FX.countText($('precip'), `${Math.round(c.popNext)}%`);
+    FX.countText($('uv'), uvLabel(today.uv));
+    document.querySelectorAll('.stat').forEach((st, i) => {
+      if (!FX.reduce) st.animate([{ transform: 'translateY(14px) scale(.96)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 500, delay: 120 + i * 60, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' });
+    });
+    if (iconChanged && !FX.reduce) {
+      $('weatherIcon').animate([{ transform: 'scale(.3) rotate(-30deg)', opacity: 0 }, { transform: 'scale(1.15) rotate(6deg)', opacity: 1, offset: .6 }, { transform: 'none' }], { duration: 800, easing: 'cubic-bezier(.34,1.56,.64,1)' });
+      setTimeout(() => FX.weatherBurst($('weatherIcon'), c.code, c.isDay, 10), 350);
+    }
     $('sunrise').textContent = today.sunrise.slice(11, 16);
     $('sunset').textContent = today.sunset.slice(11, 16);
 
@@ -79,28 +87,40 @@
     // Почасовой
     const wrap = $('hourly');
     wrap.innerHTML = '';
+    const track = document.createElement('div');
+    track.className = 'hourly__track';
+    wrap.appendChild(track);
     const temps = f.hourly.map((h) => h.temp);
-    const tMin = Math.min(...temps), tMax = Math.max(...temps);
     f.hourly.forEach((h, i) => {
       const el = document.createElement('div');
       el.className = 'hour' + (i === 0 ? ' hour--now' : '');
       const hd = Weather.describe(h.code, h.isDay);
-      const pct = tMax === tMin ? 50 : ((h.temp - tMin) / (tMax - tMin)) * 100;
       el.innerHTML = `
         <span class="hour__time"></span>
         <span class="hour__icon"></span>
-        <span class="hour__bar"><i style="--p:${pct.toFixed(0)}%"></i></span>
+        <span class="hour__plot"></span>
         <b class="hour__temp"></b>
         <span class="hour__pop"></span>`;
       el.querySelector('.hour__time').textContent = i === 0 ? 'Сейчас' : h.time.slice(11, 16);
-      el.querySelector('.hour__icon').textContent = hd.icon;
+      FX.setIcon(el.querySelector('.hour__icon'), h.code, h.isDay, hd.text);
       el.querySelector('.hour__icon').title = hd.text;
       el.querySelector('.hour__temp').textContent = fmt(h.temp);
       el.querySelector('.hour__pop').textContent = h.pop >= 20 ? `💧${h.pop}%` : '';
       el.style.animationDelay = `${i * 25}ms`;
-      wrap.appendChild(el);
+      track.appendChild(el);
     });
+    state.hourTemps = temps;
+    FX.curve(track, [...track.children], temps, 54);
   }
+
+  let resizeT;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(() => {
+      const track = document.querySelector('.hourly__track');
+      if (track && state.hourTemps) FX.curve(track, [...track.querySelectorAll('.hour')], state.hourTemps, 54);
+    }, 200);
+  });
 
   function uvLabel(uv) {
     const v = Math.round(uv);
@@ -108,29 +128,16 @@
     return `${v} · ${l}`;
   }
 
-  function countTo(el, target) {
-    const from = parseInt(el.textContent, 10);
-    if (isNaN(from) || Effects.reduceMotion) { el.textContent = target; return; }
-    const start = performance.now(), dur = 700;
-    const tick = (now) => {
-      const p = Math.min(1, (now - start) / dur);
-      const e = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(from + (target - from) * e);
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }
-
   /* ---------- Дни ---------- */
   function renderDays() {
     const wrap = $('days');
     wrap.innerHTML = '';
     const c = state.forecast.current;
-    const chips = [{ idx: -1, label: 'Сейчас', icon: Weather.describe(c.code, c.isDay).icon, temp: fmt(c.temp) }]
+    const chips = [{ idx: -1, label: 'Сейчас', code: c.code, isDay: c.isDay, temp: fmt(c.temp) }]
       .concat(state.forecast.days.map((d, i) => ({
         idx: i,
         label: i === 0 ? 'Сегодня' : i === 1 ? 'Завтра' : new Date(d.date + 'T12:00').toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric' }),
-        icon: Weather.describe(d.code, true).icon,
+        code: d.code, isDay: true,
         temp: `${fmt(d.max)} / ${fmt(d.min)}`,
       })));
     chips.forEach((ch) => {
@@ -141,7 +148,7 @@
       b.setAttribute('aria-selected', ch.idx === state.day);
       b.innerHTML = '<span class="day__label"></span><span class="day__icon"></span><span class="day__temp"></span>';
       b.querySelector('.day__label').textContent = ch.label;
-      b.querySelector('.day__icon').textContent = ch.icon;
+      FX.setIcon(b.querySelector('.day__icon'), ch.code, ch.isDay, Weather.describe(ch.code, ch.isDay).text);
       b.querySelector('.day__temp').textContent = ch.temp;
       b.addEventListener('click', () => {
         if (state.day === ch.idx) return;
@@ -150,6 +157,8 @@
         wrap.querySelectorAll('.day').forEach((x) => { x.classList.remove('is-active'); x.setAttribute('aria-selected', 'false'); });
         b.classList.add('is-active');
         b.setAttribute('aria-selected', 'true');
+        FX.jelly(b);
+        FX.weatherBurst(b.querySelector('.day__icon'), ch.code, ch.isDay, 8);
         renderOutfit(true);
       });
       wrap.appendChild(b);
@@ -202,10 +211,10 @@
       : state.day === 1 ? 'Образ на завтра'
       : 'Образ на ' + new Date(state.forecast.days[state.day].date + 'T12:00').toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
     $('outfitFor').textContent = dayLabel;
-    $('outfitTitle').textContent = o.title;
+    FX.wordsIn($('outfitTitle'), o.title);
     $('outfitMessage').textContent = o.message;
     $('warmthFill').style.width = o.warmth + '%';
-    $('warmthValue').textContent = o.warmth + '%';
+    FX.countText($('warmthValue'), o.warmth + '%', 1000);
 
     grid.innerHTML = '';
     o.items.forEach((it) => {
@@ -397,9 +406,24 @@
     setupSearch();
     setGender(state.gender, false);
 
-    document.querySelectorAll('.btn, .icon-btn, .segmented__btn').forEach((b) => b.addEventListener('pointerdown', ripple));
-    document.querySelectorAll('.segmented__btn').forEach((b) => b.addEventListener('click', () => b.dataset.gender !== state.gender && setGender(b.dataset.gender)));
-    $('geoBtn').addEventListener('click', locate);
+    document.querySelectorAll('.btn, .icon-btn, .segmented__btn').forEach((b) => {
+      b.addEventListener('pointerdown', ripple);
+      b.addEventListener('click', () => FX.jelly(b));
+    });
+    document.querySelectorAll('.btn--primary').forEach((b) => FX.magnetic(b));
+    document.querySelectorAll('.segmented__btn').forEach((b) => b.addEventListener('click', () => {
+      if (b.dataset.gender === state.gender) return;
+      const [x, y] = FX.center(b);
+      FX.burst(x, y, b.dataset.gender === 'f' ? ['👗', '👠', '👜', '💄', '✨'] : ['👔', '👞', '🧢', '🕶️', '✨'], { n: 10, size: 18, power: 150 });
+      setGender(b.dataset.gender);
+    }));
+    $('geoBtn').addEventListener('click', (e) => { FX.rings(e.currentTarget, 3); locate(); });
+    $('weatherIcon').addEventListener('click', () => {
+      if (!state.forecast) return;
+      const c = state.forecast.current;
+      FX.jelly($('weatherIcon'));
+      FX.weatherBurst($('weatherIcon'), c.code, c.isDay, 16);
+    });
     $('retryBtn').addEventListener('click', async (e) => {
       const b = e.currentTarget;
       b.setAttribute('aria-busy', 'true');
@@ -409,13 +433,22 @@
     $('shuffleBtn').addEventListener('click', (e) => {
       if (e.currentTarget.getAttribute('aria-busy')) return;
       state.seed++;
-      const r = e.currentTarget.getBoundingClientRect();
-      sparkle(r.left + r.width / 2, r.top + r.height / 2, 10);
+      const [x, y] = FX.center(e.currentTarget);
+      FX.burst(x, y, ['👕', '🧥', '👖', '👟', '🧣', '🧢', '👗', '🧤'], { n: 14, size: 22, power: 220 });
       renderOutfit(true);
     });
-    $('replayBtn').addEventListener('click', (e) => !e.currentTarget.getAttribute('aria-busy') && renderOutfit(true));
+    $('replayBtn').addEventListener('click', (e) => {
+      if (e.currentTarget.getAttribute('aria-busy')) return;
+      const [x, y] = FX.center(e.currentTarget);
+      FX.burst(x, y, ['✨', '✦', '⭐'], { n: 10, spread: Math.PI * 2, gravity: 40, power: 130, size: 16 });
+      renderOutfit(true);
+    });
     $('wardrobeBtn').addEventListener('click', () => renderOutfit(true));
-    $('shareBtn').addEventListener('click', share);
+    $('shareBtn').addEventListener('click', (e) => {
+      const [x, y] = FX.center(e.currentTarget);
+      FX.burst(x, y, ['💌', '💖', '💜', '🧡'], { n: 10, size: 18, power: 160, gravity: -60, spread: Math.PI * .7, duration: 1400 });
+      share();
+    });
 
     load();
     setInterval(() => !document.hidden && load(false), REFRESH_MS);
