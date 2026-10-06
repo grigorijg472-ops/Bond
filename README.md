@@ -1,64 +1,53 @@
-# Portfolio — Яков Григорьевич
+# Портфолио Якова Григорьевича
 
-Web-разработчик из Беларуси. Создаю лендинги, веб-приложения и автоматизацию для бизнеса.
+Я веб-разработчик из Беларуси. Делаю лендинги, веб-приложения и автоматизацию для бизнеса на JavaScript, React и Python.
 
-🌐 **Смотреть портфолио:** [https://bond-ten-eta.vercel.app](https://bond-ten-eta.vercel.app)
+Сайт: [bond-ten-eta.vercel.app](https://bond-ten-eta.vercel.app)
 
-## 📁 Структура проекта
+## Проекты
+
+Все проекты работают в браузере, ничего устанавливать не нужно.
+
+| Проект | Что делает | Технологии |
+| --- | --- | --- |
+| [3D Interactive Portfolio](https://bond-ten-eta.vercel.app/projects/3d-portfolio/index.html) | Звёздное поле и вращающаяся сфера, частицы реагируют на курсор | Three.js, WebGL |
+| [AI Chat Bot](https://bond-ten-eta.vercel.app/projects/telegram-bot/index.html) | Демо чат-бота: автоответы и тексты для соцсетей | JavaScript |
+| [Habits Tracker](https://bond-ten-eta.vercel.app/projects/habits-tracker/index.html) | Трекер привычек с сериями дней и недельной статистикой | JavaScript, LocalStorage |
+| [Resume Generator](https://bond-ten-eta.vercel.app/projects/resume-generator/index.html) | Редактор резюме с живым предпросмотром и экспортом в PDF | HTML5, Print API |
+| [Interactive Map](https://bond-ten-eta.vercel.app/projects/interactive-map/index.html) | Карта на Canvas: маркеры, зум, перетаскивание, поиск | Canvas API |
+| [Dev Cost Calculator](https://bond-ten-eta.vercel.app/projects/dev-cost-calculator.html) | Считает стоимость и сроки разработки сайта | JavaScript |
+| [Proposal Generator](https://bond-ten-eta.vercel.app/projects/proposal-generator.html) | Собирает коммерческое предложение с подсчётом суммы | JavaScript, Print API |
+
+## Структура
 
 ```
-portfolio/
-├── index.html                        # Главная страница портфолио
-├── projects/                         # Проекты
-│   ├── 3d-portfolio/                # 3D интерактивное портфолио
-│   ├── telegram-bot/                # AI Chat Bot
-│   ├── habits-tracker/              # Трекер привычек
-│   ├── resume-generator/            # Генератор резюме PDF
-│   ├── interactive-map/             # Кастомная карта
-│   ├── dev-cost-calculator.html     # Калькулятор стоимости разработки
-│   ├── proposal-generator.html      # Генератор коммерческих предложений
-│   └── price_monitor.py             # Парсер цен маркетплейсов
-└── README.md
+index.html               главная страница
+404.html                 страница «не найдено»
+projects/
+  3d-portfolio/
+  telegram-bot/
+  habits-tracker/
+  resume-generator/
+  interactive-map/
+  dev-cost-calculator.html
+  proposal-generator.html
 ```
 
-## 🚀 Как посмотреть проекты
+Сайт статический: HTML, CSS и JavaScript без сборки. Чтобы открыть его локально, запустите в папке `python -m http.server` и перейдите на `http://localhost:8000`.
 
-Открой главную страницу: [https://bond-ten-eta.vercel.app](https://bond-ten-eta.vercel.app)
+## Стек
 
-Или смотри проекты напрямую:
-- [3D Portfolio](https://bond-ten-eta.vercel.app/projects/3d-portfolio/index.html) — WebGL, частицы, анимации
-- [AI Chat Bot](https://bond-ten-eta.vercel.app/projects/telegram-bot/index.html) — Симуляция чат-бота
-- [Habits Tracker](https://bond-ten-eta.vercel.app/projects/habits-tracker/index.html) — Трекинг привычек
-- [Resume Generator](https://bond-ten-eta.vercel.app/projects/resume-generator/index.html) — Генератор резюме в PDF
-- [Interactive Map](https://bond-ten-eta.vercel.app/projects/interactive-map/index.html) — Canvas-карта с зумом
-- [Dev Cost Calculator](https://bond-ten-eta.vercel.app/projects/dev-cost-calculator.html) — Калькулятор стоимости
-- [Proposal Generator](https://bond-ten-eta.vercel.app/projects/proposal-generator.html) — Генератор КП
+- Frontend: HTML, CSS, JavaScript, React, Vue, Tailwind
+- Backend: Node.js, Express, Python, REST API, PostgreSQL
+- Автоматизация: Selenium, BeautifulSoup, Pandas
+- Инструменты: Git, Figma, VS Code
 
-## 💻 Технологии
+## Откат к прошлой версии
 
-- **Frontend:** HTML5, CSS3, JavaScript, React, Vue.js, Tailwind CSS
-- **Backend:** Node.js, Python, Express, REST API, PostgreSQL
-- **Automation:** Selenium, BeautifulSoup, Pandas
-- **Tools:** Git, Figma, VS Code
+Версия сайта до редизайна сохранена в ветке `backup-original` (коммит `ba8a191`). Чтобы вернуть её, создайте Pull Request из `backup-original` в `main` или выберите эту ветку как Production Branch в настройках Vercel.
 
-## 📞 Контакты
+## Контакты
 
-- **Telegram:** [@Bond8848](https://t.me/Bond8848)
-- **Email:** grigorijg472@gmail.com
-- **GitHub:** [grigorijg472-ops](https://github.com/grigorijg472-ops)
-
----
-
-## 📝 О проектах
-
-| Проект | Описание | Технологии |
-|--------|----------|------------|
-| 3D Portfolio | Интерактивное портфолио с частицами и вращающейся сферой | Three.js, WebGL, GSAP |
-| AI Chat Bot | Симуляция чат-бота с нейросетью, автоответы | HTML/CSS, JavaScript |
-| Habits Tracker | Веб-приложение для отслеживания привычек | React, LocalStorage |
-| Resume Generator | Инструмент для создания резюме в PDF | HTML5, Print API |
-| Interactive Map | Canvas-карта с маркерами, зумом и панорамированием | Canvas API, JavaScript |
-
----
-
-<sub>Сделано с заботой о клиенте.</sub>
+- Telegram: [@Bond8848](https://t.me/Bond8848)
+- Email: grigorijg472@gmail.com
+- GitHub: [grigorijg472-ops](https://github.com/grigorijg472-ops)

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Map — Кастомная интерактивная карта</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #f8fafc;
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .page-header p {
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.8);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .map-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .map-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      padding: 40px;
+      pointer-events: none;
+    }
+
+    .sidebar {
+      position: absolute;
+      left: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 350px;
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      pointer-events: auto;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #1e293b;
+    }
+
+    .location-card {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .location-card:hover {
+      background: #f1f5f9;
+      transform: translateX(8px);
+      border-color: #3b82f6;
+    }
+
+    .location-card.active {
+      background: #eff6ff;
+      border-color: #3b82f6;
+    }
+
+    .location-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .location-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #1e293b;
+    }
+
+    .location-tag {
+      background: #3b82f6;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .location-desc {
+      font-size: 0.9375rem;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    .location-meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .search-container {
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 20px 14px 48px;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      font-size: 1rem;
+      background: #f8fafc;
+      transition: all 0.3s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      background: white;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+    }
+
+    .stats-bar {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 24px;
+      background: white;
+      padding: 20px 40px;
+      border-radius: 50px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      pointer-events: auto;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+    }
+
+    .legend {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      pointer-events: auto;
+    }
+
+    .legend h4 {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 16px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+      font-size: 0.875rem;
+      color: #64748b;
+    }
+
+    .legend-color {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+    }
+
+    .controls {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    .control-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      border: none;
+      background: white;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      color: #1e293b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      transition: all 0.3s;
+    }
+
+    .control-btn:hover {
+      transform: scale(1.05);
+      background: #f1f5f9;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .stats-bar { width: 90%; left: 50%; transform: translateX(-50%); }
+      .legend { display: none; }
+    }
+
+    @media print {
+      .sidebar, .stats-bar, .legend, .controls { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>🗺️ Interactive Map</h1>
+    <p>Интерактивная карта с кастомными маркерами, фильтрацией и детальными описаниями.</p>
+  </div>
+
+  <div class="map-container" id="mapContainer">
+    <canvas id="mapCanvas"></canvas>
+
+    <div class="map-overlay">
+      <div class="sidebar">
+        <div class="search-container">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchInput" placeholder="Поиск локаций...">
+        </div>
+
+        <h2>Локации</h2>
+
+        <div class="location-card active" data-id="1">
+          <div class="location-header">
+            <span class="location-name">Центральный офис</span>
+            <span class="location-tag">Офис</span>
+          </div>
+          <div class="location-desc">
+            Главный офис компании. Здесь расположены административные службы и команда разработки.
+          </div>
+          <div class="location-meta">
+            <span class="meta-item">🕒 9:00-18:00</span>
+            <span class="meta-item">👥 50 человек</span>
+          </div>
+        </div>
+
+        <div class="location-card" data-id="2">
+          <div class="location-header">
+            <span class="location-name">Технопарк</span>
+            <span class="location-tag">Инфраструктура</span>
+          </div>
+          <div class="location-desc">
+            Современное здание с лабораториями и вычислительным центром. Ключевой объект инфраструктуры.
+          </div>
+          <div class="location-meta">
+            <span class="meta-item">🕒 24/7</span>
+            <span class="meta-item">💻 100+ раб. мест</span>
+          </div>
+        </div>
+
+        <div class="location-card" data-id="3">
+          <div class="location-header">
+            <span class="location-name">Клиентский центр</span>
+            <span class="location-tag">Сервис</span>
+          </div>
+          <div class="location-desc">
+            Место встреч с клиентами. Конференц-залы и переговорные комнаты для обсуждения проектов.
+          </div>
+          <div class="location-meta">
+            <span class="meta-item">🕒 10:00-20:00</span>
+            <span class="meta-item">👥 20 сотрудников</span>
+          </div>
+        </div>
+
+        <div class="location-card" data-id="4">
+          <div class="location-header">
+            <span class="location-name">Дистрибуция</span>
+            <span class="location-tag">Логистика</span>
+          </div>
+          <div class="location-desc">
+            Складской комплекс с системой автоматизированного учёта. Обработка заказов и доставка.
+          </div>
+          <div class="location-meta">
+            <span class="meta-item">🕒 8:00-22:00</span>
+            <span class="meta-item">📦 500+ заказов/день</span>
+          </div>
+        </div>
+
+        <div class="location-card" data-id="5">
+          <div class="location-header">
+            <span class="location-name">Инновационный центр</span>
+            <span class="location-tag">R&amp;D</span>
+          </div>
+          <div class="location-desc">
+            Лаборатория новых технологий. Разработка прототипов и экспериментальных решений.
+          </div>
+          <div class="location-meta">
+            <span class="meta-item">🕒 9:00-21:00</span>
+            <span class="meta-item">🔬 30 специалистов</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="control-btn" id="zoomIn">+</button>
+        <button class="control-btn" id="zoomOut">-</button>
+        <button class="control-btn" id="resetView">🔄</button>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-value">5</div>
+          <div class="stat-label">Локаций</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">350+</div>
+          <div class="stat-label">Сотрудников</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Покрытие</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <h4>Категории</h4>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #3b82f6;"></div>
+          <span>Офис</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #10b981;"></div>
+          <span>Инфраструктура</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #f59e0b;"></div>
+          <span>Сервис</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #ef4444;"></div>
+          <span>Логистика</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background: #8b5cf6;"></div>
+          <span>R&amp;D</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('mapCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Canvas setup
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Locations data
+    const locations = [
+      { id: 1, x: canvas.width * 0.35, y: canvas.height * 0.4, type: 'Офис', color: '#3b82f6', size: 20 },
+      { id: 2, x: canvas.width * 0.6, y: canvas.height * 0.3, type: 'Инфраструктура', color: '#10b981', size: 24 },
+      { id: 3, x: canvas.width * 0.25, y: canvas.height * 0.7, type: 'Сервис', color: '#f59e0b', size: 18 },
+      { id: 4, x: canvas.width * 0.7, y: canvas.height * 0.65, type: 'Логистика', color: '#ef4444', size: 22 },
+      { id: 5, x: canvas.width * 0.5, y: canvas.height * 0.55, type: 'R&D', color: '#8b5cf6', size: 26 }
+    ];
+
+    // Zoom state
+    let scale = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+    let isDragging = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    // Draw connection lines
+    function drawConnections() {
+      ctx.strokeStyle = 'rgba(59, 130, 246, 0.2)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+
+      for (let i = 0; i < locations.length; i++) {
+        for (let j = i + 1; j < locations.length; j++) {
+          const x1 = locations[i].x + offsetX;
+          const y1 = locations[i].y + offsetY;
+          const x2 = locations[j].x + offsetX;
+          const y2 = locations[j].y + offsetY;
+
+          // Draw curved line
+          const midX = (x1 + x2) / 2;
+          const midY = (y1 + y2) / 2;
+          const curveX = midX;
+          const curveY = midY + Math.abs(x2 - x1) * 0.1;
+
+          ctx.moveTo(x1, y1);
+          ctx.quadraticCurveTo(curveX, curveY, x2, y2);
+        }
+      }
+
+      ctx.stroke();
+    }
+
+    // Draw markers
+    function drawMarkers() {
+      locations.forEach(loc => {
+        const x = loc.x + offsetX;
+        const y = loc.y + offsetY;
+        const size = loc.size * scale;
+
+        // Draw glow
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 2);
+        gradient.addColorStop(0, loc.color + '40');
+        gradient.addColorStop(1, loc.color + '00');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(x, y, size * 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw marker circle
+        ctx.fillStyle = loc.color;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw border
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Draw label
+        ctx.fillStyle = '#1e293b';
+        ctx.font = `600 14px Inter`;
+        ctx.textAlign = 'center';
+        ctx.fillText(loc.type, x, y - size - 8);
+      });
+    }
+
+    // Draw map background (abstract)
+    function drawBackground() {
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw grid
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.1)';
+      ctx.lineWidth = 1;
+
+      const gridSize = 50 * scale;
+
+      ctx.beginPath();
+      for (let x = offsetX % gridSize; x < canvas.width; x += gridSize) {
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+      }
+      for (let y = offsetY % gridSize; y < canvas.height; y += gridSize) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+      }
+      ctx.stroke();
+    }
+
+    // Main render - called only when needed
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBackground();
+      drawConnections();
+      drawMarkers();
+    }
+
+    // Mouse interaction
+    canvas.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        const dx = e.clientX - lastX;
+        const dy = e.clientY - lastY;
+        offsetX += dx;
+        offsetY += dy;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        render();
+      }
+    });
+
+    // Zoom controls
+    const zoomInBtn = document.getElementById('zoomIn');
+    const zoomOutBtn = document.getElementById('zoomOut');
+    const resetBtn = document.getElementById('resetView');
+
+    zoomInBtn.addEventListener('click', () => {
+      scale *= 1.2;
+      render();
+    });
+
+    zoomOutBtn.addEventListener('click', () => {
+      scale /= 1.2;
+      render();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      scale = 1;
+      offsetX = 0;
+      offsetY = 0;
+      render();
+    });
+
+    // Location selection
+    const locationCards = document.querySelectorAll('.location-card');
+    const searchInput = document.getElementById('searchInput');
+
+    function selectLocation(id) {
+      locationCards.forEach(card => {
+        card.classList.toggle('active', parseInt(card.dataset.id) === id);
+      });
+
+      const loc = locations.find(l => l.id === id);
+      if (loc) {
+        const centerX = (canvas.width - 350) / 2 - 40 - loc.x;
+        const centerY = canvas.height / 2 - loc.y;
+        offsetX = centerX;
+        offsetY = centerY;
+        scale = 1.5;
+        render();
+      }
+    }
+
+    locationCards.forEach(card => {
+      card.addEventListener('click', () => {
+        selectLocation(parseInt(card.dataset.id));
+      });
+    });
+
+    // Search filter
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      locationCards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(query) ? 'block' : 'none';
+      });
+    });
+
+    // Initial render
+    offsetX = (canvas.width - 350 - 80) / 2 - canvas.width / 2;
+    offsetY = canvas.height / 2 - canvas.height / 2;
+    render();
+  </script>
+</body>
+</html>

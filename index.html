@@ -1,490 +1,467 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Яков Григорьевич — Web Developer</title>
-    <meta name="description" content="Создаю современные веб-приложения, лендинги и автоматизацию для бизнеса. JavaScript, React, Python.">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Яков Григорьевич, веб-разработчик</title>
+<meta name="description" content="Веб-разработчик из Беларуси. Лендинги, веб-приложения и автоматизация для бизнеса на JavaScript, React и Python.">
+<meta name="theme-color" content="#05070c">
+<meta property="og:title" content="Яков Григорьевич, веб-разработчик">
+<meta property="og:description" content="Лендинги, веб-приложения и автоматизация для бизнеса.">
+<link rel="icon" href="favicon.ico">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070c; --surface:#0b0f17; --surface-2:#111723; --border:#1c2433; --border-strong:#2a3446;
+  --fg:#f1f5f9; --muted:#9aa7b8; --subtle:#808b9c;
+  --accent:#22d3ee; --accent-2:#3b82f6; --accent-hover:#67e8f9; --on-accent:#03121a;
+  --radius:16px; --ease:cubic-bezier(.2,.7,.2,1);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-6:24px; --sp-8:32px; --sp-12:48px; --sp-16:64px; --sp-24:96px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%}
+body{font-family:Onest,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;font-size:16px;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img,svg{display:block}
+::selection{background:rgba(34,211,238,.3)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+.container{width:100%;max-width:1200px;margin:0 auto;padding:0 var(--sp-6)}
+.skip{position:absolute;left:var(--sp-4);top:-60px;z-index:100;background:var(--accent);color:var(--on-accent);padding:var(--sp-2) var(--sp-4);border-radius:8px;font-weight:600}
+.skip:focus{top:var(--sp-4)}
+.icon{font-size:20px;line-height:1;flex:none;display:inline-block}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #030509;
-            color: white;
-            overflow-x: hidden;
-        }
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.glow{position:fixed;z-index:0;pointer-events:none;width:700px;height:700px;border-radius:50%;filter:blur(120px);opacity:.18}
+.glow.a{background:#0891b2;top:-250px;right:-200px}.glow.b{background:#1d4ed8;bottom:-300px;left:-250px;opacity:.12}
+main,header,footer{position:relative;z-index:1}
 
-        html {
-            scroll-behavior: smooth;
-        }
+/* Nav */
+.nav{position:sticky;top:0;z-index:50;transition:background .25s,border-color .25s;border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(5,7,12,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--border)}
+.nav .container{display:flex;align-items:center;justify-content:space-between;height:68px;gap:var(--sp-4)}
+.logo{display:flex;align-items:center;gap:var(--sp-3);font-weight:600;letter-spacing:-.01em}
+.logo-mark{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--on-accent);font-family:"JetBrains Mono",monospace;font-weight:500;font-size:14px}
+.nav-links{display:flex;gap:var(--sp-1);list-style:none}
+.nav-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 var(--sp-4);border-radius:10px;color:var(--muted);font-size:15px;transition:color .2s,background .2s}
+.nav-links a:hover,.nav-links a[aria-current="true"]{color:var(--fg);background:rgba(255,255,255,.05)}
 
-        /* Particle Canvas */
-        #particle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
+/* Buttons */
+.btn{--h:52px;display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);min-height:var(--h);padding:0 var(--sp-6);border-radius:12px;font:600 16px/1 Onest,sans-serif;border:1px solid transparent;cursor:pointer;transition:background .2s var(--ease),border-color .2s,color .2s,transform .15s var(--ease),box-shadow .25s;white-space:nowrap;-webkit-tap-highlight-color:transparent;user-select:none}
+.btn:active{transform:translateY(1px) scale(.98)}
+.btn .icon{transition:transform .2s var(--ease)}
+.btn-primary{background:var(--accent);color:var(--on-accent);box-shadow:0 0 0 0 rgba(34,211,238,0),0 8px 24px -8px rgba(34,211,238,.55)}
+.btn-primary:hover{background:var(--accent-hover);box-shadow:0 0 0 4px rgba(34,211,238,.15),0 10px 30px -8px rgba(34,211,238,.7)}
+.btn-primary:hover .icon{transform:translateX(3px)}
+.btn-secondary{background:rgba(255,255,255,.04);color:var(--fg);border-color:var(--border-strong)}
+.btn-secondary:hover{background:rgba(255,255,255,.08);border-color:rgba(34,211,238,.5)}
+.btn-ghost{color:var(--muted);padding:0 var(--sp-4)}
+.btn-ghost:hover{color:var(--fg);background:rgba(255,255,255,.05)}
+.btn-sm{--h:44px;padding:0 var(--sp-4);font-size:15px;border-radius:10px}
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
+/* Hero */
+.hero{min-height:calc(100svh - 68px);display:flex;align-items:center;padding:var(--sp-16) 0 var(--sp-24)}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:var(--sp-12);align-items:center}
+.badge{display:inline-flex;align-items:center;gap:var(--sp-2);padding:6px 14px;border:1px solid rgba(34,211,238,.25);background:rgba(34,211,238,.06);color:var(--accent);border-radius:999px;font-size:13px;letter-spacing:.04em}
+.dot{width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+h1{font-size:clamp(44px,7.5vw,88px);font-weight:300;line-height:1.02;letter-spacing:-.035em;margin:var(--sp-6) 0;text-wrap:balance}
+.grad{background:linear-gradient(120deg,var(--accent) 0%,var(--accent-2) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:540px;text-wrap:pretty}
+.cta{display:flex;flex-wrap:wrap;gap:var(--sp-3);margin-top:var(--sp-8)}
 
-        ::-webkit-scrollbar-track {
-            background: #030509;
-        }
+.card-contact{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid var(--border);border-radius:24px;padding:var(--sp-6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+.card-contact::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:linear-gradient(140deg,rgba(34,211,238,.5),transparent 40%,transparent 60%,rgba(59,130,246,.4));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.cc-head{display:flex;align-items:center;gap:var(--sp-3);padding-bottom:var(--sp-4);margin-bottom:var(--sp-2);border-bottom:1px solid var(--border)}
+.tile{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none;background:rgba(34,211,238,.1);color:var(--accent);border:1px solid rgba(34,211,238,.2)}
+.cc-head small,.row small{display:block;font-size:13px;color:var(--subtle)}
+.cc-head strong{font-weight:600}
+.row{display:flex;align-items:center;gap:var(--sp-3);min-height:64px;padding:var(--sp-2) var(--sp-3);margin:0 calc(var(--sp-3) * -1);border-radius:12px;transition:background .2s}
+.row:hover{background:rgba(255,255,255,.04)}
+.row .tile{background:rgba(255,255,255,.04);border-color:var(--border);color:var(--fg)}
+.row .meta{flex:1;min-width:0}
+.row .meta span{display:block;font-weight:500;overflow-wrap:anywhere}
+.row .go{color:var(--subtle);transition:transform .2s var(--ease),color .2s}
+.row:hover .go{color:var(--accent);transform:translate(2px,-2px)}
+.copy{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.copy:hover{color:var(--fg);border-color:var(--border-strong);background:rgba(255,255,255,.05)}
+.copy.ok{color:#34d399;border-color:rgba(52,211,153,.4)}
 
-        ::-webkit-scrollbar-thumb {
-            background: rgba(34, 211, 238, 0.3);
-            border-radius: 5px;
-        }
+/* Sections */
+section{padding:var(--sp-24) 0}
+.eyebrow{font-size:13px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase}
+h2{font-size:clamp(32px,4.5vw,52px);font-weight:300;letter-spacing:-.025em;line-height:1.1;margin-top:var(--sp-3);text-wrap:balance}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--sp-6);flex-wrap:wrap;margin-bottom:var(--sp-12)}
+.sec-head p{color:var(--muted);max-width:420px}
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(34, 211, 238, 0.5);
-        }
+/* Filters */
+.filters{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+.chip{min-height:44px;padding:0 var(--sp-4);border-radius:999px;border:1px solid var(--border-strong);background:transparent;color:var(--muted);font:500 14px Onest,sans-serif;cursor:pointer;transition:all .2s}
+.chip:hover{color:var(--fg);border-color:#3a4659}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 
-        ::selection {
-            background: rgba(34, 211, 238, 0.3);
-            color: white;
-        }
+/* Projects */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-4)}
+.project{position:relative;display:flex;flex-direction:column;gap:var(--sp-4);padding:var(--sp-6);border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);transition:border-color .25s,transform .25s var(--ease),box-shadow .25s,background .25s;isolation:isolate}
+.project::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(400px circle at var(--mx,50%) var(--my,0%),rgba(34,211,238,.09),transparent 60%);opacity:0;transition:opacity .3s;z-index:-1}
+.project:hover{border-color:rgba(34,211,238,.4);transform:translateY(-4px);box-shadow:0 24px 50px -24px rgba(34,211,238,.35);background:var(--surface-2)}
+.project:hover::after{opacity:1}
+.project[hidden]{display:none}
+.p-top{display:flex;justify-content:space-between;align-items:center}
+.p-icon{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
+.p-icon .icon{font-size:24px}
+.p-cat{font-size:12px;color:var(--subtle)}
+.project h3{font-size:20px;font-weight:600;letter-spacing:-.01em}
+.project p{color:var(--muted);font-size:15px;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:6px;list-style:none}
+.tags li{font-size:12px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:#c3cdd9}
+.p-link{display:inline-flex;align-items:center;gap:var(--sp-2);min-height:44px;font-weight:600;font-size:15px;color:var(--accent);margin-top:auto}
+.p-link::before{content:"";position:absolute;inset:0;border-radius:inherit}
+.p-link .icon{transition:transform .2s var(--ease)}
+.project:hover .p-link .icon{transform:translate(3px,-3px)}
+.project:focus-within{border-color:rgba(34,211,238,.6)}
+.p-link:focus-visible{outline:none}
+.project:has(.p-link:focus-visible){outline:2px solid var(--accent);outline-offset:3px}
 
-        /* Animation classes */
-        .fade-in {
-            animation: fadeInUp 1s ease-out forwards;
-        }
+/* Services */
+.services{list-style:none;border-top:1px solid var(--border)}
+.svc{display:grid;grid-template-columns:64px 1fr 1.4fr 32px;gap:var(--sp-6);align-items:center;padding:var(--sp-6) 0;border-bottom:1px solid var(--border);transition:background .25s}
+.svc:hover{background:linear-gradient(90deg,rgba(34,211,238,.05),transparent 70%)}
+.svc .num{color:var(--accent);font-size:14px}
+.svc h3{font-size:clamp(20px,2.4vw,28px);font-weight:400;letter-spacing:-.01em}
+.svc p{color:var(--muted);font-size:15px}
+.svc .icon{color:var(--subtle);font-size:24px;justify-self:end;transition:color .25s,transform .25s var(--ease)}
+.svc:hover .icon{color:var(--accent);transform:translateX(-4px)}
+.stack{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-4);margin-top:var(--sp-8)}
+.stack div{padding:var(--sp-4) var(--sp-6);border-radius:12px;border:1px solid var(--border)}
+.stack small{display:block;color:var(--subtle);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:var(--sp-2)}
+.stack span{color:#c3cdd9;font-size:14px}
 
-        .fade-in:nth-child(1) { animation-delay: 0.2s; }
-        .fade-in:nth-child(2) { animation-delay: 0.4s; }
-        .fade-in:nth-child(3) { animation-delay: 0.6s; }
-        .fade-in:nth-child(4) { animation-delay: 0.8s; }
+/* Contact */
+.contact{text-align:center;padding:var(--sp-16) var(--sp-6);border-radius:28px;border:1px solid var(--border);background:radial-gradient(600px 300px at 50% 0%,rgba(34,211,238,.12),transparent 70%),var(--surface)}
+.contact h2{margin:var(--sp-3) auto var(--sp-4);max-width:640px}
+.contact p{color:var(--muted);max-width:480px;margin:0 auto}
+.contact .cta{justify-content:center}
+footer{padding:var(--sp-8) 0;border-top:1px solid var(--border);color:var(--subtle);font-size:14px}
+footer .container{display:flex;justify-content:space-between;gap:var(--sp-4);flex-wrap:wrap;align-items:center}
+footer nav{display:flex;gap:var(--sp-1)}
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;z-index:60;background:var(--fg);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:500;font-size:15px;transition:opacity .25s,transform .25s var(--ease);pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
 
-        .project-card {
-            animation: fadeInUp 0.8s ease-out forwards;
-            opacity: 0;
-        }
+/* Reveal */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.no-js .reveal{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.dot{animation:none}html{scroll-behavior:auto}}
 
-        .project-card:nth-child(1) { animation-delay: 1s; }
-        .project-card:nth-child(2) { animation-delay: 1.1s; }
-        .project-card:nth-child(3) { animation-delay: 1.2s; }
-        .project-card:nth-child(4) { animation-delay: 1.3s; }
-        .project-card:nth-child(5) { animation-delay: 1.4s; }
-        .project-card:nth-child(6) { animation-delay: 1.5s; }
-        .project-card:nth-child(7) { animation-delay: 1.6s; }
-
-        .gradient-text {
-            background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-    </style>
+@media (max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}.stack{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:860px){.hero-grid{grid-template-columns:1fr}.hero{min-height:auto;padding-top:var(--sp-12)}.nav-links{display:none}}
+@media (max-width:640px){.container{padding:0 var(--sp-4)}.grid,.stack{grid-template-columns:1fr}.svc{grid-template-columns:40px 1fr;gap:var(--sp-2) var(--sp-4)}.svc p{grid-column:2}.svc .icon{display:none}section{padding:var(--sp-16) 0}.cta .btn{flex:1 1 100%}.sec-head{margin-bottom:var(--sp-8)}.contact{padding:var(--sp-12) var(--sp-4)}}
+</style>
 </head>
-<body class="relative min-h-screen">
-    <!-- Particle Background Canvas -->
-    <canvas id="particle-canvas"></canvas>
+<body class="no-js">
+<a class="skip" href="#main">Перейти к содержимому</a>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="glow a" aria-hidden="true"></div><div class="glow b" aria-hidden="true"></div>
 
-    <!-- Noise Texture Overlay -->
-    <div class="fixed inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none z-10"
-         style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');">
+<header class="nav" id="nav">
+  <div class="container">
+    <a class="logo" href="#top" aria-label="Яков Григорьевич, на главную"><span class="logo-mark">ЯГ</span><span>Яков Григорьевич</span></a>
+    <nav aria-label="Основная навигация">
+      <ul class="nav-links">
+        <li><a href="#projects">Проекты</a></li>
+        <li><a href="#services">Услуги</a></li>
+        <li><a href="#contact">Контакты</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer"><i class="ph ph-telegram-logo icon" aria-hidden="true"></i>Написать</a>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" id="top" style="padding-top:var(--sp-12)">
+    <div class="container hero-grid">
+      <div>
+        <span class="badge reveal mono"><span class="dot" aria-hidden="true"></span>Открыт для новых проектов</span>
+        <h1 class="reveal">Яков<br><span class="grad">Григорьевич</span></h1>
+        <p class="lead reveal">Веб-разработчик из Беларуси. Делаю лендинги, веб-приложения и автоматизацию для бизнеса на JavaScript, React и Python.</p>
+        <div class="cta reveal">
+          <a class="btn btn-primary" href="#projects">Смотреть работы<i class="ph ph-arrow-right icon" aria-hidden="true"></i></a>
+          <a class="btn btn-secondary" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer"><i class="ph ph-telegram-logo icon" aria-hidden="true"></i>Написать в Telegram</a>
+        </div>
+      </div>
+
+      <aside class="card-contact reveal" aria-label="Контакты">
+        <div class="cc-head">
+          <span class="tile"><i class="ph ph-code icon" aria-hidden="true"></i></span>
+          <div><small class="mono">stack</small><strong>Full-stack разработчик</strong></div>
+        </div>
+        <a class="row" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer">
+          <span class="tile"><i class="ph ph-telegram-logo icon" aria-hidden="true"></i></span>
+          <span class="meta"><small>Telegram</small><span>@Bond8848</span></span>
+          <i class="ph ph-arrow-up-right icon go" aria-hidden="true"></i>
+        </a>
+        <div class="row">
+          <a class="tile" href="mailto:grigorijg472@gmail.com" aria-label="Написать на почту"><i class="ph ph-envelope-simple icon" aria-hidden="true"></i></a>
+          <a class="meta" href="mailto:grigorijg472@gmail.com"><small>Email</small><span>grigorijg472@gmail.com</span></a>
+          <button class="copy" type="button" data-copy="grigorijg472@gmail.com" aria-label="Скопировать email"><i class="ph ph-copy icon" aria-hidden="true"></i></button>
+        </div>
+        <a class="row" href="https://github.com/grigorijg472-ops" target="_blank" rel="noopener noreferrer">
+          <span class="tile"><i class="ph ph-github-logo icon" aria-hidden="true"></i></span>
+          <span class="meta"><small>GitHub</small><span>grigorijg472-ops</span></span>
+          <i class="ph ph-arrow-up-right icon go" aria-hidden="true"></i>
+        </a>
+      </aside>
     </div>
+  </section>
 
-    <!-- Main Content -->
-    <div class="relative z-20">
-        <!-- Hero Section -->
-        <section class="min-h-screen flex items-center justify-center px-4 md:px-8 py-20">
-            <div class="max-w-7xl w-full">
-                <div class="grid md:grid-cols-2 gap-12 items-center">
-                    <!-- Left Column -->
-                    <div class="space-y-8">
-                        <div class="fade-in inline-flex items-center gap-2 px-4 py-2 text-xs font-light tracking-widest uppercase border border-cyan-500/20 text-cyan-400 rounded-full bg-cyan-500/5 backdrop-blur-sm">
-                            <span>✨</span> WEB DEVELOPER
-                        </div>
+  <section id="projects">
+    <div class="container">
+      <div class="sec-head">
+        <div><p class="eyebrow mono">Портфолио</p><h2>Избранные проекты</h2></div>
+        <div class="filters" role="group" aria-label="Фильтр проектов">
+          <button class="chip" type="button" data-filter="all" aria-pressed="true">Все</button>
+          <button class="chip" type="button" data-filter="app" aria-pressed="false">Приложения</button>
+          <button class="chip" type="button" data-filter="business" aria-pressed="false">Для бизнеса</button>
+          <button class="chip" type="button" data-filter="visual" aria-pressed="false">Графика</button>
+        </div>
+      </div>
 
-                        <h1 class="fade-in text-6xl md:text-8xl font-light tracking-tight leading-none">
-                            Яков<br/>
-                            <span class="gradient-text">Григорьевич</span>
-                        </h1>
+      <div class="grid" id="grid">
+        <article class="project reveal" data-cat="visual" style="--c:#818cf8">
+          <div class="p-top"><span class="p-icon"><i class="ph ph-planet icon" aria-hidden="true"></i></span><span class="p-cat mono">3D / WebGL</span></div>
+          <h3>3D Interactive Portfolio</h3>
+          <p>Портфолио на Three.js: звёздное поле, вращающаяся сфера и частицы, которые реагируют на курсор.</p>
+          <ul class="tags"><li>Three.js</li><li>WebGL</li><li>Simplex Noise</li></ul>
+          <a class="p-link" href="projects/3d-portfolio/index.html">Открыть проект<i class="ph ph-arrow-up-right icon" aria-hidden="true"></i></a>
+        </article>
 
-                        <p class="fade-in text-xl text-gray-400 max-w-lg leading-relaxed">
-                            Создаю современные веб-приложения, лендинги и автоматизацию для бизнеса.
-                            Специализируюсь на JavaScript, React и Python.
-                        </p>
+        <article class="project reveal" data-cat="business" style="--c:#c084fc">
+          <div class="p-top"><span class="p-icon"><i class="ph ph-robot icon" aria-hidden="true"></i></span><span class="p-cat mono">Чат-бот</span></div>
+          <h3>AI Chat Bot</h3>
+          <p>Демо чат-бота для бизнеса: интерфейс в стиле мессенджера, автоответы и генерация текстов для соцсетей.</p>
+          <ul class="tags"><li>JavaScript</li><li>Chat UI</li><li>AI-симуляция</li></ul>
+          <a class="p-link" href="projects/telegram-bot/index.html">Открыть проект<i class="ph ph-arrow-up-right icon" aria-hidden="true"></i></a>
+        </article>
 
-                        <div class="fade-in flex flex-wrap gap-4">
-                            <a href="#projects"
-                               class="group px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-black rounded-full font-medium transition-all duration-300 flex items-center gap-2 hover:scale-105">
-                                Смотреть работы
-                                <span class="group-hover:translate-x-1 transition-transform">→</span>
-                            </a>
-                            <a href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer"
-                               class="px-8 py-4 border border-white/10 hover:border-cyan-500/50 rounded-full font-medium transition-all duration-300 flex items-center gap-2 hover:bg-white/5">
-                                Связаться
-                                <span>📧</span>
-                            </a>
-                        </div>
-                    </div>
+        <article class="project reveal" data-cat="app" style="--c:#34d399">
+          <div class="p-top"><span class="p-icon"><i class="ph ph-chart-bar icon" aria-hidden="true"></i></span><span class="p-cat mono">Веб-приложение</span></div>
+          <h3>Habits Tracker</h3>
+          <p>Трекер привычек с сериями дней, недельным прогрессом и статистикой. Данные хранятся в браузере.</p>
+          <ul class="tags"><li>JavaScript</li><li>LocalStorage</li><li>Анимации</li></ul>
+          <a class="p-link" href="projects/habits-tracker/index.html">Открыть проект<i class="ph ph-arrow-up-right icon" aria-hidden="true"></i></a>
+        </article>
 
-                    <!-- Right Column - Contact Card -->
-                    <div class="fade-in relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-3xl blur-3xl"></div>
-                        <div class="relative bg-white/[0.03] backdrop-blur-xl border border-cyan-500/20 p-8 rounded-3xl shadow-[0_22px_40px_rgba(0,0,0,0.4)]">
-                            <div class="space-y-6">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-2xl">
-                                        💻
-                                    </div>
-                                    <div>
-                                        <p class="text-sm text-gray-400 uppercase tracking-wider">Stack</p>
-                                        <p class="text-lg font-medium">Full-Stack Developer</p>
-                                    </div>
-                                </div>
+        <article class="project reveal" data-cat="app" style="--c:#fb923c">
+          <div class="p-top"><span class="p-icon"><i class="ph ph-file-text icon" aria-hidden="true"></i></span><span class="p-cat mono">Инструмент</span></div>
+          <h3>Resume Generator</h3>
+          <p>Редактор резюме с живым предпросмотром, проверкой полей и экспортом в PDF через печать.</p>
+          <ul class="tags"><li>HTML5</li><li>Print API</li><li>Валидация форм</li></ul>
+          <a class="p-link" href="projects/resume-generator/index.html">Открыть проект<i class="ph ph-arrow-up-right icon" aria-hidden="true"></i></a>
+        </article>
 
-                                <div class="h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
+        <article class="project reveal" data-cat="visual" style="--c:#a78bfa">
+          <div class="p-top"><span class="p-icon"><i class="ph ph-map-trifold icon" aria-hidden="true"></i></span><span class="p-cat mono">Canvas</span></div>
+          <h3>Interactive Map</h3>
+          <p>Карта на Canvas с маркерами, плавным зумом, перетаскиванием и поиском по локациям.</p>
+          <ul class="tags"><li>Canvas API</li><li>JavaScript</li><li>Интерактив</li></ul>
+          <a class="p-link" href="projects/interactive-map/index.html">Открыть проект<i class="ph ph-arrow-up-right icon" aria-hidden="true"></i></a>
+        </article>
 
-                                <div class="space-y-4">
-                                    <a href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer"
-                                       class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group">
-                                        <span class="text-2xl group-hover:scale-110 transition-transform">📱</span>
-                                        <div>
-                                            <p class="text-sm text-gray-400">Telegram</p>
-                                            <p class="font-medium">@Bond8848</p>
-                                        </div>
-                                    </a>
+        <article class="project reveal" data-cat="business" style="--c:#22d3ee">
+          <div class="p-top"><span class="p-icon"><i class="ph ph-calculator icon" aria-hidden="true"></i></span><span class="p-cat mono">Калькулятор</span></div>
+          <h3>Dev Cost Calculator</h3>
+          <p>Считает стоимость и сроки разработки по типу проекта, набору функций и срочности.</p>
+          <ul class="tags"><li>JavaScript</li><li>UI/UX</li><li>Расчёты</li></ul>
+          <a class="p-link" href="projects/dev-cost-calculator.html">Открыть проект<i class="ph ph-arrow-up-right icon" aria-hidden="true"></i></a>
+        </article>
 
-                                    <a href="mailto:grigorijg472@gmail.com"
-                                       class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group">
-                                        <span class="text-2xl group-hover:scale-110 transition-transform">✉️</span>
-                                        <div>
-                                            <p class="text-sm text-gray-400">Email</p>
-                                            <p class="font-medium">grigorijg472@gmail.com</p>
-                                        </div>
-                                    </a>
-
-                                    <a href="https://github.com/grigorijg472-ops" target="_blank" rel="noopener noreferrer"
-                                       class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group">
-                                        <span class="text-2xl group-hover:scale-110 transition-transform">💻</span>
-                                        <div>
-                                            <p class="text-sm text-gray-400">GitHub</p>
-                                            <p class="font-medium">grigorijg472-ops</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Projects Section -->
-        <section id="projects" class="py-20 px-4 md:px-8">
-            <div class="max-w-7xl mx-auto">
-                <div class="text-center mb-16">
-                    <p class="text-cyan-400 uppercase tracking-widest text-sm mb-4">Portfolio</p>
-                    <h2 class="text-5xl md:text-6xl font-light">Избранные проекты</h2>
-                </div>
-
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Project Card Template -->
-                    <a href="projects/3d-portfolio/index.html" target="_blank" rel="noopener noreferrer"
-                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
-                        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
-                        <div class="relative space-y-4">
-                            <div class="text-4xl">🌌</div>
-                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">3D Interactive Portfolio</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed">
-                                Интерактивное портфолио с Three.js: звездное поле, вращающаяся сфера и анимированные частицы на WebGL
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Three.js</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">WebGL</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">GSAP</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
-                                Открыть проект
-                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="projects/telegram-bot/index.html" target="_blank" rel="noopener noreferrer"
-                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
-                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
-                        <div class="relative space-y-4">
-                            <div class="text-4xl">🤖</div>
-                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">AI Chat Bot</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed">
-                                Симуляция чат-бота с нейросетью, реалистичный UI, автоответы и генерация текстов
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">JavaScript</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Chat UI</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">AI Simulation</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
-                                Открыть проект
-                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="projects/habits-tracker/index.html" target="_blank" rel="noopener noreferrer"
-                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
-                        <div class="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
-                        <div class="relative space-y-4">
-                            <div class="text-4xl">📊</div>
-                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">Habits Tracker</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed">
-                                Веб-приложение для отслеживания привычек с прогресс-барами и подробной статистикой
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">React</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">LocalStorage</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Animations</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
-                                Открыть проект
-                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="projects/resume-generator/index.html" target="_blank" rel="noopener noreferrer"
-                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
-                        <div class="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
-                        <div class="relative space-y-4">
-                            <div class="text-4xl">📄</div>
-                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">Resume Generator</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed">
-                                Генератор резюме с экспортом в PDF, реальным предпросмотром и валидацией форм
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">HTML5</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Print API</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Form Validation</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
-                                Открыть проект
-                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="projects/interactive-map/index.html" target="_blank" rel="noopener noreferrer"
-                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
-                        <div class="absolute inset-0 bg-gradient-to-br from-violet-500 to-purple-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
-                        <div class="relative space-y-4">
-                            <div class="text-4xl">🗺️</div>
-                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">Interactive Map</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed">
-                                Canvas-карта с маркерами, плавным зумом, панорамированием и фильтрацией локаций
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Canvas API</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">JavaScript</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Interaction</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
-                                Открыть проект
-                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="projects/dev-cost-calculator.html" target="_blank" rel="noopener noreferrer"
-                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
-                        <div class="relative space-y-4">
-                            <div class="text-4xl">💰</div>
-                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">Dev Cost Calculator</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed">
-                                Калькулятор стоимости разработки с выбором типа проекта, функционала и сроков
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">JavaScript</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">UI/UX</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Calculator</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
-                                Открыть проект
-                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="projects/proposal-generator.html" target="_blank" rel="noopener noreferrer"
-                       class="project-card group relative bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,211,238,0.15)]">
-                        <div class="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-500 opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300"></div>
-                        <div class="relative space-y-4">
-                            <div class="text-4xl">⚡</div>
-                            <h3 class="text-xl font-medium group-hover:text-cyan-400 transition-colors">Proposal Generator</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed">
-                                Генератор коммерческих предложений с печатью, копированием и автоподсчетом
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">JavaScript</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Print API</span>
-                                <span class="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-gray-300">Automation</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-cyan-400 text-sm font-medium pt-2">
-                                Открыть проект
-                                <span class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">↗</span>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer id="contact" class="py-12 px-4 border-t border-white/5">
-            <div class="max-w-7xl mx-auto text-center">
-                <p class="text-gray-400">
-                    © 2026 Яков Григорьевич. Сделано с 💙 для клиентов.
-                </p>
-            </div>
-        </footer>
+        <article class="project reveal" data-cat="business" style="--c:#fbbf24">
+          <div class="p-top"><span class="p-icon"><i class="ph ph-lightning icon" aria-hidden="true"></i></span><span class="p-cat mono">Генератор</span></div>
+          <h3>Proposal Generator</h3>
+          <p>Собирает коммерческое предложение с автоподсчётом суммы. Готовый текст можно распечатать или скопировать.</p>
+          <ul class="tags"><li>JavaScript</li><li>Print API</li><li>Автоматизация</li></ul>
+          <a class="p-link" href="projects/proposal-generator.html">Открыть проект<i class="ph ph-arrow-up-right icon" aria-hidden="true"></i></a>
+        </article>
+      </div>
     </div>
+  </section>
 
-    <script>
-        // Particle Canvas Animation
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let nodes = [];
-        let beams = [];
-        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*()'.split('');
-        let mouse = { x: -1000, y: -1000 };
+  <section id="services">
+    <div class="container">
+      <div class="sec-head">
+        <div><h2>Чем могу помочь</h2></div>
+        <p>Пишу чистый код и слежу за тем, чтобы сайт быстро грузился и был удобен на телефоне.</p>
+      </div>
+      <ol class="services">
+        <li class="svc reveal"><span class="num mono">01</span><h3>Лендинги</h3><p>Адаптивные страницы под продукт или услугу, с формами заявок и аналитикой.</p><i class="ph ph-layout icon" aria-hidden="true"></i></li>
+        <li class="svc reveal"><span class="num mono">02</span><h3>Веб-приложения</h3><p>Личные кабинеты, калькуляторы, генераторы документов и внутренние инструменты.</p><i class="ph ph-app-window icon" aria-hidden="true"></i></li>
+        <li class="svc reveal"><span class="num mono">03</span><h3>Автоматизация</h3><p>Парсеры, чат-боты и скрипты на Python, которые снимают рутину с команды.</p><i class="ph ph-gear-six icon" aria-hidden="true"></i></li>
+      </ol>
+      <div class="stack reveal">
+        <div><small class="mono">Frontend</small><span>HTML, CSS, JavaScript, React, Vue, Tailwind</span></div>
+        <div><small class="mono">Backend</small><span>Node.js, Express, Python, REST API, PostgreSQL</span></div>
+        <div><small class="mono">Автоматизация</small><span>Selenium, BeautifulSoup, Pandas</span></div>
+        <div><small class="mono">Инструменты</small><span>Git, Figma, VS Code</span></div>
+      </div>
+    </div>
+  </section>
 
-        function resize() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = width * dpr;
-            canvas.height = height * dpr;
-            canvas.style.width = width + 'px';
-            canvas.style.height = height + 'px';
-            ctx.scale(dpr, dpr);
+  <section id="contact">
+    <div class="container">
+      <div class="contact reveal">
+                <h2>Есть задача? Обсудим</h2>
+        <p>Опишите проект в паре предложений. Отвечу в Telegram или по почте.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer"><i class="ph ph-telegram-logo icon" aria-hidden="true"></i>Написать в Telegram</a>
+          <a class="btn btn-secondary" href="mailto:grigorijg472@gmail.com"><i class="ph ph-envelope-simple icon" aria-hidden="true"></i>grigorijg472@gmail.com</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <span>© <span id="year">2026</span> Яков Григорьевич</span>
+    <nav aria-label="Ссылки в подвале">
+      <a class="btn btn-ghost btn-sm" href="https://github.com/grigorijg472-ops" target="_blank" rel="noopener noreferrer"><i class="ph ph-github-logo icon" aria-hidden="true"></i>GitHub</a>
+      <a class="btn btn-ghost btn-sm" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer"><i class="ph ph-telegram-logo icon" aria-hidden="true"></i>Telegram</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  document.body.classList.remove('no-js');
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Sticky nav
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Active nav link
+  const links = [...document.querySelectorAll('.nav-links a')];
+  const spy = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) links.forEach(a => a.setAttribute('aria-current', a.getAttribute('href') === '#' + e.target.id));
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  ['projects','services','contact'].forEach(id => spy.observe(document.getElementById(id)));
+
+  // Reveal
+  const items = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) items.forEach(el => el.classList.add('in'));
+  else {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
+    items.forEach((el, i) => { el.style.transitionDelay = Math.min(i % 6, 5) * 60 + 'ms'; io.observe(el); });
+  }
+
+  // Filters
+  const chips = document.querySelectorAll('.chip');
+  chips.forEach(c => c.addEventListener('click', () => {
+    chips.forEach(x => x.setAttribute('aria-pressed', x === c));
+    const f = c.dataset.filter;
+    document.querySelectorAll('.project').forEach(p => { p.hidden = f !== 'all' && p.dataset.cat !== f; if (!p.hidden) p.classList.add('in'); });
+  }));
+
+  // Card spotlight
+  document.querySelectorAll('.project').forEach(card => card.addEventListener('pointermove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }));
+
+  // Copy email
+  const toast = document.getElementById('toast'); let tt;
+  const show = msg => { toast.textContent = msg; toast.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('show'), 2200); };
+  document.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', async () => {
+    const text = btn.dataset.copy; let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+      const ta = Object.assign(document.createElement('textarea'), { value: text }); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); try { ok = document.execCommand('copy'); } catch (_) {} ta.remove();
+    }
+    if (ok) { btn.classList.add('ok'); btn.querySelector('i').className = 'ph ph-check icon'; show('Email скопирован');
+      setTimeout(() => { btn.classList.remove('ok'); btn.querySelector('i').className = 'ph ph-copy icon'; }, 2000); }
+    else show('Не удалось скопировать');
+  }));
+
+  // Background: falling glyphs + network (как в исходной версии)
+  const canvas = document.getElementById('bg'), ctx = canvas.getContext('2d');
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*()'.split('');
+  let width, height, nodes = [], beams = [], raf = null;
+  const mouse = { x: -1000, y: -1000 };
+  function resize() {
+    width = window.innerWidth; height = window.innerHeight;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = width * dpr; canvas.height = height * dpr;
+    canvas.style.width = width + 'px'; canvas.style.height = height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function initParticles() {
+    nodes = Array.from({ length: 90 }).map(() => ({
+      x: Math.random() * width, y: Math.random() * height,
+      vy: (Math.random() * 0.4) + 0.1,
+      char: chars[Math.floor(Math.random() * chars.length)]
+    }));
+    beams = Array.from({ length: 25 }).map(() => ({
+      x: Math.random() * width, y: Math.random() * height,
+      length: Math.random() * 100 + 50,
+      speed: (Math.random() * 6) + 3,
+      opacity: Math.random() * 0.5 + 0.3
+    }));
+  }
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    beams.forEach(b => {
+      b.y -= b.speed;
+      if (b.y + b.length < 0) { b.y = height + 100; b.x = Math.random() * width; }
+      const g = ctx.createLinearGradient(b.x, b.y, b.x, b.y + b.length);
+      g.addColorStop(0, `rgba(96, 165, 250, ${b.opacity})`);
+      g.addColorStop(1, 'transparent');
+      ctx.strokeStyle = g; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.x, b.y + b.length); ctx.stroke();
+    });
+    ctx.font = '12px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineWidth = 0.5;
+    for (let i = 0; i < nodes.length; i++) {
+      const n1 = nodes[i];
+      for (let j = i + 1; j < nodes.length; j++) {
+        const n2 = nodes[j], d = Math.hypot(n1.x - n2.x, n1.y - n2.y);
+        if (d < 120) {
+          ctx.strokeStyle = `rgba(156, 163, 175, ${0.15 * (1 - d / 120)})`;
+          ctx.beginPath(); ctx.moveTo(n1.x, n1.y); ctx.lineTo(n2.x, n2.y); ctx.stroke();
         }
-
-        window.addEventListener('resize', () => {
-            resize();
-            initParticles();
-        });
-
-        window.addEventListener('mousemove', e => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-
-        function initParticles() {
-            nodes = Array.from({ length: 90 }).map(() => ({
-                x: Math.random() * width,
-                y: Math.random() * height,
-                vy: (Math.random() * 0.4) + 0.1,
-                char: chars[Math.floor(Math.random() * chars.length)]
-            }));
-
-            beams = Array.from({ length: 25 }).map(() => ({
-                x: Math.random() * width,
-                y: Math.random() * height,
-                length: Math.random() * 100 + 50,
-                speed: (Math.random() * 6) + 3,
-                opacity: Math.random() * 0.5 + 0.3
-            }));
-        }
-
-        resize();
-        initParticles();
-
-        function draw() {
-            ctx.clearRect(0, 0, width, height);
-
-            // Beams
-            beams.forEach(b => {
-                b.y -= b.speed;
-                if (b.y + b.length < 0) {
-                    b.y = height + 100;
-                    b.x = Math.random() * width;
-                }
-                let g = ctx.createLinearGradient(b.x, b.y, b.x, b.y + b.length);
-                g.addColorStop(0, `rgba(96, 165, 250, ${b.opacity})`);
-                g.addColorStop(1, 'transparent');
-                ctx.strokeStyle = g;
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.moveTo(b.x, b.y);
-                ctx.lineTo(b.x, b.y + b.length);
-                ctx.stroke();
-            });
-
-            // Nodes
-            ctx.font = '12px monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.lineWidth = 0.5;
-
-            for(let i = 0; i < nodes.length; i++) {
-                let n1 = nodes[i];
-                for(let j = i + 1; j < nodes.length; j++) {
-                    let n2 = nodes[j];
-                    let d = Math.hypot(n1.x - n2.x, n1.y - n2.y);
-                    if(d < 120) {
-                        ctx.strokeStyle = `rgba(156, 163, 175, ${0.15 * (1 - d/120)})`;
-                        ctx.beginPath();
-                        ctx.moveTo(n1.x, n1.y);
-                        ctx.lineTo(n2.x, n2.y);
-                        ctx.stroke();
-                    }
-                }
-            }
-
-            nodes.forEach(n => {
-                n.y += n.vy;
-                if(n.y > height + 20) {
-                    n.y = -20;
-                    n.x = Math.random() * width;
-                }
-
-                let dist = Math.hypot(mouse.x - n.x, mouse.y - n.y);
-                if (dist < 180 || Math.random() > 0.98) {
-                    n.char = chars[Math.floor(Math.random() * chars.length)];
-                }
-
-                if (dist < 180) {
-                    ctx.strokeStyle = `rgba(96, 165, 250, ${0.5 * (1 - dist/180)})`;
-                    ctx.beginPath();
-                    ctx.moveTo(n.x, n.y);
-                    ctx.lineTo(mouse.x, mouse.y);
-                    ctx.stroke();
-                }
-
-                ctx.fillStyle = dist < 180 ? '#60A5FA' : 'rgba(156, 163, 175, 0.4)';
-                ctx.fillText(n.char, n.x, n.y);
-            });
-
-            requestAnimationFrame(draw);
-        }
-        draw();
-    </script>
+      }
+    }
+    nodes.forEach(n => {
+      n.y += n.vy;
+      if (n.y > height + 20) { n.y = -20; n.x = Math.random() * width; }
+      const dist = Math.hypot(mouse.x - n.x, mouse.y - n.y);
+      if (dist < 180 || Math.random() > 0.98) n.char = chars[Math.floor(Math.random() * chars.length)];
+      if (dist < 180) {
+        ctx.strokeStyle = `rgba(96, 165, 250, ${0.5 * (1 - dist / 180)})`;
+        ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+      }
+      ctx.fillStyle = dist < 180 ? '#60A5FA' : 'rgba(156, 163, 175, 0.4)';
+      ctx.fillText(n.char, n.x, n.y);
+    });
+    raf = requestAnimationFrame(draw);
+  }
+  resize(); initParticles(); raf = requestAnimationFrame(draw);
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  window.addEventListener('touchmove', e => { const t = e.touches[0]; if (t) { mouse.x = t.clientX; mouse.y = t.clientY; } }, { passive: true });
+  // Пауза только когда вкладка скрыта: экономит батарею, на вид не влияет
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { cancelAnimationFrame(raf); raf = null; }
+    else if (!raf) raf = requestAnimationFrame(draw);
+  });
+})();
+</script>
 </body>
 </html>
-

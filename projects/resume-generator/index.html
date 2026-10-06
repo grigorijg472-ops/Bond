@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResumeGen — Генератор резюме в PDF</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 800;
+      color: white;
+      margin-bottom: 16px;
+    }
+
+    .header p {
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.9);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .editor-section {
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      height: 700px;
+      overflow-y: auto;
+    }
+
+    .editor-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 0.9375rem;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #667eea;
+      margin: 24px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #667eea;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      background: #5a6fd6;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .preview-section {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      height: 700px;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .resume-header {
+      text-align: center;
+      margin-bottom: 32px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 24px;
+    }
+
+    .resume-name {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+    }
+
+    .resume-title {
+      font-size: 1.25rem;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .resume-contact {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 16px;
+      font-size: 0.9375rem;
+      color: #6b7280;
+    }
+
+    .resume-section {
+      margin-bottom: 24px;
+    }
+
+    .resume-section-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .resume-item {
+      margin-bottom: 16px;
+    }
+
+    .resume-item-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .resume-item-title {
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .resume-item-date {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .resume-item-subtitle {
+      font-size: 1rem;
+      color: #6b7280;
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+
+    .resume-item-desc {
+      font-size: 0.9375rem;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skill-tag {
+      background: #667eea;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 24px;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      font-size: 0.9375rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .main-content { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      .preview-section, .preview-section * { visibility: visible; }
+      .preview-section {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+        background: white;
+        padding: 20px;
+      }
+      .header, .editor-section, .btn-group { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📄 ResumeGen</h1>
+      <p>Создайте профессиональное резюме за 5 минут. Экспорт в PDF с красивым дизайном.</p>
+    </div>
+
+    <div class="main-content">
+      <div class="editor-section">
+        <h3>Редактор резюме</h3>
+
+        <div class="form-group">
+          <label>ФИО</label>
+          <input type="text" id="fullName" placeholder="Иванов Иван Иванович">
+        </div>
+
+        <div class="form-group">
+          <label>Должность</label>
+          <input type="text" id="jobTitle" placeholder="Веб-разработчик">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="email" placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label>Телефон</label>
+            <input type="tel" id="phone" placeholder="+7 (999) 000-00-00">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Telegram / Ссылка</label>
+          <input type="text" id="social" placeholder="@username">
+        </div>
+
+        <div class="form-group">
+          <label>О себе</label>
+          <textarea id="about" rows="4" placeholder="Краткое описание вашего опыта и целей..."></textarea>
+        </div>
+
+        <div class="section-title">Опыт работы</div>
+
+        <div id="experienceContainer">
+          <div class="resume-item" style="background: #f9fafb; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <div class="resume-item-header">
+              <span class="resume-item-title">Senior Web Developer</span>
+              <span class="resume-item-date">2022 - Настоящее время</span>
+            </div>
+            <div class="resume-item-subtitle">Tech Company, Москва</div>
+            <div class="resume-item-desc">
+              - Разработка веб-приложений на React<br>
+              - Архитектура и оптимизация производительности<br>
+              - Работа в команде из 10 разработчиков
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary" id="addExpBtn" style="width: 100%; margin-bottom: 24px;">
+          + Добавить опыт
+        </button>
+
+        <div class="section-title">Образование</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Учебное заведение</label>
+            <input type="text" id="education" placeholder="МГУ им. Ломоносова">
+          </div>
+          <div class="form-group">
+            <label>Годы обучения</label>
+            <input type="text" id="educationYears" placeholder="2018 - 2022">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Факультет и специальность</label>
+          <input type="text" id="educationField" placeholder="Факультет информационных технологий">
+        </div>
+
+        <div class="section-title">Навыки</div>
+
+        <div class="form-group">
+          <label>Навыки (через запятую)</label>
+          <input type="text" id="skills" placeholder="HTML, CSS, JavaScript, React, Node.js, Python">
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="window.print()">💾 Скачать PDF</button>
+          <button class="btn btn-secondary" onclick="resetResume()">🔄 Сбросить</button>
+        </div>
+      </div>
+
+      <div class="preview-section" id="resumePreview">
+        <div class="resume-header">
+          <div class="resume-name" id="previewName">Иванов Иван Иванович</div>
+          <div class="resume-title" id="previewTitle">Веб-разработчик</div>
+          <div class="resume-contact">
+            <span id="previewEmail">email@example.com</span>
+            <span id="previewPhone">+7 (999) 000-00-00</span>
+            <span id="previewSocial">@username</span>
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-section-title">Обо мне</div>
+          <div class="resume-item-desc" id="previewAbout">
+            Опытный разработчик с 5 годами опыта в создании веб-приложений. Специализируюсь на React и Node.js. Люблю создавать пользовательские интерфейсы и решать сложные технические задачи.
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-section-title">Опыт работы</div>
+          <div class="resume-item">
+            <div class="resume-item-header">
+              <span class="resume-item-title" id="previewExpTitle">Senior Web Developer</span>
+              <span class="resume-item-date">2022 - Настоящее время</span>
+            </div>
+            <div class="resume-item-subtitle" id="previewExpCompany">Tech Company, Москва</div>
+            <div class="resume-item-desc" id="previewExpDesc">
+              - Разработка веб-приложений на React<br>
+              - Архитектура и оптимизация производительности<br>
+              - Работа в команде из 10 разработчиков
+            </div>
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-section-title">Образование</div>
+          <div class="resume-item">
+            <div class="resume-item-header">
+              <span class="resume-item-title" id="previewEducation">МГУ им. Ломоносова</span>
+              <span class="resume-item-date" id="previewEducationYears">2018 - 2022</span>
+            </div>
+            <div class="resume-item-subtitle" id="previewEducationField">Факультет информационных технологий</div>
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-section-title">Навыки</div>
+          <div class="skills-list" id="previewSkills">
+            <span class="skill-tag">HTML</span>
+            <span class="skill-tag">CSS</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">Node.js</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">✨</div>
+        <h3>Красивый дизайн</h3>
+        <p>Профессиональное оформление резюме, которое выделит вас среди других кандидатов.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>PDF экспорт</h3>
+        <p>Один клик для сохранения резюме в формате PDF — готово к отправке работодателям.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Быстро</h3>
+        <p>Создайте полноценное резюме за 5 минут без сложных инструментов.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Update preview on input
+    const inputs = {
+      fullName: document.getElementById('fullName'),
+      jobTitle: document.getElementById('jobTitle'),
+      email: document.getElementById('email'),
+      phone: document.getElementById('phone'),
+      social: document.getElementById('social'),
+      about: document.getElementById('about'),
+      education: document.getElementById('education'),
+      educationYears: document.getElementById('educationYears'),
+      educationField: document.getElementById('educationField'),
+      skills: document.getElementById('skills')
+    };
+
+    const previews = {
+      name: document.getElementById('previewName'),
+      title: document.getElementById('previewTitle'),
+      email: document.getElementById('previewEmail'),
+      phone: document.getElementById('previewPhone'),
+      social: document.getElementById('previewSocial'),
+      about: document.getElementById('previewAbout'),
+      education: document.getElementById('previewEducation'),
+      educationYears: document.getElementById('previewEducationYears'),
+      educationField: document.getElementById('previewEducationField'),
+      skills: document.getElementById('previewSkills')
+    };
+
+    inputs.fullName.addEventListener('input', (e) => previews.name.textContent = e.target.value || 'Иванов Иван Иванович');
+    inputs.jobTitle.addEventListener('input', (e) => previews.title.textContent = e.target.value || 'Веб-разработчик');
+    inputs.email.addEventListener('input', (e) => previews.email.textContent = e.target.value || 'email@example.com');
+    inputs.phone.addEventListener('input', (e) => previews.phone.textContent = e.target.value || '+7 (999) 000-00-00');
+    inputs.social.addEventListener('input', (e) => previews.social.textContent = e.target.value || '@username');
+    inputs.about.addEventListener('input', (e) => previews.about.textContent = e.target.value || 'Опытный разработчик с 5 годами опыта в создании веб-приложений. Специализируюсь на React и Node.js. Люблю создавать пользовательские интерфейсы и решать сложные технические задачи.');
+    inputs.education.addEventListener('input', (e) => previews.education.textContent = e.target.value || 'МГУ им. Ломоносова');
+    inputs.educationYears.addEventListener('input', (e) => previews.educationYears.textContent = e.target.value || '2018 - 2022');
+    inputs.educationField.addEventListener('input', (e) => previews.educationField.textContent = e.target.value || 'Факультет информационных технологий');
+
+    inputs.skills.addEventListener('input', (e) => {
+      const skills = e.target.value.split(',').map(s => s.trim()).filter(s => s);
+      previews.skills.innerHTML = skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('');
+      if (skills.length === 0) {
+        previews.skills.innerHTML = '<span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">JavaScript</span>';
+      }
+    });
+
+    // Add experience
+    const addExpBtn = document.getElementById('addExpBtn');
+    const experienceContainer = document.getElementById('experienceContainer');
+
+    addExpBtn.addEventListener('click', () => {
+      const count = experienceContainer.children.length + 1;
+      const expDiv = document.createElement('div');
+      expDiv.className = 'resume-item';
+      expDiv.style.cssText = 'background: #f9fafb; padding: 16px; border-radius: 8px; margin-bottom: 16px;';
+      expDiv.innerHTML = `
+        <div class="resume-item-header">
+          <span class="resume-item-title" contenteditable="true">Должность ${count}</span>
+          <span class="resume-item-date">2023 - Настоящее время</span>
+        </div>
+        <div class="resume-item-subtitle" contenteditable="true">Компания, Город</div>
+        <div class="resume-item-desc" contenteditable="true">
+          - Описание обязанностей<br>
+          - Достижения
+        </div>
+      `;
+      experienceContainer.appendChild(expDiv);
+    });
+
+    // Reset function
+    function resetResume() {
+      document.querySelectorAll('input, textarea').forEach(input => input.value = '');
+      previews.name.textContent = 'Иванов Иван Иванович';
+      previews.title.textContent = 'Веб-разработчик';
+      previews.email.textContent = 'email@example.com';
+      previews.phone.textContent = '+7 (999) 000-00-00';
+      previews.social.textContent = '@username';
+      previews.about.textContent = 'Опытный разработчик с 5 годами опыта в создании веб-приложений.';
+      previews.education.textContent = 'МГУ им. Ломоносова';
+      previews.educationYears.textContent = '2018 - 2022';
+      previews.educationField.textContent = 'Факультет информационных технологий';
+      previews.skills.innerHTML = '<span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">JavaScript</span>';
+    }
+  </script>
+</body>
+</html>

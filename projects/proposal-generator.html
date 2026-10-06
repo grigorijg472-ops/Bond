@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Генератор коммерческих предложений</title>
+<style>
+:root {
+  --bg: #0a0a0b;
+  --fg: #fafafa;
+  --muted: #71717a;
+  --accent: #22d3ee;
+  --accent-hover: #06b6d4;
+  --card: #18181b;
+  --border: #27272a;
+  --gradient-1: #22d3ee;
+  --gradient-2: #a855f7;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #fafafa;
+    --fg: #09090b;
+    --muted: #71717a;
+    --accent: #0891b2;
+    --accent-hover: #0e7490;
+    --card: #ffffff;
+    --border: #e4e4e7;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #fafafa;
+  --fg: #09090b;
+  --muted: #71717a;
+  --accent: #0891b2;
+  --accent-hover: #0e7490;
+  --card: #ffffff;
+  --border: #e4e4e7;
+  color-scheme: light;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Inter', -apple-system, sans-serif;
+  line-height: 1.6;
+  padding: 24px;
+  min-height: 100vh;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-top: 32px;
+}
+h1 {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 800;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+.subtitle { color: var(--muted); font-size: 1.0625rem; }
+.app-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .app-layout { grid-template-columns: 1fr; }
+}
+.form-panel, .preview-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+}
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title span {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+.form-group { margin-bottom: 20px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+input, textarea, select {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--fg);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+textarea { min-height: 100px; resize: vertical; }
+.items-section { margin-top: 24px; }
+.items-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.add-item-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.add-item-btn:hover {
+  background: rgba(34, 211, 238, 0.1);
+}
+.item-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: end;
+}
+@media (max-width: 600px) {
+  .item-row { grid-template-columns: 1fr 1fr; }
+}
+.remove-btn {
+  width: 44px;
+  height: 44px;
+  background: rgba(239, 68, 68, 0.1);
+  border: none;
+  border-radius: 10px;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: all 0.2s;
+}
+.remove-btn:hover { background: rgba(239, 68, 68, 0.2); }
+@media (max-width: 600px) {
+  .remove-btn { grid-column: span 2; width: 100%; }
+}
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.preview-actions { display: flex; gap: 10px; }
+.action-btn {
+  padding: 10px 20px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.action-btn:hover { border-color: var(--accent); color: var(--accent); }
+.action-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+}
+.action-btn.primary:hover { background: var(--accent-hover); }
+.proposal-preview {
+  background: white;
+  color: #1a1a1a;
+  border-radius: 12px;
+  padding: 40px;
+  font-family: 'Times New Roman', serif;
+  min-height: 600px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.proposal-header { text-align: center; margin-bottom: 32px; border-bottom: 2px solid #e5e5e5; padding-bottom: 24px; }
+.proposal-header h2 { font-size: 1.5rem; margin-bottom: 8px; color: #1a1a1a; }
+.proposal-meta { font-size: 0.875rem; color: #666; }
+.proposal-to { margin-bottom: 24px; }
+.proposal-to h3 { font-size: 1rem; margin-bottom: 12px; color: #333; }
+.proposal-to p { margin: 4px 0; font-size: 0.9375rem; }
+.proposal-items { margin: 32px 0; }
+.proposal-items table { width: 100%; border-collapse: collapse; }
+.proposal-items th, .proposal-items td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e5e5;
+}
+.proposal-items th { font-weight: 600; background: #f9f9f9; font-size: 0.875rem; }
+.proposal-items td { font-size: 0.9375rem; }
+.proposal-items td:last-child, .proposal-items th:last-child { text-align: right; }
+.proposal-total {
+  text-align: right;
+  padding-top: 16px;
+  border-top: 2px solid #1a1a1a;
+  margin-top: 16px;
+}
+.proposal-total p { margin: 8px 0; font-size: 1rem; }
+.proposal-total strong { font-size: 1.25rem; }
+.proposal-footer { margin-top: 40px; padding-top: 24px; border-top: 1px solid #e5e5e5; }
+.proposal-footer h4 { font-size: 1rem; margin-bottom: 12px; }
+.proposal-footer p { font-size: 0.9375rem; color: #333; margin: 8px 0; }
+@media print {
+  body { background: white; padding: 0; }
+  .form-panel, .preview-actions, header { display: none; }
+  .preview-panel { border: none; padding: 0; }
+  .proposal-preview { box-shadow: none; }
+}
+.app-layout > * { min-width: 0; }
+.form-row > *, .item-row > * { min-width: 0; }
+input, select, textarea { max-width: 100%; }
+@media (max-width: 600px) { .preview-actions { flex-wrap: wrap; } .preview-actions .action-btn { flex: 1 1 auto; } .preview-header { flex-wrap: wrap; gap: 12px; }
+  .proposal-preview { overflow-x: auto; } .preview-panel table { display: block; overflow-x: auto; } }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent, #22d3ee); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+
+<div class="container">
+  <header>
+    <h1>Генератор коммерческих предложений</h1>
+    <p class="subtitle">Создайте профессиональное КП за минуту</p>
+  </header>
+
+  <div class="app-layout">
+    <div class="form-panel">
+      <div class="section-title">
+        <span>📝</span>
+        Данные предложения
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Номер КП</label>
+          <input type="text" id="proposalNumber" value="КП-2024-001">
+        </div>
+        <div class="form-group">
+          <label>Дата</label>
+          <input type="date" id="proposalDate">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Название компании клиента</label>
+        <input type="text" id="clientCompany" placeholder="ООО «Ромашка»">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Контактное лицо</label>
+          <input type="text" id="clientName" placeholder="Иван Петров">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="clientEmail" placeholder="email@company.ru">
+        </div>
+      </div>
+
+      <div class="items-section">
+        <div class="items-header">
+          <label style="margin: 0; color: var(--fg); font-weight: 700;">Услуги / Товары</label>
+          <button class="add-item-btn" onclick="addItem()">+ Добавить</button>
+        </div>
+        <div id="itemsList">
+          <div class="item-row">
+            <div><label>Наименование</label><input type="text" class="item-name" placeholder="Разработка сайта" oninput="updatePreview()"></div>
+            <div><label>Кол-во</label><input type="number" class="item-qty" value="1" min="1" oninput="updatePreview()"></div>
+            <div><label>Цена, ₽</label><input type="number" class="item-price" value="0" min="0" oninput="updatePreview()"></div>
+            <button class="remove-btn" onclick="removeItem(this)">×</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top: 24px;">
+        <label>Примечание</label>
+        <textarea id="proposalNote" placeholder="Дополнительные условия, сроки выполнения..." oninput="updatePreview()"></textarea>
+      </div>
+    </div>
+
+    <div class="preview-panel">
+      <div class="preview-header">
+        <div class="section-title" style="margin: 0;">
+          <span>👁</span>
+          Предпросмотр
+        </div>
+        <div class="preview-actions">
+          <button class="action-btn" onclick="window.print()">🖨 Печать</button>
+          <button class="action-btn primary" onclick="copyToClipboard(this)">📋 Копировать</button>
+        </div>
+      </div>
+
+      <div class="proposal-preview" id="proposalPreview">
+        <div class="proposal-header">
+          <h2>КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ</h2>
+          <p class="proposal-meta">№ <span id="previewNumber">КП-2024-001</span> от <span id="previewDate">__ __________ 2024</span></p>
+        </div>
+
+        <div class="proposal-to">
+          <h3>Кому:</h3>
+          <p><strong id="previewClientCompany">Название компании</strong></p>
+          <p id="previewClientName">Контактное лицо</p>
+          <p id="previewClientEmail">email@company.ru</p>
+        </div>
+
+        <div class="proposal-items">
+          <table>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Наименование</th>
+                <th>Кол-во</th>
+                <th>Цена</th>
+                <th>Сумма</th>
+              </tr>
+            </thead>
+            <tbody id="previewItems">
+              <tr>
+                <td>1</td>
+                <td>Услуга</td>
+                <td>1</td>
+                <td>0 ₽</td>
+                <td>0 ₽</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="proposal-total">
+            <p><strong>Итого: <span id="previewTotal">0</span> ₽</strong></p>
+          </div>
+        </div>
+
+        <div class="proposal-footer">
+          <h4>Условия:</h4>
+          <p id="previewNote">Срок выполнения: по согласованию.</p>
+          <p>Предложение действительно в течение 30 дней.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Установка текущей даты
+document.getElementById('proposalDate').valueAsDate = new Date();
+
+function updatePreview() {
+  // Обновляем номер и дату
+  document.getElementById('previewNumber').textContent = document.getElementById('proposalNumber').value;
+
+  const date = document.getElementById('proposalDate').value;
+  if (date) {
+    const d = new Date(date);
+    const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+    document.getElementById('previewDate').textContent = `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
+
+  // Обновляем данные клиента
+  document.getElementById('previewClientCompany').textContent = document.getElementById('clientCompany').value || 'Название компании';
+  document.getElementById('previewClientName').textContent = document.getElementById('clientName').value || 'Контактное лицо';
+  document.getElementById('previewClientEmail').textContent = document.getElementById('clientEmail').value || 'email@company.ru';
+
+  // Обновляем таблицу услуг
+  const items = document.querySelectorAll('#itemsList .item-row');
+  let html = '';
+  let total = 0;
+
+  items.forEach((item, index) => {
+    const name = item.querySelector('.item-name').value || 'Услуга';
+    const qty = parseInt(item.querySelector('.item-qty').value) || 1;
+    const price = parseFloat(item.querySelector('.item-price').value) || 0;
+    const sum = qty * price;
+    total += sum;
+
+    html += `<tr>
+      <td>${index + 1}</td>
+      <td>${name}</td>
+      <td>${qty}</td>
+      <td>${price.toLocaleString('ru-RU')} ₽</td>
+      <td>${sum.toLocaleString('ru-RU')} ₽</td>
+    </tr>`;
+  });
+
+  document.getElementById('previewItems').innerHTML = html;
+  document.getElementById('previewTotal').textContent = total.toLocaleString('ru-RU');
+
+  // Примечание
+  document.getElementById('previewNote').textContent = document.getElementById('proposalNote').value || 'Срок выполнения: по согласованию.';
+}
+
+function addItem() {
+  const itemsList = document.getElementById('itemsList');
+  const newItem = document.createElement('div');
+  newItem.className = 'item-row';
+  newItem.innerHTML = `
+    <div><label>Наименование</label><input type="text" class="item-name" placeholder="Услуга" oninput="updatePreview()"></div>
+    <div><label>Кол-во</label><input type="number" class="item-qty" value="1" min="1" oninput="updatePreview()"></div>
+    <div><label>Цена, ₽</label><input type="number" class="item-price" value="0" min="0" oninput="updatePreview()"></div>
+    <button class="remove-btn" onclick="removeItem(this)">×</button>
+  `;
+  itemsList.appendChild(newItem);
+}
+
+function removeItem(btn) {
+  const itemsList = document.getElementById('itemsList');
+  if (itemsList.children.length > 1) {
+    btn.parentElement.remove();
+    updatePreview();
+  }
+}
+
+function copyToClipboard(btn) {
+  const text = document.getElementById('proposalPreview').innerText;
+  const done = (label) => {
+    const original = btn.textContent;
+    btn.textContent = label;
+    setTimeout(() => btn.textContent = original, 2000);
+  };
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+    ta.remove();
+    done(ok ? '✓ Скопировано!' : 'Не удалось скопировать');
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => done('✓ Скопировано!'), fallback);
+  } else { fallback(); }
+}
+
+// Инициализация
+updatePreview();
+</script>
+</body>
+</html>
