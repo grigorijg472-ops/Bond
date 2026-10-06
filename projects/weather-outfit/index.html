@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Что надеть? Одежда по погоде</title>
+  <meta name="description" content="Реальная погода в любом городе и готовый образ: что надеть сегодня, завтра и на неделю.">
+  <meta name="theme-color" content="#1b1640">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23ff7e5f%22 stroke-width=%222%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z%22/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body data-theme="clear-day">
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <div class="glow glow--a" aria-hidden="true"></div>
+  <div class="glow glow--b" aria-hidden="true"></div>
+
+  <div class="app">
+    <!-- Шапка -->
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Что надеть?">
+        <span class="brand__mark"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg></span>
+        <span class="brand__text">Что&nbsp;надеть?</span>
+      </a>
+
+      <div class="search" role="search">
+        <svg class="i search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="searchInput" class="search__input" type="search" placeholder="Найти город…" autocomplete="off" aria-label="Поиск города" aria-autocomplete="list" aria-controls="searchResults">
+        <button id="geoBtn" class="icon-btn" type="button" title="Моё местоположение" aria-label="Определить моё местоположение">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h3m14 0h3M12 2v3m0 14v3"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <ul id="searchResults" class="search__results" role="listbox" hidden></ul>
+      </div>
+
+      <div class="segmented" role="radiogroup" aria-label="Для кого подбирать">
+        <button class="segmented__btn is-active" type="button" role="radio" aria-checked="true" data-gender="f">Для неё</button>
+        <button class="segmented__btn" type="button" role="radio" aria-checked="false" data-gender="m">Для него</button>
+        <span class="segmented__pill" aria-hidden="true"></span>
+      </div>
+    </header>
+
+    <main>
+      <!-- Ошибка -->
+      <div id="errorBox" class="error" hidden>
+        <svg class="i error__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4m0 4h.01"/></svg>
+        <p id="errorText">Не удалось загрузить погоду.</p>
+        <button id="retryBtn" class="btn btn--secondary" type="button"><span>Повторить</span></button>
+      </div>
+
+      <!-- Погода сейчас -->
+      <section class="hero card" id="hero" aria-live="polite">
+        <div class="hero__main">
+          <div class="hero__place">
+            <h1 id="cityName" class="skeleton-text">Загрузка…</h1>
+            <p id="cityMeta" class="muted"></p>
+          </div>
+          <div class="hero__temp">
+            <span id="weatherIcon" class="hero__icon">⏳</span>
+            <span class="hero__deg"><span id="temperature">--</span><sup>°</sup></span>
+          </div>
+          <p id="weatherDesc" class="hero__desc">Узнаём погоду…</p>
+          <p class="muted">Ощущается как <b id="feelsLike">--°</b> · <span id="minMax">↑--° ↓--°</span></p>
+        </div>
+
+        <ul class="stats">
+          <li class="stat"><span class="stat__ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg></span><span class="stat__label">Ветер</span><b id="wind">--</b></li>
+          <li class="stat"><span class="stat__ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg></span><span class="stat__label">Влажность</span><b id="humidity">--</b></li>
+          <li class="stat"><span class="stat__ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10.06 10.06 1 0 0-20 0Z"/><path d="M12 12v8a2 2 0 0 0 4 0"/><path d="M12 2v1"/></svg></span><span class="stat__label">Осадки</span><b id="precip">--</b></li>
+          <li class="stat"><span class="stat__ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-17.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span><span class="stat__label">УФ-индекс</span><b id="uv">--</b></li>
+          <li class="stat"><span class="stat__ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v8m-7.07.93 1.41 1.41M2 18h2m16 0h2m-2.93-7.07-1.41 1.41M22 22H2M8 6l4-4 4 4m0 12a4 4 0 0 0-8 0"/></svg></span><span class="stat__label">Восход</span><b id="sunrise">--</b></li>
+          <li class="stat"><span class="stat__ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10V2m-7.07 8.93 1.41 1.41M2 18h2m16 0h2m-2.93-7.07-1.41 1.41M22 22H2M16 6l-4 4-4-4m8 12a4 4 0 0 0-8 0"/></svg></span><span class="stat__label">Закат</span><b id="sunset">--</b></li>
+        </ul>
+      </section>
+
+      <!-- Почасовой -->
+      <section class="card hourly-card">
+        <div class="card__head">
+          <h2>Ближайшие 24 часа</h2>
+          <span class="muted" id="updatedAt"></span>
+        </div>
+        <div class="hourly" id="hourly" tabindex="0" aria-label="Почасовой прогноз"></div>
+      </section>
+
+      <!-- Образ -->
+      <section class="card outfit" id="outfitSection">
+        <div class="outfit__head">
+          <div>
+            <p class="eyebrow" id="outfitFor">Образ на сейчас</p>
+            <h2 class="outfit__title" id="outfitTitle">Подбираем образ…</h2>
+            <p class="muted" id="outfitMessage"></p>
+          </div>
+          <div class="warmth" title="Насколько тепло нужно одеться">
+            <span class="warmth__label">Утепление</span>
+            <div class="warmth__bar"><span id="warmthFill"></span></div>
+            <span class="warmth__value" id="warmthValue">--</span>
+          </div>
+        </div>
+
+        <div class="days" id="days" role="tablist" aria-label="Выбор дня"></div>
+
+        <div class="stage" id="stage">
+          <button class="wardrobe" id="wardrobeBtn" type="button" aria-label="Открыть шкаф и подобрать образ">
+            <span class="wardrobe__door wardrobe__door--l"></span>
+            <span class="wardrobe__door wardrobe__door--r"></span>
+            <span class="wardrobe__glow"></span>
+            <span class="wardrobe__label">Открыть шкаф</span>
+          </button>
+          <div class="outfit-grid" id="outfitGrid"></div>
+        </div>
+
+        <div class="outfit__actions">
+          <button class="btn btn--primary" id="shuffleBtn" type="button">
+            <svg class="i btn__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m18 14 4 4-4 4M18 2l4 4-4 4"/><path d="M2 18h1.97a4 4 0 0 0 3.3-1.7l5.45-8.6a4 4 0 0 1 3.3-1.7H22M2 6h1.97a4 4 0 0 1 3.6 2.2M22 18h-6.04a4 4 0 0 1-3.3-1.8l-.36-.45"/></svg>
+            <span>Другой вариант</span>
+          </button>
+          <button class="btn btn--secondary" id="replayBtn" type="button">
+            <svg class="i btn__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <span>Ещё раз</span>
+          </button>
+          <button class="btn btn--secondary" id="shareBtn" type="button">
+            <svg class="i btn__ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98m-.01-10.98-6.82 3.98"/></svg>
+            <span>Поделиться</span>
+          </button>
+        </div>
+
+        <div class="tips" id="tips"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Погода: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · обновляется каждые 15 минут</p>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/weather.js"></script>
+  <script src="js/outfits.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
