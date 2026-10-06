@@ -22,7 +22,7 @@
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-6:24px; --sp-8:32px; --sp-12:48px; --sp-16:64px; --sp-24:96px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;scroll-padding-top:80px;-webkit-text-size-adjust:100%}
+html{scroll-padding-top:80px;-webkit-text-size-adjust:100%}
 body{font-family:Onest,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;font-size:16px;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 img,svg{display:block}
@@ -156,11 +156,18 @@ footer nav{display:flex;gap:var(--sp-1)}
 .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
 .reveal.in{opacity:1;transform:none}
 .no-js .reveal{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.dot{animation:none}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.dot{animation:none}}
 
 @media (max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}.stack{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:860px){.hero-grid{grid-template-columns:1fr}.hero{min-height:auto;padding-top:var(--sp-12)}.nav-links{display:none}}
 @media (max-width:640px){.container{padding:0 var(--sp-4)}.grid,.stack{grid-template-columns:1fr}.svc{grid-template-columns:40px 1fr;gap:var(--sp-2) var(--sp-4)}.svc p{grid-column:2}.svc .icon{display:none}section{padding:var(--sp-16) 0}.cta .btn{flex:1 1 100%}.sec-head{margin-bottom:var(--sp-8)}.contact{padding:var(--sp-12) var(--sp-4)}}
+
+/* Page slide transition */
+.slide-wrap{overflow-x:clip}
+.is-sliding main,.is-sliding footer{will-change:transform,opacity}
+.nav-links a{position:relative}
+.nav-links a::after{content:"";position:absolute;left:16px;right:16px;bottom:8px;height:2px;border-radius:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+.nav-links a[aria-current="true"]::after{transform:scaleX(1)}
 </style>
 </head>
 <body class="no-js">
@@ -178,10 +185,11 @@ footer nav{display:flex;gap:var(--sp-1)}
         <li><a href="#contact">Контакты</a></li>
       </ul>
     </nav>
-    <a class="btn btn-primary btn-sm" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer"><i class="ph ph-telegram-logo icon" aria-hidden="true"></i>Написать</a>
+    <a class="btn btn-primary btn-sm" href="#contact"><i class="ph ph-telegram-logo icon" aria-hidden="true"></i>Написать</a>
   </div>
 </header>
 
+<div class="slide-wrap">
 <main id="main">
   <section class="hero" id="top" style="padding-top:var(--sp-12)">
     <div class="container hero-grid">
@@ -334,6 +342,7 @@ footer nav{display:flex;gap:var(--sp-1)}
     </nav>
   </div>
 </footer>
+</div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -376,6 +385,48 @@ footer nav{display:flex;gap:var(--sp-1)}
     card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
     card.style.setProperty('--my', (e.clientY - r.top) + 'px');
   }));
+
+
+  // Плавное перелистывание разделов влево/вправо
+  const wrapEls = [document.getElementById('main'), document.querySelector('footer')];
+  const order = ['top', 'projects', 'services', 'contact'];
+  let busy = false;
+  const currentId = () => {
+    let id = 'top';
+    for (const k of order) { const el = document.getElementById(k); if (el && el.getBoundingClientRect().top <= 120) id = k; }
+    return id;
+  };
+  const targetTop = (id) => id === 'top' ? 0 : Math.max(0, document.getElementById(id).getBoundingClientRect().top + scrollY - 76);
+  async function slideTo(id, push = true) {
+    const el = document.getElementById(id);
+    if (!el || busy) return;
+    const from = order.indexOf(currentId()), to = order.indexOf(id);
+    if (from === to && Math.abs(targetTop(id) - scrollY) < 4) return;
+    busy = true; document.body.classList.add('is-sliding');
+    const dir = to >= from ? 1 : -1; // вперёд: уезжает влево, новый приезжает справа
+    const D = 340, ease = 'cubic-bezier(.65,0,.35,1)';
+    const out = wrapEls.map(e => e.animate(
+      [{ transform: 'translateX(0)', opacity: 1, filter: 'blur(0)' }, { transform: `translateX(${-dir * 12}vw)`, opacity: 0, filter: 'blur(6px)' }],
+      { duration: D, easing: ease, fill: 'forwards' }));
+    await Promise.all(out.map(a => a.finished));
+    window.scrollTo({ top: targetTop(id), behavior: 'instant' });
+    if (push) history.pushState({ id }, '', id === 'top' ? location.pathname : '#' + id);
+    const inn = wrapEls.map(e => e.animate(
+      [{ transform: `translateX(${dir * 12}vw)`, opacity: 0, filter: 'blur(6px)' }, { transform: 'translateX(0)', opacity: 1, filter: 'blur(0)' }],
+      { duration: D + 80, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'forwards' }));
+    out.forEach(a => a.cancel());
+    el.querySelectorAll('.reveal').forEach(r => r.classList.add('in'));
+    await Promise.all(inn.map(a => a.finished));
+    inn.forEach(a => a.cancel());
+    document.body.classList.remove('is-sliding'); busy = false;
+    el.setAttribute('tabindex', '-1'); el.focus({ preventScroll: true });
+  }
+  document.querySelectorAll('a[href^="#"]:not(.skip)').forEach(a => a.addEventListener('click', e => {
+    const id = a.getAttribute('href').slice(1);
+    if (!document.getElementById(id)) return;
+    e.preventDefault(); slideTo(id);
+  }));
+  addEventListener('popstate', () => slideTo(location.hash.slice(1) || 'top', false));
 
   // Copy email
   const toast = document.getElementById('toast'); let tt;
