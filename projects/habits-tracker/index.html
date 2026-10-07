@@ -1,319 +1,542 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Habits Tracker: трекер привычек с сериями</title>
-<meta name="description" content="Трекер привычек: отмечайте день, следите за сериями и недельным прогрессом. Данные хранятся в браузере.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
-<link rel="stylesheet" href="../shared/base.css">
-<style>
-  .page { max-width: 1120px; margin: 0 auto; padding: 8px clamp(16px, 4vw, 40px) 72px; }
-  .head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 24px; padding: clamp(12px, 4vh, 40px) 0 28px; }
-  .head h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 700; letter-spacing: -0.04em; }
-  .head .date { color: var(--muted); margin-top: 8px; }
-  .kpis { display: flex; gap: clamp(20px, 4vw, 48px); }
-  .kpi b { display: block; font-family: var(--mono); font-weight: 500; font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 1.1; letter-spacing: -0.02em; }
-  .kpi span { font-size: .84rem; color: var(--muted); }
-  .kpi .i { color: var(--accent); width: .8em; height: .8em; vertical-align: -.02em; margin-right: 4px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tracker — Система трекинга привычек</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  .grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; align-items: start; }
-  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: clamp(18px, 2.4vw, 28px); }
-  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-  .card h2 { font-size: 1.15rem; letter-spacing: -0.01em; }
-  .progress { height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; margin: 4px 0 22px; }
-  .progress i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 99px; transition: width .7s var(--ease); }
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: white;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
 
-  .list { list-style: none; padding: 0; display: grid; }
-  .habit { display: grid; grid-template-columns: auto minmax(0,1fr) auto auto auto; align-items: center; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); }
-  .habit:first-child { border-top: 0; }
-  .check { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; color: transparent; transition: background-color .2s, border-color .2s, transform .18s var(--ease); }
-  .check:hover { border-color: var(--accent); }
-  .check:active { transform: scale(.92); }
-  .check .i { width: 22px; height: 22px; stroke-width: 2.6; transform: scale(.4); transition: transform .3s var(--ease); }
-  .habit.done .check { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-  .habit.done .check .i { transform: scale(1); }
-  .habit .nm { font-weight: 600; transition: color .2s; }
-  .habit.done .nm { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1.5px; }
-  .habit .meta { font-size: .82rem; color: var(--muted); margin-top: 2px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
-  .dots { display: flex; gap: 4px; }
-  .dots i { width: 9px; height: 9px; border-radius: 3px; background: var(--surface-2); border: 1px solid var(--line); }
-  .dots i.on { background: var(--accent); border-color: var(--accent); }
-  .streak { display: inline-flex; align-items: center; gap: 4px; font-family: var(--mono); font-weight: 500; font-size: .95rem; min-width: 3.4em; justify-content: flex-end; }
-  .streak .i { width: 1em; height: 1em; color: var(--muted); }
-  .streak.hot .i { color: #e5792a; }
-  .del { width: 40px; height: 40px; border-radius: 10px; color: var(--muted); display: grid; place-items: center; opacity: .7; transition: opacity .2s, background-color .2s, color .2s; }
-  .del:hover { opacity: 1; background: var(--surface-2); color: var(--danger); }
-  .empty { padding: 28px 0 8px; color: var(--muted); text-align: center; }
-  .add { width: 100%; margin-top: 8px; border: 1.5px dashed var(--line); color: var(--muted); border-radius: 14px; min-height: 52px; justify-content: center; }
-  .add:hover { border-color: var(--accent); color: var(--accent-ink); }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
 
-  .stack { display: grid; gap: 20px; }
-  .chart { width: 100%; height: auto; }
-  .chart text { font-family: var(--font); font-size: 11px; fill: var(--muted); }
-  .chart .bar { fill: color-mix(in srgb, var(--accent) 38%, var(--surface-2)); transition: height .6s var(--ease), y .6s var(--ease); }
-  .chart .bar.today { fill: var(--accent); }
-  .chart .base { stroke: var(--line); }
-  .chart .val { fill: var(--ink); font-family: var(--mono); font-size: 11px; }
-  .heat { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-  .heat .dn { font-size: .72rem; color: var(--muted); text-align: center; }
-  .heat i { aspect-ratio: 1; border-radius: 6px; background: var(--surface-2); }
-  .heat i[data-l="1"] { background: color-mix(in srgb, var(--accent) 25%, var(--surface-2)); }
-  .heat i[data-l="2"] { background: color-mix(in srgb, var(--accent) 50%, var(--surface-2)); }
-  .heat i[data-l="3"] { background: color-mix(in srgb, var(--accent) 75%, var(--surface-2)); }
-  .heat i[data-l="4"] { background: var(--accent); }
-  .heat i.future { background: transparent; border: 1px dashed var(--line); }
-  .heat i.now { outline: 2px solid var(--ink); outline-offset: 1px; }
-  .legend { display: flex; align-items: center; gap: 6px; justify-content: flex-end; margin-top: 12px; font-size: .78rem; color: var(--muted); }
-  .legend i { width: 12px; height: 12px; border-radius: 4px; background: var(--surface-2); }
-  .foot { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; color: var(--muted); font-size: .86rem; }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
 
-  dialog { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); color: var(--ink); padding: 0; width: min(440px, calc(100vw - 32px)); box-shadow: var(--shadow); }
-  dialog::backdrop { background: rgba(10, 12, 11, .55); }
-  dialog form { padding: 26px; display: grid; gap: 16px; }
-  dialog h2 { font-size: 1.3rem; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
-  .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 40; display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 18px; background: var(--ink); color: var(--bg); border-radius: 14px; box-shadow: var(--shadow); transition: opacity .25s, transform .3s var(--ease); max-width: calc(100vw - 32px); }
-  .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
-  .toast button { color: inherit; font-weight: 700; min-height: 40px; padding: 0 12px; border-radius: 10px; text-decoration: underline; }
+    .header h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
 
-  @media (max-width: 860px) {
-    .grid { grid-template-columns: 1fr; }
-    .habit { grid-template-columns: auto minmax(0,1fr) auto auto; }
-    .habit .dots { display: none; }
-  }
-  @media (max-width: 480px) {
-    .kpis { width: 100%; justify-content: space-between; }
-    .row { grid-template-columns: 1fr; }
-  }
-</style>
+    .header p {
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 32px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .progress-section h3 {
+      color: #4ade80;
+    }
+
+    .streak-counter {
+      text-align: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+      border-radius: 16px;
+      margin-bottom: 24px;
+    }
+
+    .streak-number {
+      font-size: 4rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .streak-label {
+      font-size: 0.875rem;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .streak-icon {
+      font-size: 2rem;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 24px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #22c55e);
+      border-radius: 10px;
+      transition: width 1s ease;
+    }
+
+    .habits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .habit-item {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.3s;
+    }
+
+    .habit-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .habit-checkbox {
+      width: 32px;
+      height: 32px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .habit-checkbox.completed {
+      background: #4ade80;
+      border-color: #4ade80;
+    }
+
+    .habit-checkbox.completed::after {
+      content: '✓';
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .habit-info {
+      flex: 1;
+    }
+
+    .habit-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .habit-category {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .habit-stats {
+      display: flex;
+      gap: 12px;
+    }
+
+    .stat-item {
+      text-align: center;
+      min-width: 80px;
+    }
+
+    .stat-value {
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .add-habit-btn {
+      width: 100%;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border: 2px dashed rgba(255,255,255,0.3);
+      border-radius: 16px;
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1rem;
+    }
+
+    .add-habit-btn:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .chart-container {
+      position: relative;
+      height: 250px;
+      margin-top: 30px;
+    }
+
+    .chart-bar {
+      position: absolute;
+      bottom: 0;
+      background: linear-gradient(180deg, #4ade80, #22c55e);
+      border-radius: 8px 8px 0 0;
+      transition: height 0.5s ease;
+    }
+
+    .chart-bar:hover {
+      background: linear-gradient(180deg, #6ee7b7, #4ade80);
+    }
+
+    .chart-label {
+      position: absolute;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .add-habit-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .add-habit-modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      border-radius: 24px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .modal-content h2 {
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #4ade80;
+      color: #1a1a2e;
+      flex: 1;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .dashboard { grid-template-columns: 1fr; }
+      .streak-number { font-size: 3rem; }
+    }
+  </style>
 </head>
 <body>
-<header class="topbar">
-  <a class="back" href="../../index.html#projects"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path><path d="M5 12l6 6"></path><path d="M5 12l6 -6"></path></svg><span>Портфолио</span></a>
-  <span class="name">Habits Tracker</span>
-  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg><span>Написать</span></a>
-</header>
-
-<main class="page">
-  <div class="head">
-    <div>
-      <h1>Привычки</h1>
-      <p class="date" id="today"></p>
+  <div class="container">
+    <div class="header">
+      <h1>📊 Tracker</h1>
+      <p>Отслеживайте привычки, достигайте целей и стройте лучшую версию себя</p>
     </div>
-    <div class="kpis" aria-live="polite">
-      <div class="kpi"><b id="kStreak" class="num">0</b><span>дней без пропусков</span></div>
-      <div class="kpi"><b id="kWeek" class="num">0%</b><span>выполнено за 7 дней</span></div>
-      <div class="kpi"><b id="kToday" class="num">0/0</b><span>сегодня</span></div>
+
+    <div class="dashboard">
+      <div class="card progress-section">
+        <div class="card-header">
+          <h3>Текущий прогресс</h3>
+          <span style="color: #4ade80; font-weight: 700;">87%</span>
+        </div>
+
+        <div class="streak-counter">
+          <div class="streak-icon">🔥</div>
+          <div class="streak-number" id="currentStreak">12</div>
+          <div class="streak-label">дней подряд</div>
+        </div>
+
+        <h3>Недельный прогресс</h3>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 87%"></div>
+        </div>
+        <div style="text-align: center; margin-top: 8px; color: rgba(255,255,255,0.6);">
+          31 из 36 заданий выполнено
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Активные привычки</h3>
+          <button class="btn" style="padding: 8px 16px; background: rgba(255,255,255,0.2);">+</button>
+        </div>
+
+        <div class="habits-list">
+          <div class="habit-item">
+            <div class="habit-checkbox completed"></div>
+            <div class="habit-info">
+              <div class="habit-name">Утренняя пробежка</div>
+              <div class="habit-category">Фитнес</div>
+            </div>
+            <div class="habit-stats">
+              <div class="stat-item">
+                <div class="stat-value">7</div>
+                <div class="stat-label">недель</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="habit-item">
+            <div class="habit-checkbox completed"></div>
+            <div class="habit-info">
+              <div class="habit-name">Чтение книги</div>
+              <div class="habit-category">Обучение</div>
+            </div>
+            <div class="habit-stats">
+              <div class="stat-item">
+                <div class="stat-value">24</div>
+                <div class="stat-label">дней</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="habit-item">
+            <div class="habit-checkbox completed"></div>
+            <div class="habit-info">
+              <div class="habit-name">Пить воду</div>
+              <div class="habit-category">Здоровье</div>
+            </div>
+            <div class="habit-stats">
+              <div class="stat-item">
+                <div class="stat-value">12</div>
+                <div class="stat-label">дней</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="habit-item">
+            <div class="habit-checkbox"></div>
+            <div class="habit-info">
+              <div class="habit-name">Медитация</div>
+              <div class="habit-category">Ментальное здоровье</div>
+            </div>
+            <div class="habit-stats">
+              <div class="stat-item">
+                <div class="stat-value">3</div>
+                <div class="stat-label">дней</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="add-habit-btn" id="addHabitBtn">+ Добавить привычку</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card chart-section">
+      <div class="card-header">
+        <h3>Статистика за неделю</h3>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-bar" style="left: 4%; width: 10%; height: 60%; bottom: 40px;">
+          <div class="chart-label">Пн</div>
+        </div>
+        <div class="chart-bar" style="left: 18%; width: 10%; height: 75%; bottom: 40px;">
+          <div class="chart-label">Вт</div>
+        </div>
+        <div class="chart-bar" style="left: 32%; width: 10%; height: 50%; bottom: 40px;">
+          <div class="chart-label">Ср</div>
+        </div>
+        <div class="chart-bar" style="left: 46%; width: 10%; height: 90%; bottom: 40px;">
+          <div class="chart-label">Чт</div>
+        </div>
+        <div class="chart-bar" style="left: 60%; width: 10%; height: 80%; bottom: 40px;">
+          <div class="chart-label">Пт</div>
+        </div>
+        <div class="chart-bar" style="left: 74%; width: 10%; height: 95%; bottom: 40px;">
+          <div class="chart-label">Сб</div>
+        </div>
+        <div class="chart-bar" style="left: 88%; width: 10%; height: 85%; bottom: 40px;">
+          <div class="chart-label">Вс</div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 24px; margin-top: 30px; flex-wrap: wrap;">
+        <div style="text-align: center;">
+          <div style="font-size: 2.5rem; font-weight: 700; color: #4ade80;">87%</div>
+          <div style="font-size: 0.875rem; color: rgba(255,255,255,0.6);">Выполнено</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 2.5rem; font-weight: 700; color: #60a5fa;">4</div>
+          <div style="font-size: 0.875rem; color: rgba(255,255,255,0.6);">В процессе</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 2.5rem; font-weight: 700; color: #f472b6;">1</div>
+          <div style="font-size: 0.875rem; color: rgba(255,255,255,0.6);">Новые</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="grid">
-    <section class="card" aria-labelledby="hTitle">
-      <div class="card-head"><h2 id="hTitle">Сегодня</h2><span class="help" id="weekText"></span></div>
-      <div class="progress" role="progressbar" aria-label="Недельный прогресс" aria-valuemin="0" aria-valuemax="100" id="bar"><i></i></div>
-      <ul class="list" id="list"></ul>
-      <button class="btn add" id="addBtn" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg>Добавить привычку</button>
-    </section>
-
-    <div class="stack">
-      <section class="card" aria-labelledby="cTitle">
-        <div class="card-head"><h2 id="cTitle">Последние 7 дней</h2></div>
-        <svg class="chart" id="chart" viewBox="0 0 360 190" role="img"></svg>
-      </section>
-      <section class="card" aria-labelledby="mTitle">
-        <div class="card-head"><h2 id="mTitle">Пять недель</h2></div>
-        <div class="heat" id="heat" role="img"></div>
-        <div class="legend">меньше <i></i><i style="background:color-mix(in srgb,var(--accent) 50%,var(--surface-2))"></i><i style="background:var(--accent)"></i> больше</div>
-      </section>
+  <div class="add-habit-modal" id="addHabitModal">
+    <div class="modal-content">
+      <h2>Новая привычка</h2>
+      <div class="form-group">
+        <label>Название</label>
+        <input type="text" placeholder="Например: Бег по утрам">
+      </div>
+      <div class="form-group">
+        <label>Категория</label>
+        <select>
+          <option>Фитнес</option>
+          <option>Обучение</option>
+          <option>Здоровье</option>
+          <option>Ментальное здоровье</option>
+          <option>Работа</option>
+          <option>Другое</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Цель</label>
+        <input type="number" placeholder="Количество раз в неделю">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelBtn">Отмена</button>
+        <button class="btn btn-primary" id="saveBtn">Добавить</button>
+      </div>
     </div>
   </div>
 
-  <div class="foot">
-    <span>Данные хранятся только в вашем браузере.</span>
-    <button class="btn btn-quiet btn-sm" id="resetBtn" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"></path><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path></svg>Вернуть демо-данные</button>
-  </div>
-</main>
-
-<dialog id="dlg" aria-labelledby="dTitle">
-  <form method="dialog" id="form" novalidate>
-    <h2 id="dTitle">Новая привычка</h2>
-    <div class="field">
-      <label for="fName">Название</label>
-      <input class="input" id="fName" name="name" type="text" maxlength="40" placeholder="Например, бег по утрам" required autocomplete="off" aria-describedby="fErr">
-      <p class="error" id="fErr" role="alert"></p>
-    </div>
-    <div class="row">
-      <div class="field"><label for="fCat">Категория</label>
-        <select class="select" id="fCat">
-          <option>Фитнес</option><option>Обучение</option><option>Здоровье</option><option>Ментальное здоровье</option><option>Работа</option><option>Другое</option>
-        </select></div>
-      <div class="field"><label for="fTarget">Раз в неделю</label>
-        <input class="input" id="fTarget" type="number" min="1" max="7" value="7" inputmode="numeric"></div>
-    </div>
-    <div class="actions">
-      <button class="btn btn-ghost" type="button" id="cancel">Отмена</button>
-      <button class="btn btn-primary" type="submit" id="save">Добавить</button>
-    </div>
-  </form>
-</dialog>
-
-<div class="toast" id="toast" role="status"><span id="toastText"></span><button type="button" id="undo">Отменить</button></div>
-
-<script>
-(() => {
-  const KEY = 'habits.v2';
-  const $ = id => document.getElementById(id);
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const CHECK = `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg>`, FLAME = `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 10.941c2.333 -3.308 .167 -7.823 -1 -8.941c0 3.395 -2.235 5.299 -3.667 6.706c-1.43 1.408 -2.333 3.294 -2.333 5.588c0 3.704 3.134 6.706 7 6.706c3.866 0 7 -3.002 7 -6.706c0 -1.712 -1.232 -4.403 -2.333 -5.588c-2.084 3.353 -3.257 3.353 -4.667 2.235"></path></svg>`, TRASH = `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7l16 0"></path><path d="M10 11l0 6"></path><path d="M14 11l0 6"></path><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>`;
-  const DAY = 864e5;
-  const key = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
-  const today = () => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; };
-  const WD = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-
-  function seed() {
+  <script>
     const habits = [
-      { id: 'h1', name: 'Утренняя пробежка', cat: 'Фитнес', target: 5 },
-      { id: 'h2', name: 'Чтение книги', cat: 'Обучение', target: 7 },
-      { id: 'h3', name: 'Стакан воды после сна', cat: 'Здоровье', target: 7 },
-      { id: 'h4', name: 'Медитация', cat: 'Ментальное здоровье', target: 4 }
+      { name: 'Утренняя пробежка', category: 'Фитнес', streak: 7, completed: true },
+      { name: 'Чтение книги', category: 'Обучение', streak: 24, completed: true },
+      { name: 'Пить воду', category: 'Здоровье', streak: 12, completed: true },
+      { name: 'Медитация', category: 'Ментальное здоровье', streak: 3, completed: false }
     ];
-    const log = {}; let s = 7;
-    const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
-    for (let i = 34; i >= 1; i--) {
-      const k = key(addDays(today(), -i)), p = { h1: .62, h2: .86, h3: .9, h4: .5 };
-      log[k] = habits.filter(h => i <= 4 || rnd() < p[h.id]).map(h => h.id);
-    }
-    return { habits, log };
-  }
-  let state;
-  try { state = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
-  if (!state || !Array.isArray(state.habits)) state = seed();
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
 
-  const done = (id, k) => (state.log[k] || []).includes(id);
-  function streakOf(id) {
-    let d = today(), n = 0;
-    if (!done(id, key(d))) d = addDays(d, -1);
-    while (done(id, key(d))) { n++; d = addDays(d, -1); }
-    return n;
-  }
-  function perfectStreak() {
-    const ids = state.habits.map(h => h.id); if (!ids.length) return 0;
-    const ok = k => ids.every(id => done(id, k));
-    let d = today(), n = 0; if (!ok(key(d))) d = addDays(d, -1);
-    while (ok(key(d))) { n++; d = addDays(d, -1); }
-    return n;
-  }
-  function weekStats() {
-    let got = 0, goal = 0;
-    state.habits.forEach(h => {
-      let c = 0; for (let i = 0; i < 7; i++) if (done(h.id, key(addDays(today(), -i)))) c++;
-      got += Math.min(c, h.target); goal += h.target;
+    const addHabitBtn = document.getElementById('addHabitBtn');
+    const addHabitModal = document.getElementById('addHabitModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const habitCheckboxes = document.querySelectorAll('.habit-checkbox');
+
+    addHabitBtn.addEventListener('click', () => {
+      addHabitModal.classList.add('active');
     });
-    return { got, goal, pct: goal ? Math.round(got / goal * 100) : 0 };
-  }
-  const ratio = k => state.habits.length ? state.habits.filter(h => done(h.id, k)).length / state.habits.length : 0;
-  const plural = (n, a, b, c) => { const m = n % 100, d = n % 10; return m > 10 && m < 20 ? c : d === 1 ? a : d > 1 && d < 5 ? b : c; };
 
-  function render() {
-    const t = today(), tk = key(t);
-    const ds = t.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }); $('today').textContent = ds[0].toUpperCase() + ds.slice(1);
-    const list = $('list'); list.replaceChildren();
-    if (!state.habits.length) { const e = document.createElement('li'); e.className = 'empty'; e.textContent = 'Пока пусто. Добавьте первую привычку.'; list.appendChild(e); }
-    state.habits.forEach(h => {
-      const li = document.createElement('li'); const isDone = done(h.id, tk);
-      li.className = 'habit' + (isDone ? ' done' : '');
-      const st = streakOf(h.id);
-      let dots = ''; for (let i = 6; i >= 0; i--) dots += `<i class="${done(h.id, key(addDays(t, -i))) ? 'on' : ''}"></i>`;
-      li.innerHTML = `<button class="check" type="button" role="checkbox" aria-checked="${isDone}" aria-label="Отметить: "></button>
-        <div><div class="nm"></div><div class="meta"><span class="cat"></span><span>${h.target} ${plural(h.target, 'раз', 'раза', 'раз')} в неделю</span></div></div>
-        <div class="dots" aria-hidden="true">${dots}</div>
-        <div class="streak ${st >= 7 ? 'hot' : ''}" title="Серия, дней подряд">${FLAME}<span class="num">${st}</span></div>
-        <button class="del" type="button" aria-label="Удалить привычку">${TRASH}</button>`;
-      li.querySelector('.check').innerHTML = CHECK;
-      li.querySelector('.check').setAttribute('aria-label', 'Отметить: ' + h.name);
-      li.querySelector('.nm').textContent = h.name; li.querySelector('.cat').textContent = h.cat;
-      li.querySelector('.check').addEventListener('click', () => toggle(h.id));
-      li.querySelector('.del').addEventListener('click', () => remove(h.id));
-      list.appendChild(li);
+    cancelBtn.addEventListener('click', () => {
+      addHabitModal.classList.remove('active');
     });
-    const w = weekStats(), nd = state.habits.filter(h => done(h.id, tk)).length;
-    $('kStreak').textContent = perfectStreak(); $('kWeek').textContent = w.pct + '%'; $('kToday').textContent = nd + '/' + state.habits.length;
-    $('weekText').textContent = `${w.got} из ${w.goal} за 7 дней`;
-    const bar = $('bar'); bar.setAttribute('aria-valuenow', w.pct); bar.firstElementChild.style.width = w.pct + '%';
-    drawChart(); drawHeat();
-  }
 
-  function drawChart() {
-    const svg = $('chart'), W = 360, H = 190, top = 24, base = 150, bh = base - top, bw = 34, gap = (W - 7 * bw) / 8;
-    let out = `<line class="base" x1="0" x2="${W}" y1="${base}" y2="${base}"/>`, label = [];
-    for (let i = 0; i < 7; i++) {
-      const d = addDays(today(), i - 6), r = ratio(key(d)), h = Math.max(r * bh, r ? 4 : 2), x = gap + i * (bw + gap), isT = i === 6;
-      label.push(`${WD[d.getDay()]}: ${Math.round(r * 100)}%`);
-      out += `<rect class="bar ${isT ? 'today' : ''}" x="${x}" y="${base - h}" width="${bw}" height="${h}" rx="8"/>
-        <text x="${x + bw / 2}" y="${base + 20}" text-anchor="middle">${WD[d.getDay()]}</text>
-        <text class="val" x="${x + bw / 2}" y="${base - h - 7}" text-anchor="middle">${Math.round(r * 100)}</text>`;
-    }
-    svg.innerHTML = out; svg.setAttribute('aria-label', 'Процент выполненных привычек по дням. ' + label.join(', '));
-  }
+    saveBtn.addEventListener('click', () => {
+      addHabitModal.classList.remove('active');
+      alert('Привычка добавлена!');
+    });
 
-  function drawHeat() {
-    const el = $('heat'); el.replaceChildren();
-    ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(n => { const s = document.createElement('span'); s.className = 'dn'; s.textContent = n; el.appendChild(s); });
-    const t = today(), dow = (t.getDay() + 6) % 7, start = addDays(t, -(dow + 28));
-    let sum = 0, cnt = 0;
-    for (let i = 0; i < 35; i++) {
-      const d = addDays(start, i), c = document.createElement('i'), r = ratio(key(d));
-      if (d > t) c.className = 'future';
-      else { c.dataset.l = r === 0 ? 0 : Math.min(4, Math.ceil(r * 4)); sum += r; cnt++; if (key(d) === key(t)) c.className = 'now'; }
-      c.title = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + (d > t ? '' : ': ' + Math.round(r * 100) + '%');
-      el.appendChild(c);
-    }
-    el.setAttribute('aria-label', 'Календарь за пять недель, в среднем ' + Math.round(sum / cnt * 100) + '% выполнено');
-  }
+    habitCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('click', () => {
+        checkbox.classList.toggle('completed');
+      });
+    });
 
-  function toggle(id) {
-    const k = key(today()), arr = state.log[k] || [];
-    state.log[k] = arr.includes(id) ? arr.filter(x => x !== id) : [...arr, id];
-    save(); render();
-    const b = [...document.querySelectorAll('.check')].find(x => x.getAttribute('aria-label') === 'Отметить: ' + state.habits.find(h => h.id === id).name);
-    if (b) b.focus({ preventScroll: true });
-  }
-
-  let undoFn = null, tt;
-  function toast(msg, fn) {
-    $('toastText').textContent = msg; undoFn = fn; $('undo').hidden = !fn;
-    $('toast').classList.add('show'); clearTimeout(tt); tt = setTimeout(() => $('toast').classList.remove('show'), 6000);
-  }
-  $('undo').addEventListener('click', () => { if (undoFn) undoFn(); undoFn = null; $('toast').classList.remove('show'); });
-  function remove(id) {
-    const i = state.habits.findIndex(h => h.id === id), h = state.habits[i];
-    state.habits.splice(i, 1); save(); render();
-    toast('Привычка «' + h.name + '» удалена', () => { state.habits.splice(i, 0, h); save(); render(); });
-  }
-
-  const dlg = $('dlg'), fName = $('fName'), fErr = $('fErr');
-  $('addBtn').addEventListener('click', () => { fName.value = ''; fErr.textContent = ''; fName.removeAttribute('aria-invalid'); $('fTarget').value = 7; dlg.showModal(); fName.focus(); });
-  $('cancel').addEventListener('click', () => dlg.close());
-  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
-  $('form').addEventListener('submit', e => {
-    e.preventDefault();
-    const name = fName.value.trim();
-    if (!name) { fErr.textContent = 'Введите название привычки'; fName.setAttribute('aria-invalid', 'true'); fName.focus(); return; }
-    const target = Math.min(7, Math.max(1, parseInt($('fTarget').value, 10) || 7));
-    state.habits.push({ id: 'h' + Date.now().toString(36), name, cat: $('fCat').value, target });
-    save(); render(); dlg.close(); toast('Привычка добавлена', null);
-  });
-  fName.addEventListener('input', () => { fErr.textContent = ''; fName.removeAttribute('aria-invalid'); });
-  $('resetBtn').addEventListener('click', () => { state = seed(); save(); render(); toast('Демо-данные восстановлены', null); });
-
-  render();
-})();
-</script>
+    // Animation for progress bars
+    document.querySelectorAll('.progress-fill').forEach(bar => {
+      const width = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => {
+        bar.style.width = width;
+      }, 100);
+    });
+  </script>
 </body>
 </html>
