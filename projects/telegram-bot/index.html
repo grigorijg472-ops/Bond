@@ -1,189 +1,499 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AI Chat Bot: демо Telegram-бота для бизнеса</title>
-<meta name="description" content="Рабочее демо чат-бота: ответы по сценарию, тексты для соцсетей, расчёт стоимости и напоминания. Напишите ему сами.">
-<meta name="theme-color" content="#0e1621">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
-<link rel="stylesheet" href="../shared/base.css">
-<style>
-  :root { color-scheme: dark; --bg: #0b121a; --surface: #131d28; --surface-2: #1a2735; --ink: #e8eef4; --muted: #8fa3b5; --line: #243445; --accent: #5eb5f7; --accent-ink: #8ccbfa; --on-accent: #06121c;
-    --in: #1b2836; --out: #2b5278; }
-  body { background: radial-gradient(1200px 600px at 85% -10%, rgba(94,181,247,.10), transparent 60%), var(--bg); }
-  .wrap { max-width: 1160px; margin: 0 auto; padding: 8px clamp(16px, 4vw, 40px) 56px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 460px); gap: clamp(32px, 6vw, 88px); align-items: start; }
-  .intro { padding-top: clamp(8px, 6vh, 64px); display: grid; gap: 28px; }
-  .intro h1 { font-size: clamp(2.2rem, 4.6vw, 3.6rem); font-weight: 700; letter-spacing: -0.035em; }
-  .intro .lead { color: var(--muted); font-size: 1.1rem; max-width: 32rem; margin-top: 16px; }
-  .intro .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
-  .demo-note { display: flex; gap: 10px; align-items: flex-start; color: var(--muted); font-size: .88rem; max-width: 32rem; }
-  .demo-note .i { margin-top: 2px; color: var(--accent); }
-  .caps { list-style: none; padding: 0; border-top: 1px solid var(--line); }
-  .caps li { display: grid; grid-template-columns: 28px 1fr; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line); }
-  .caps .i { color: var(--accent); width: 24px; height: 24px; margin-top: 2px; }
-  .caps b { display: block; font-weight: 600; }
-  .caps span { color: var(--muted); font-size: .94rem; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram AI Бот — Интеллектуальные решения</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  /* Окно чата */
-  .chat { position: sticky; top: 16px; display: grid; grid-template-rows: auto 1fr auto auto; height: min(700px, calc(100dvh - 96px)); min-height: 520px;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.45); }
-  .chat-head { display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
-  .avatar { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); flex: none; }
-  .avatar .i { width: 24px; height: 24px; }
-  .who { flex: 1; min-width: 0; }
-  .who b { display: block; font-weight: 600; line-height: 1.2; }
-  .who span { font-size: .82rem; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
-  .who span::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #5fd08f; }
-  .log { overflow-y: auto; padding: 16px 14px; display: flex; flex-direction: column; gap: 6px; scroll-behavior: smooth; overscroll-behavior: contain;
-    background: linear-gradient(180deg, rgba(11,18,26,.55), rgba(11,18,26,.35)); }
-  .day { align-self: center; font-size: .78rem; color: var(--muted); background: rgba(255,255,255,.05); padding: 3px 12px; border-radius: 999px; margin-bottom: 6px; }
-  .msg { max-width: 86%; padding: 9px 12px 7px; border-radius: 16px; line-height: 1.45; animation: pop .26s var(--ease); overflow-wrap: anywhere; }
-  @keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.98); } }
-  .msg.bot { align-self: flex-start; background: var(--in); border-bottom-left-radius: 5px; }
-  .msg.me { align-self: flex-end; background: var(--out); border-bottom-right-radius: 5px; }
-  .msg p + p, .msg ul + p, .msg p + ul { margin-top: 6px; }
-  .msg ul { padding-left: 18px; display: grid; gap: 2px; }
-  .msg time { display: block; text-align: right; font-size: .7rem; color: rgba(232,238,244,.5); margin-top: 2px; font-variant-numeric: tabular-nums; }
-  .msg .link { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 12px; border-radius: 10px; background: rgba(94,181,247,.16); color: var(--accent-ink); text-decoration: none; font-weight: 600; font-size: .92rem; min-height: 40px; }
-  .msg .link:hover { background: rgba(94,181,247,.26); }
-  .typing { align-self: flex-start; background: var(--in); border-radius: 16px; border-bottom-left-radius: 5px; padding: 12px 14px; display: flex; gap: 5px; }
-  .typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: blink 1.1s infinite; }
-  .typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
-  @keyframes blink { 0%, 60%, 100% { opacity: .35; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
-  .quick { display: flex; gap: 8px; padding: 10px 14px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--line); background: var(--surface); }
-  .quick::-webkit-scrollbar { display: none; }
-  .quick button { flex: none; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); font-size: .9rem; color: var(--ink); transition: border-color .2s, background-color .2s, transform .15s; }
-  .quick button:hover { border-color: var(--accent); }
-  .quick button:active { transform: scale(.97); }
-  .compose { display: flex; gap: 10px; padding: 10px 14px 14px; background: var(--surface); }
-  .compose .input { border-radius: 999px; padding-inline: 18px; background: var(--surface-2); border-color: var(--line); }
-  .send { width: 46px; height: 46px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; flex: none; transition: transform .15s var(--ease), opacity .2s, filter .2s; }
-  .send:hover { filter: brightness(1.1); }
-  .send:active { transform: scale(.92); }
-  .send[disabled] { opacity: .35; cursor: not-allowed; }
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
 
-  @media (max-width: 900px) {
-    .wrap { grid-template-columns: 1fr; }
-    .chat { position: relative; top: 0; order: 2; height: min(640px, calc(100dvh - 80px)); }
-    .intro { padding-top: 0; order: 1; }
-    .caps { order: 3; }
-  }
-  @media (max-width: 900px) { .intro { display: contents; } .intro .head { order: 1; } .caps { order: 3; } .demo-note { order: 4; } }
-</style>
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 800;
+      color: white;
+      margin-bottom: 16px;
+    }
+
+    .header p {
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.9);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .chat-container {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 32px;
+      border: 1px solid rgba(255,255,255,0.2);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 24px;
+    }
+
+    .bot-avatar {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+
+    .bot-info h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .bot-info p {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #4ade80;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .chat-messages {
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 16px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 16px;
+      margin-bottom: 24px;
+    }
+
+    .message {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 12px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .message.user .message-avatar {
+      background: rgba(255,255,255,0.2);
+      order: 2;
+    }
+
+    .message.bot .message-avatar {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      order: 1;
+    }
+
+    .message-content {
+      padding: 14px 18px;
+      border-radius: 18px;
+      max-width: 75%;
+      line-height: 1.6;
+    }
+
+    .message.user .message-content {
+      background: rgba(255,255,255,0.2);
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.bot .message-content {
+      background: rgba(255,255,255,0.95);
+      color: #333;
+      border-bottom-left-radius: 4px;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 12px;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 16px 24px;
+      border-radius: 24px;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .input-area input:focus {
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .input-area input::placeholder {
+      color: rgba(255,255,255,0.5);
+    }
+
+    .send-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 32px;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      background: rgba(255,255,255,0.15);
+    }
+
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 24px;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      font-size: 0.9375rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .feature-item {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .feature-item h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    .feature-item p {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.6);
+      margin: 0;
+    }
+
+    .cta-section {
+      text-align: center;
+      margin-top: 60px;
+      padding: 60px 20px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+    }
+
+    .cta-section h2 {
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      font-weight: 800;
+      color: white;
+      margin-bottom: 16px;
+    }
+
+    .cta-section p {
+      font-size: 1.125rem;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 32px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 32px;
+      border-radius: 24px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      background: white;
+      color: #667eea;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 768px) {
+      .features { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .message-content { max-width: 85%; }
+    }
+  </style>
 </head>
 <body>
-<header class="topbar">
-  <a class="back" href="../../index.html#projects"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path><path d="M5 12l6 6"></path><path d="M5 12l6 -6"></path></svg><span>Портфолио</span></a>
-  <span class="name">AI Chat Bot</span>
-  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg><span>Написать</span></a>
-</header>
+  <div class="container">
+    <div class="header">
+      <h1>🤖 AI Telegram Бот</h1>
+      <p>Интегрируем нейросети в ваши бизнес-процессы: автоматизация ответов, генерация контента и аналитика.</p>
+    </div>
 
-<div class="wrap">
-  <section class="intro">
-    <div class="head">
-      <h1>Чат-бот, который отвечает по делу</h1>
-      <p class="lead">Демо Telegram-бота для бизнеса: тексты для соцсетей, расчёт стоимости, напоминания. Напишите ему сами.</p>
-      <div class="actions">
-        <a class="btn btn-primary" href="https://t.me/Bond8848" target="_blank" rel="noopener">Заказать бота <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17 7l-10 10"></path><path d="M8 7l9 0l0 9"></path></svg></a>
-        <a class="btn btn-ghost" href="../dev-cost-calculator.html">Калькулятор стоимости</a>
+    <div class="chat-container">
+      <div class="chat-header">
+        <div class="bot-avatar">🤖</div>
+        <div class="bot-info">
+          <h3>Ассистент AI</h3>
+          <p><span class="status-dot"></span>В сети — отвечает мгновенно</p>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+          <div class="message-avatar">🤖</div>
+          <div class="message-content">
+            Привет! Я AI-ассистент. Чем могу помочь сегодня?
+          </div>
+        </div>
+        <div class="message user">
+          <div class="message-avatar">👤</div>
+          <div class="message-content">
+            Какой твой функционал?
+          </div>
+        </div>
+        <div class="message bot">
+          <div class="message-avatar">🤖</div>
+          <div class="message-content">
+            Я могу:<br>
+            ✅ Отвечать на вопросы о продуктах<br>
+            ✅ Генерировать тексты и контент<br>
+            ✅ Рассчитывать стоимость услуг<br>
+            ✅ Создавать черновики сообщений<br>
+            ✅ И многое другое!
+          </div>
+        </div>
+        <div class="message user">
+          <div class="message-avatar">👤</div>
+          <div class="message-content">
+            Покажи пример генерации текста
+          </div>
+        </div>
+        <div class="message bot">
+          <div class="message-avatar">🤖</div>
+          <div class="message-content">
+            Вот пример пост для соцсетей:<br><br>
+            <strong>🚀 Запуск нового сервиса!</strong><br><br>
+            Мы рады представить нашу новую платформу для автоматизации бизнеса. Ускорьте процессы в 5 раз уже сегодня!<br><br>
+            🔹 Интеграция с 100+ сервисами<br>
+            🔹 Анализ в реальном времени<br>
+            🔹 Поддержка 24/7<br><br>
+            📞 Свяжитесь с нами уже сегодня!
+          </div>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <input type="text" placeholder="Напишите сообщение..." id="userInput">
+        <button class="send-btn">➤</button>
       </div>
     </div>
-    <ul class="caps">
-      <li><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15.5 13a3.5 3.5 0 0 0 -3.5 3.5v1a3.5 3.5 0 0 0 7 0v-1.8"></path><path d="M8.5 13a3.5 3.5 0 0 1 3.5 3.5v1a3.5 3.5 0 0 1 -7 0v-1.8"></path><path d="M17.5 16a3.5 3.5 0 0 0 0 -7h-.5"></path><path d="M19 9.3v-2.8a3.5 3.5 0 0 0 -7 0"></path><path d="M6.5 16a3.5 3.5 0 0 1 0 -7h.5"></path><path d="M5 9.3v-2.8a3.5 3.5 0 0 1 7 0v10"></path></svg><div><b>Нейросети</b><span>Подключение GPT-моделей для генерации текстов, ответов и анализа.</span></div></li>
-      <li><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11"></path></svg><div><b>Мгновенные ответы</b><span>Автоматическая обработка запросов без очереди и ожидания.</span></div></li>
-      <li><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path><path d="M13.5 6.5l4 4"></path></svg><div><b>Генерация контента</b><span>Посты, описания и тексты для соцсетей по вашему тону.</span></div></li>
-      <li><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 14v-3a8 8 0 1 1 16 0v3"></path><path d="M18 19c0 1.657 -2.686 3 -6 3"></path><path d="M4 14a2 2 0 0 1 2 -2h1a2 2 0 0 1 2 2v3a2 2 0 0 1 -2 2h-1a2 2 0 0 1 -2 -2v-3"></path><path d="M15 14a2 2 0 0 1 2 -2h1a2 2 0 0 1 2 2v3a2 2 0 0 1 -2 2h-1a2 2 0 0 1 -2 -2v-3"></path></svg><div><b>Поддержка клиентов</b><span>Ответы на частые вопросы круглосуточно, сложные случаи уходят человеку.</span></div></li>
-      <li><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -14"></path><path d="M8 8a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v1a1 1 0 0 1 -1 1h-6a1 1 0 0 1 -1 -1l0 -1"></path><path d="M8 14l0 .01"></path><path d="M12 14l0 .01"></path><path d="M16 14l0 .01"></path><path d="M8 17l0 .01"></path><path d="M12 17l0 .01"></path><path d="M16 17l0 .01"></path></svg><div><b>Расчёты</b><span>Стоимость услуг и проектов прямо в переписке.</span></div></li>
-      <li><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"></path><path d="M9 17v1a3 3 0 0 0 6 0v-1"></path></svg><div><b>Напоминания и аналитика</b><span>Уведомления о задачах, статистика по темам и времени ответа.</span></div></li>
-    </ul>
-    <p class="demo-note"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path><path d="M12 9h.01"></path><path d="M11 12h1v4h1"></path></svg><span>Это демо: ответы заданы сценарием, нейросеть не подключена. В рабочем боте те же сценарии работают поверх GPT и ваших данных.</span></p>
-  </section>
 
-  <section class="chat" aria-label="Демо чата с ботом">
-    <div class="chat-head">
-      <div class="avatar"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 6a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2l0 -4"></path><path d="M12 2v2"></path><path d="M9 12v9"></path><path d="M15 12v9"></path><path d="M5 16l4 -2"></path><path d="M15 14l4 2"></path><path d="M9 18h6"></path><path d="M10 8v.01"></path><path d="M14 8v.01"></path></svg></div>
-      <div class="who"><b>Ассистент</b><span>в сети</span></div>
-      <button class="btn btn-quiet btn-icon" id="reset" type="button" aria-label="Очистить переписку" title="Очистить переписку"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"></path><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path></svg></button>
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>Нейросети</h3>
+        <p>Интеграция с GPT-моделями для генерации текстов, ответов и анализа.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Мгновенные ответы</h3>
+        <p>Автоматическая обработка запросов без задержек и ожидания.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Аналитика</h3>
+        <p>Статистика по запросам, популярным темам и времени отклика.</p>
+      </div>
     </div>
-    <div class="log" id="log" role="log" aria-live="polite" aria-relevant="additions"></div>
-    <div class="quick" id="quick" aria-label="Быстрые ответы"></div>
-    <form class="compose" id="form" autocomplete="off">
-      <label class="sr-only" for="text">Сообщение</label>
-      <input class="input" id="text" type="text" placeholder="Напишите сообщение" maxlength="300" enterkeyhint="send">
-      <button class="send" id="send" type="submit" aria-label="Отправить" disabled><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 14l11 -11"></path><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"></path></svg></button>
-    </form>
-  </section>
-</div>
 
-<script>
-(() => {
-  const log = document.getElementById('log'), quick = document.getElementById('quick');
-  const form = document.getElementById('form'), text = document.getElementById('text'), send = document.getElementById('send');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const SEND_ICON = `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg>`;
-  const PRICES = { 'Лендинг': ['30 000', '1-2 недели'], 'Веб-приложение': ['80 000', '3-6 недель'], 'Интернет-магазин': ['120 000', '4-8 недель'], 'Автоматизация': ['50 000', '1-3 недели'] };
-  let awaiting = null, busy = false;
+    <div class="features-grid">
+      <div class="feature-item">
+        <h4>📝 Генерация контента</h4>
+        <p>Автоматическое создание постов, описаний и текстов для соцсетей.</p>
+      </div>
+      <div class="feature-item">
+        <h4>💬 Чат-поддержка</h4>
+        <p>24/7 поддержка клиентов с интеллектуальной обработкой запросов.</p>
+      </div>
+      <div class="feature-item">
+        <h4>💰 Расчёты</h4>
+        <p>Мгновенный расчёт стоимости услуг и проектов.</p>
+      </div>
+      <div class="feature-item">
+        <h4>📅 Напоминания</h4>
+        <p>Автоматические уведомления и напоминания о задачах.</p>
+      </div>
+    </div>
 
-  const time = () => new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-  const norm = s => s.toLowerCase().replace(/ё/g, 'е').trim();
+    <div class="cta-section">
+      <h2>Хотите свой AI-бот?</h2>
+      <p>Создаю персонализированных ботов под ваши нужды. От простого ответчика до полноценного ассистента с доступом к API.</p>
+      <a href="https://t.me/Bond8848" class="btn" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.654-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
+        Связаться в Telegram
+      </a>
+    </div>
+  </div>
 
-  function bubble(who, m) {
-    const el = document.createElement('div'); el.className = 'msg ' + who;
-    (m.paras || []).forEach(t => { const p = document.createElement('p'); p.textContent = t; el.appendChild(p); });
-    if (m.list) { const ul = document.createElement('ul'); m.list.forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); }); el.appendChild(ul); }
-    if (m.after) { const p = document.createElement('p'); p.textContent = m.after; el.appendChild(p); }
-    if (m.link) { const a = document.createElement('a'); a.className = 'link'; a.href = m.link.href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = m.link.label; el.appendChild(a); }
-    const t = document.createElement('time'); t.textContent = time(); el.appendChild(t);
-    log.appendChild(el); log.scrollTop = log.scrollHeight; return el;
-  }
-  function setQuick(items) {
-    quick.replaceChildren();
-    items.forEach(label => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.addEventListener('click', () => ask(label)); quick.appendChild(b); });
-  }
-  const MAIN = ['Что ты умеешь?', 'Пример поста', 'Рассчитать сайт', 'Напоминание', 'Связаться'];
+  <script>
+    const chatMessages = document.getElementById('chatMessages');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.querySelector('.send-btn');
 
-  function reply(q) {
-    const s = norm(q);
-    if (awaiting === 'type') {
-      const key = Object.keys(PRICES).find(k => s.includes(norm(k).slice(0, 5)));
-      if (key) { awaiting = null; const [p, t] = PRICES[key];
-        return { m: { paras: [`${key}: ориентировочно от ${p} ₽, срок ${t}.`, 'Точная цена зависит от функций и срочности. Это можно прикинуть в калькуляторе.'], link: { label: 'Открыть калькулятор', href: '../dev-cost-calculator.html' } }, chips: MAIN }; }
+    function scrollToBottom() {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-    if (/привет|здравств|добрый|хай/.test(s)) return { m: { paras: ['Здравствуйте! Я демо-бот. Могу показать, как отвечаю на вопросы, пишу тексты и считаю стоимость.'] }, chips: MAIN };
-    if (/умеешь|функци|можешь|возможност|помо/.test(s)) return { m: { paras: ['В этом демо я умею:'], list: ['Отвечать на вопросы о продукте', 'Писать черновики постов', 'Прикидывать стоимость проекта', 'Ставить напоминания', 'Передавать диалог человеку'] }, chips: ['Пример поста', 'Рассчитать сайт', 'Напоминание'] };
-    if (/пост|текст|контент|соцсет|реклам/.test(s)) return { m: { paras: ['Пример поста для соцсетей:', 'Запускаем новый сервис автоматизации. Заявки, оплаты и отчёты теперь живут в одном окне.'], list: ['Подключение за один день', 'Отчёты в реальном времени', 'Поддержка в чате'], after: 'Расскажите про свой продукт, и я подстрою тон под вашу аудиторию.' }, chips: ['Рассчитать сайт', 'Связаться'] };
-    if (/стоим|цен|сколько|расчет|рассчит|калькул|прайс|сайт/.test(s)) { awaiting = 'type'; return { m: { paras: ['Что нужно сделать?'] }, chips: Object.keys(PRICES) }; }
-    if (/напомин|уведомл|задач|встреч/.test(s)) return { m: { paras: ['Готово, поставил напоминание на завтра, 10:00: «Позвонить клиенту по проекту».', 'В рабочей версии оно придёт в Telegram и попадёт в ваш календарь.'] }, chips: ['Что ты умеешь?', 'Связаться'] };
-    if (/связ|контакт|заказ|нужен бот|хочу бот|telegram|телеграм|разработчик/.test(s)) return { m: { paras: ['Опишите задачу автору в Telegram: чем раньше, тем быстрее оценка.'], link: { label: 'Написать в Telegram', href: 'https://t.me/Bond8848' } }, chips: ['Рассчитать сайт'] };
-    if (/спасибо|благодар/.test(s)) return { m: { paras: ['Пожалуйста! Если нужен такой бот под вашу задачу, напишите автору.'] }, chips: ['Связаться'] };
-    return { m: { paras: ['В демо я знаю несколько тем. Выберите одну из них или спросите своими словами.'] }, chips: MAIN };
-  }
 
-  function ask(q) {
-    q = q.trim(); if (!q || busy) return;
-    busy = true; bubble('me', { paras: [q] }); text.value = ''; send.disabled = true; quick.replaceChildren();
-    const r = reply(q);
-    const dots = document.createElement('div'); dots.className = 'typing'; dots.setAttribute('aria-hidden', 'true'); dots.innerHTML = '<i></i><i></i><i></i>';
-    const wait = reduce ? 0 : 700 + Math.min(q.length * 12, 600);
-    setTimeout(() => { log.appendChild(dots); log.scrollTop = log.scrollHeight; }, reduce ? 0 : 150);
-    setTimeout(() => { dots.remove(); bubble('bot', r.m); setQuick(r.chips); busy = false; }, wait + 150);
-  }
+    function addMessage(text, isUser) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
 
-  function start() {
-    log.replaceChildren(); awaiting = null; busy = false;
-    const d = document.createElement('div'); d.className = 'day'; d.textContent = 'Сегодня'; log.appendChild(d);
-    bubble('bot', { paras: ['Привет! Я демо-бот. Выберите вопрос ниже или напишите свой.'] });
-    setQuick(MAIN);
-  }
+      const avatar = isUser
+        ? '<div class="message-avatar">👤</div>'
+        : '<div class="message-avatar">🤖</div>';
 
-  form.addEventListener('submit', e => { e.preventDefault(); ask(text.value); });
-  text.addEventListener('input', () => { send.disabled = !text.value.trim(); });
-  document.getElementById('reset').addEventListener('click', start);
-  start();
-})();
-</script>
+      messageDiv.innerHTML = `
+        ${avatar}
+        <div class="message-content">${text}</div>
+      `;
+
+      chatMessages.appendChild(messageDiv);
+      scrollToBottom();
+    }
+
+    function simulateBotResponse(userText) {
+      const responses = [
+        `Я могу помочь с этим! Подробнее: ${userText.substring(0, 50)}...`,
+        'Отличный вопрос! Вот что я думаю:',
+        'Давайте разберёмся вместе. У меня есть несколько идей.',
+        'Я готов помочь с этим проектом. Свяжемся в ближайшее время!'
+      ];
+
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+      setTimeout(() => {
+        addMessage(randomResponse, false);
+      }, 1000 + Math.random() * 1000);
+    }
+
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      addMessage(text, true);
+      userInput.value = '';
+      simulateBotResponse(text);
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // Auto-scroll on load
+    scrollToBottom();
+  </script>
 </body>
 </html>
