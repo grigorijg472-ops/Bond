@@ -69,7 +69,7 @@
 </head>
 <body>
 <header class="topbar">
-  <a class="back" href="../../index.html#projects"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path><path d="M5 12l6 6"></path><path d="M5 12l6 -6"></path></svg><span>Портфолио</span></a>
+  <a class="back" href="../../index.html#projects" aria-label="Портфолио"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path><path d="M5 12l6 6"></path><path d="M5 12l6 -6"></path></svg><span>Портфолио</span></a>
   <span class="name">Interactive Map</span>
   <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg><span>Написать</span></a>
 </header>
@@ -291,5 +291,7 @@
   resize(); if (cw) { view.init = true; fitTo(LOCS, false); } draw();
 })();
 </script>
+<script type="application/json" id="case-data">{"title": "Interactive Map", "task": "Сделать карту без Google Maps и Leaflet, на собственном движке, чтобы показать работу с графикой.", "features": ["Перетаскивание, колесо, щипок, двойной клик и управление с клавиатуры.", "Город рисуется программно, без картинок и тайлов.", "Нумерованные маркеры, поиск и фильтры по категориям, плавный перелёт к точке.", "Светлая и тёмная тема."], "stack": ["Canvas API", "Pointer Events", "JavaScript"], "note": "Город и локации выдуманные, геоданных нет. Для реальных карт подключается Leaflet или MapLibre."}</script>
+<script src="../shared/about.js"></script>
 </body>
 </html>

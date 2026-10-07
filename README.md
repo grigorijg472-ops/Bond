@@ -6,17 +6,17 @@
 
 ## Проекты
 
-Все проекты работают в браузере, ничего устанавливать не нужно.
+Все проекты работают в браузере, ничего устанавливать не нужно. На каждой странице кнопка «О проекте» открывает описание: задача, что внутри, стек и ограничения.
 
 | Проект | Что делает | Технологии |
 | --- | --- | --- |
-| [3D Interactive Portfolio](https://grigorijg472-ops.github.io/Bond/projects/3d-portfolio/index.html) | Звёздное поле и вращающаяся сфера, частицы реагируют на курсор | Three.js, WebGL |
-| [AI Chat Bot](https://grigorijg472-ops.github.io/Bond/projects/telegram-bot/index.html) | Демо чат-бота: автоответы и тексты для соцсетей | JavaScript |
-| [Habits Tracker](https://grigorijg472-ops.github.io/Bond/projects/habits-tracker/index.html) | Трекер привычек с сериями дней и недельной статистикой | JavaScript, LocalStorage |
-| [Resume Generator](https://grigorijg472-ops.github.io/Bond/projects/resume-generator/index.html) | Редактор резюме с живым предпросмотром и экспортом в PDF | HTML5, Print API |
-| [Interactive Map](https://grigorijg472-ops.github.io/Bond/projects/interactive-map/index.html) | Карта на Canvas: маркеры, зум, перетаскивание, поиск | Canvas API |
-| [Dev Cost Calculator](https://grigorijg472-ops.github.io/Bond/projects/dev-cost-calculator.html) | Считает стоимость и сроки разработки сайта | JavaScript |
-| [Proposal Generator](https://grigorijg472-ops.github.io/Bond/projects/proposal-generator.html) | Собирает коммерческое предложение с подсчётом суммы | JavaScript, Print API |
+| [3D Portfolio](https://grigorijg472-ops.github.io/Bond/projects/3d-portfolio/index.html) | 3D-сцена из частиц и сферы, поворот перетаскиванием, подписи навыков следуют за узлами | Three.js, WebGL, GLSL |
+| [AI Chat Bot](https://grigorijg472-ops.github.io/Bond/projects/telegram-bot/index.html) | Демо диалога бота: услуги, расчёт цены, переход к заказу. Ответы заготовленные, без сервера | JavaScript |
+| [Habits Tracker](https://grigorijg472-ops.github.io/Bond/projects/habits-tracker/index.html) | Трекер привычек: серии дней, график за 7 дней, тепловая карта за 5 недель | JavaScript, localStorage |
+| [Resume Generator](https://grigorijg472-ops.github.io/Bond/projects/resume-generator/index.html) | Редактор резюме с предпросмотром A4, шаблонами и печатью в PDF | JavaScript, CSS print |
+| [Interactive Map](https://grigorijg472-ops.github.io/Bond/projects/interactive-map/index.html) | Собственная карта на Canvas: зум, перетаскивание, поиск, фильтры по категориям | Canvas API |
+| [Dev Cost Calculator](https://grigorijg472-ops.github.io/Bond/projects/dev-cost-calculator.html) | Считает ориентировочную стоимость и срок разработки сайта | JavaScript |
+| [Proposal Generator](https://grigorijg472-ops.github.io/Bond/projects/proposal-generator.html) | Собирает коммерческое предложение: позиции, скидка, срок, печать на A4 | JavaScript, CSS print |
 
 ## Структура
 
@@ -24,6 +24,7 @@
 index.html               главная страница
 404.html                 страница «не найдено»
 projects/
+  shared/                общие стили и скрипт кнопки «О проекте»
   3d-portfolio/
   telegram-bot/
   habits-tracker/
@@ -44,7 +45,7 @@ projects/
 
 ## Откат к прошлой версии
 
-Версия сайта до редизайна сохранена в ветке `backup-original` (коммит `ba8a191`). Чтобы вернуть её, создайте Pull Request из `backup-original` в `main` или в Settings → Pages выберите ветку `backup-original`.
+Версия мини-проектов до редизайна сохранена в ветке `backup-original-site`. Чтобы вернуть её, создайте Pull Request из `backup-original-site` в `main` или в Settings → Pages выберите эту ветку. Более ранняя версия всего сайта лежит в ветке `backup-original` (коммит `ba8a191`).
 
 ## Контакты
 

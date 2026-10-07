@@ -104,7 +104,7 @@
 </head>
 <body>
 <header class="topbar">
-  <a class="back" href="../../index.html#projects"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path><path d="M5 12l6 6"></path><path d="M5 12l6 -6"></path></svg><span>Портфолио</span></a>
+  <a class="back" href="../../index.html#projects" aria-label="Портфолио"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path><path d="M5 12l6 6"></path><path d="M5 12l6 -6"></path></svg><span>Портфолио</span></a>
   <span class="name">Resume Generator</span>
   <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg><span>Написать</span></a>
 </header>
@@ -283,5 +283,7 @@
   fillForm(); paint();
 })();
 </script>
+<script type="application/json" id="case-data">{"title": "Resume Generator", "task": "Собрать резюме без конструктора с подпиской: сразу видеть результат и получить PDF.", "features": ["Предпросмотр формата A4 обновляется при вводе.", "Два шаблона, пять цветов, несколько мест работы.", "Текст сохраняется в localStorage, введённые данные экранируются.", "PDF через печать браузера, отдельные стили для печати."], "stack": ["JavaScript", "CSS print", "localStorage"], "note": "PDF создаёт диалог печати браузера, серверной части нет."}</script>
+<script src="../shared/about.js"></script>
 </body>
 </html>
