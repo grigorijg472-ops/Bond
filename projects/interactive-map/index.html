@@ -1,622 +1,295 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Map — Кастомная интерактивная карта</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Interactive Map: интерактивная карта на Canvas</title>
+<meta name="description" content="Карта на Canvas: перетаскивание, масштаб колесом и щипком, маркеры, фильтры по категориям и поиск.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+  :root { --accent: #2a62d6; --accent-ink: #2250b0; --on-accent: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --accent: #7ea6ff; --accent-ink: #9dbaff; --on-accent: #08122b; } }
+  html, body { height: 100%; }
+  body { display: grid; grid-template-rows: 60px minmax(0, 1fr); overflow: hidden; }
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--line); }
+  .app { display: grid; grid-template-columns: 380px minmax(0, 1fr); min-height: 0; }
+  .side { display: grid; grid-template-rows: auto auto minmax(0, 1fr); min-height: 0; background: var(--surface); border-right: 1px solid var(--line); }
+  .side-head { padding: 20px 20px 14px; display: grid; gap: 14px; }
+  .side-head h1 { font-size: 1.5rem; letter-spacing: -0.03em; }
+  .search { position: relative; }
+  .search .i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+  .search .input { padding-left: 42px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 14px; border-bottom: 1px solid var(--line); }
+  .cat { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); font-size: .86rem; font-weight: 500; background: var(--surface); transition: border-color .2s, background-color .2s, opacity .2s; }
+  .cat i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+  .cat:hover { border-color: var(--muted); }
+  .cat[aria-pressed="true"] { border-color: color-mix(in srgb, var(--c) 70%, var(--line)); background: color-mix(in srgb, var(--c) 10%, var(--surface)); }
+  .cat[aria-pressed="false"] { opacity: .55; }
+  .cat[aria-pressed="false"] i { background: transparent; box-shadow: inset 0 0 0 2px var(--c); }
+  .list { list-style: none; padding: 8px 12px 20px; margin: 0; overflow-y: auto; display: grid; gap: 4px; align-content: start; overscroll-behavior: contain; }
+  .loc { width: 100%; text-align: left; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding: 14px; border-radius: 14px; border: 1px solid transparent; transition: background-color .2s, border-color .2s; }
+  .loc:hover { background: var(--surface-2); }
+  .loc[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 8%, var(--surface)); border-color: color-mix(in srgb, var(--c) 55%, var(--line)); }
+  .badge { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff; font-weight: 700; font-size: .9rem; font-family: var(--mono); }
+  .loc .t { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .loc .t b { font-weight: 600; }
+  .loc .t span { font-size: .78rem; color: var(--muted); white-space: nowrap; }
+  .loc .d { color: var(--muted); font-size: .9rem; margin-top: 4px; }
+  .loc .m { display: none; gap: 6px 16px; flex-wrap: wrap; margin-top: 10px; font-size: .85rem; }
+  .loc[aria-pressed="true"] .m { display: flex; }
+  .loc .m span { display: inline-flex; align-items: center; gap: 6px; }
+  .loc .m .i { color: var(--muted); width: 1.1em; height: 1.1em; }
+  .empty { padding: 28px 8px; text-align: center; color: var(--muted); }
+  .count { font-size: .84rem; color: var(--muted); display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
+  .count button { font-weight: 600; color: var(--accent-ink); min-height: 28px; }
 
-    body {
-      background: #f8fafc;
-      font-family: 'Inter', -apple-system, sans-serif;
-      min-height: 100vh;
-    }
+  .stage { position: relative; min-height: 0; min-width: 0; background: var(--bg); }
+  #map { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; outline-offset: -3px; }
+  #map.drag { cursor: grabbing; } #map.hit { cursor: pointer; }
+  .ctl { position: absolute; top: 16px; right: 16px; display: grid; gap: 8px; }
+  .ctl .btn { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 12px; width: 46px; min-height: 46px; padding: 0; }
+  .ctl .btn:hover { background: var(--surface-2); }
+  .tip { position: absolute; left: 0; top: 0; pointer-events: none; padding: 6px 10px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: .85rem; font-weight: 600; white-space: nowrap; opacity: 0; transition: opacity .15s; z-index: 5; }
+  .tip.on { opacity: 1; }
+  .hint { position: absolute; left: 16px; bottom: 16px; display: inline-flex; gap: 8px; align-items: center; padding: 8px 12px; border-radius: 10px; background: color-mix(in srgb, var(--surface) 88%, transparent); border: 1px solid var(--line); font-size: .82rem; color: var(--muted); pointer-events: none; }
 
-    .page-header {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      color: white;
-      padding: 80px 20px;
-      text-align: center;
-    }
-
-    .page-header h1 {
-      font-size: clamp(2rem, 5vw, 4rem);
-      font-weight: 800;
-      margin-bottom: 16px;
-    }
-
-    .page-header p {
-      font-size: 1.25rem;
-      color: rgba(255,255,255,0.8);
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .map-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
-    .map-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 10;
-      padding: 40px;
-      pointer-events: none;
-    }
-
-    .sidebar {
-      position: absolute;
-      left: 40px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 350px;
-      background: white;
-      border-radius: 24px;
-      padding: 32px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-      pointer-events: auto;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    .sidebar h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 24px;
-      color: #1e293b;
-    }
-
-    .location-card {
-      background: #f8fafc;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 16px;
-      transition: all 0.3s;
-      cursor: pointer;
-      border: 2px solid transparent;
-    }
-
-    .location-card:hover {
-      background: #f1f5f9;
-      transform: translateX(8px);
-      border-color: #3b82f6;
-    }
-
-    .location-card.active {
-      background: #eff6ff;
-      border-color: #3b82f6;
-    }
-
-    .location-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .location-name {
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #1e293b;
-    }
-
-    .location-tag {
-      background: #3b82f6;
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .location-desc {
-      font-size: 0.9375rem;
-      color: #64748b;
-      line-height: 1.6;
-    }
-
-    .location-meta {
-      display: flex;
-      gap: 16px;
-      margin-top: 16px;
-      font-size: 0.875rem;
-      color: #94a3b8;
-    }
-
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .search-container {
-      margin-bottom: 24px;
-      position: relative;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 14px 20px 14px 48px;
-      border: 2px solid #e2e8f0;
-      border-radius: 16px;
-      font-size: 1rem;
-      background: #f8fafc;
-      transition: all 0.3s;
-    }
-
-    .search-input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      background: white;
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #94a3b8;
-    }
-
-    .stats-bar {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 24px;
-      background: white;
-      padding: 20px 40px;
-      border-radius: 50px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-      pointer-events: auto;
-    }
-
-    .stat-item {
-      text-align: center;
-    }
-
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #1e293b;
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #94a3b8;
-    }
-
-    .legend {
-      position: absolute;
-      bottom: 40px;
-      right: 40px;
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-      pointer-events: auto;
-    }
-
-    .legend h4 {
-      font-size: 0.875rem;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 16px;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
-      font-size: 0.875rem;
-      color: #64748b;
-    }
-
-    .legend-color {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-    }
-
-    .controls {
-      position: absolute;
-      top: 40px;
-      right: 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      pointer-events: auto;
-    }
-
-    .control-btn {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      border: none;
-      background: white;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-      color: #1e293b;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      transition: all 0.3s;
-    }
-
-    .control-btn:hover {
-      transform: scale(1.05);
-      background: #f1f5f9;
-    }
-
-    @media (max-width: 900px) {
-      .sidebar { display: none; }
-      .stats-bar { width: 90%; left: 50%; transform: translateX(-50%); }
-      .legend { display: none; }
-    }
-
-    @media print {
-      .sidebar, .stats-bar, .legend, .controls { display: none; }
-    }
-  </style>
+  @media (max-width: 900px) {
+    body { overflow: auto; display: block; height: auto; }
+    .topbar { position: sticky; top: 0; z-index: 30; height: 60px; }
+    .app { display: flex; flex-direction: column-reverse; }
+    .stage { height: 56dvh; min-height: 340px; }
+    .side { border-right: 0; border-top: 1px solid var(--line); }
+    .list { overflow: visible; }
+    .hint { display: none; }
+  }
+</style>
 </head>
 <body>
-  <div class="page-header">
-    <h1>🗺️ Interactive Map</h1>
-    <p>Интерактивная карта с кастомными маркерами, фильтрацией и детальными описаниями.</p>
-  </div>
+<header class="topbar">
+  <a class="back" href="../../index.html#projects"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path><path d="M5 12l6 6"></path><path d="M5 12l6 -6"></path></svg><span>Портфолио</span></a>
+  <span class="name">Interactive Map</span>
+  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg><span>Написать</span></a>
+</header>
 
-  <div class="map-container" id="mapContainer">
-    <canvas id="mapCanvas"></canvas>
-
-    <div class="map-overlay">
-      <div class="sidebar">
-        <div class="search-container">
-          <span class="search-icon">🔍</span>
-          <input type="text" class="search-input" id="searchInput" placeholder="Поиск локаций...">
-        </div>
-
-        <h2>Локации</h2>
-
-        <div class="location-card active" data-id="1">
-          <div class="location-header">
-            <span class="location-name">Центральный офис</span>
-            <span class="location-tag">Офис</span>
-          </div>
-          <div class="location-desc">
-            Главный офис компании. Здесь расположены административные службы и команда разработки.
-          </div>
-          <div class="location-meta">
-            <span class="meta-item">🕒 9:00-18:00</span>
-            <span class="meta-item">👥 50 человек</span>
-          </div>
-        </div>
-
-        <div class="location-card" data-id="2">
-          <div class="location-header">
-            <span class="location-name">Технопарк</span>
-            <span class="location-tag">Инфраструктура</span>
-          </div>
-          <div class="location-desc">
-            Современное здание с лабораториями и вычислительным центром. Ключевой объект инфраструктуры.
-          </div>
-          <div class="location-meta">
-            <span class="meta-item">🕒 24/7</span>
-            <span class="meta-item">💻 100+ раб. мест</span>
-          </div>
-        </div>
-
-        <div class="location-card" data-id="3">
-          <div class="location-header">
-            <span class="location-name">Клиентский центр</span>
-            <span class="location-tag">Сервис</span>
-          </div>
-          <div class="location-desc">
-            Место встреч с клиентами. Конференц-залы и переговорные комнаты для обсуждения проектов.
-          </div>
-          <div class="location-meta">
-            <span class="meta-item">🕒 10:00-20:00</span>
-            <span class="meta-item">👥 20 сотрудников</span>
-          </div>
-        </div>
-
-        <div class="location-card" data-id="4">
-          <div class="location-header">
-            <span class="location-name">Дистрибуция</span>
-            <span class="location-tag">Логистика</span>
-          </div>
-          <div class="location-desc">
-            Складской комплекс с системой автоматизированного учёта. Обработка заказов и доставка.
-          </div>
-          <div class="location-meta">
-            <span class="meta-item">🕒 8:00-22:00</span>
-            <span class="meta-item">📦 500+ заказов/день</span>
-          </div>
-        </div>
-
-        <div class="location-card" data-id="5">
-          <div class="location-header">
-            <span class="location-name">Инновационный центр</span>
-            <span class="location-tag">R&amp;D</span>
-          </div>
-          <div class="location-desc">
-            Лаборатория новых технологий. Разработка прототипов и экспериментальных решений.
-          </div>
-          <div class="location-meta">
-            <span class="meta-item">🕒 9:00-21:00</span>
-            <span class="meta-item">🔬 30 специалистов</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="controls">
-        <button class="control-btn" id="zoomIn">+</button>
-        <button class="control-btn" id="zoomOut">-</button>
-        <button class="control-btn" id="resetView">🔄</button>
-      </div>
-
-      <div class="stats-bar">
-        <div class="stat-item">
-          <div class="stat-value">5</div>
-          <div class="stat-label">Локаций</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value">350+</div>
-          <div class="stat-label">Сотрудников</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-value">100%</div>
-          <div class="stat-label">Покрытие</div>
-        </div>
-      </div>
-
-      <div class="legend">
-        <h4>Категории</h4>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #3b82f6;"></div>
-          <span>Офис</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #10b981;"></div>
-          <span>Инфраструктура</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #f59e0b;"></div>
-          <span>Сервис</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #ef4444;"></div>
-          <span>Логистика</span>
-        </div>
-        <div class="legend-item">
-          <div class="legend-color" style="background: #8b5cf6;"></div>
-          <span>R&amp;D</span>
-        </div>
+<div class="app">
+  <aside class="side" aria-label="Локации">
+    <div class="side-head">
+      <h1>Локации</h1>
+      <div class="search">
+        <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path><path d="M21 21l-6 -6"></path></svg>
+        <label class="sr-only" for="q">Поиск локаций</label>
+        <input class="input" id="q" type="search" placeholder="Название или описание" autocomplete="off">
       </div>
     </div>
-  </div>
+    <div class="chips" id="chips" role="group" aria-label="Категории"></div>
+    <div style="min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr)">
+      <p class="count" id="count" aria-live="polite" style="padding:10px 20px 0"></p>
+      <ul class="list" id="list"></ul>
+    </div>
+  </aside>
 
-  <script>
-    const canvas = document.getElementById('mapCanvas');
-    const ctx = canvas.getContext('2d');
+  <section class="stage" aria-label="Карта">
+    <canvas id="map" tabindex="0" role="application" aria-label="Карта локаций. Стрелки двигают карту, плюс и минус меняют масштаб."></canvas>
+    <div class="ctl">
+      <button class="btn" id="zin" type="button" aria-label="Приблизить"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg></button>
+      <button class="btn" id="zout" type="button" aria-label="Отдалить"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path></svg></button>
+      <button class="btn" id="fit" type="button" aria-label="Показать все локации"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11.5 12a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0" fill="currentColor"></path><path d="M5 12a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path><path d="M12 3l0 2"></path><path d="M3 12l2 0"></path><path d="M12 19l0 2"></path><path d="M19 12l2 0"></path></svg></button>
+    </div>
+    <div class="tip" id="tip" role="presentation"></div>
+    <p class="hint"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 13v-8.5a1.5 1.5 0 0 1 3 0v7.5"></path><path d="M11 11.5v-2a1.5 1.5 0 0 1 3 0v2.5"></path><path d="M14 10.5a1.5 1.5 0 0 1 3 0v1.5"></path><path d="M17 11.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7l-.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47"></path><path d="M2.541 5.594a13.487 13.487 0 0 1 2.46 -1.427"></path><path d="M14 3.458c1.32 .354 2.558 .902 3.685 1.612"></path></svg>Перетащите, колесо или щипок для масштаба</p>
+  </section>
+</div>
 
-    // Canvas setup
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const IC = { clock: `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path><path d="M12 7v5l3 3"></path></svg>`, users: `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path><path d="M21 21v-2a4 4 0 0 0 -3 -3.85"></path></svg>`, pc: `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 5a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1v-10"></path><path d="M7 20h10"></path><path d="M9 16v4"></path><path d="M15 16v4"></path></svg>`, box: `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"></path><path d="M12 12l8 -4.5"></path><path d="M12 12l0 9"></path><path d="M12 12l-8 -4.5"></path><path d="M16 5.25l-8 4.5"></path></svg>`, lab: `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 3l6 0"></path><path d="M10 9l4 0"></path><path d="M10 3v6l-4 11a.7 .7 0 0 0 .5 1h11a.7 .7 0 0 0 .5 -1l-4 -11v-6"></path></svg>` };
+  const CATS = { 'Офис': '#2a62d6', 'Инфраструктура': '#14795a', 'Сервис': '#a35f00', 'Логистика': '#c63a2e', 'R&D': '#6d49c9' };
+  const LOCS = [
+    { id: 1, name: 'Центральный офис', cat: 'Офис', x: 330, y: 270, desc: 'Главный офис компании. Здесь расположены административные службы и команда разработки.', meta: [['clock', '9:00-18:00'], ['users', '50 человек']] },
+    { id: 2, name: 'Технопарк', cat: 'Инфраструктура', x: 640, y: 190, desc: 'Современное здание с лабораториями и вычислительным центром. Ключевой объект инфраструктуры.', meta: [['clock', '24/7'], ['pc', '100+ рабочих мест']] },
+    { id: 3, name: 'Клиентский центр', cat: 'Сервис', x: 190, y: 440, desc: 'Место встреч с клиентами. Конференц-залы и переговорные комнаты для обсуждения проектов.', meta: [['clock', '10:00-20:00'], ['users', '20 сотрудников']] },
+    { id: 4, name: 'Дистрибуция', cat: 'Логистика', x: 780, y: 440, desc: 'Складской комплекс с системой автоматизированного учёта. Обработка заказов и доставка.', meta: [['clock', '8:00-22:00'], ['box', '500+ заказов в день']] },
+    { id: 5, name: 'Инновационный центр', cat: 'R&D', x: 500, y: 360, desc: 'Лаборатория новых технологий. Разработка прототипов и экспериментальных решений.', meta: [['clock', '9:00-21:00'], ['lab', '30 специалистов']] }
+  ];
+  const W = 1000, H = 700;
+  const norm = s => s.toLowerCase().replace(/ё/g, 'е');
+  let active = new Set(Object.keys(CATS)), query = '', sel = null, hover = null;
+
+  /* ---------- Список и фильтры ---------- */
+  const visible = () => LOCS.filter(l => active.has(l.cat) && (!query || norm(l.name + ' ' + l.desc + ' ' + l.cat).includes(query)));
+  function buildChips() {
+    const box = $('chips'); box.replaceChildren();
+    Object.entries(CATS).forEach(([name, c]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'cat'; b.style.setProperty('--c', c); b.setAttribute('aria-pressed', active.has(name));
+      b.innerHTML = '<i></i><span></span>'; b.lastChild.textContent = name;
+      b.addEventListener('click', () => { active.has(name) ? active.delete(name) : active.add(name); b.setAttribute('aria-pressed', active.has(name)); if (sel && !visible().some(l => l.id === sel)) sel = null; renderList(); draw(); });
+      box.appendChild(b);
+    });
+  }
+  function renderList() {
+    const list = $('list'), vis = visible(); list.replaceChildren();
+    vis.forEach(l => {
+      const li = document.createElement('li'), b = document.createElement('button');
+      b.type = 'button'; b.className = 'loc'; b.style.setProperty('--c', CATS[l.cat]); b.setAttribute('aria-pressed', sel === l.id); b.dataset.id = l.id;
+      b.innerHTML = `<span class="badge"></span><span><span class="t"><b></b><span></span></span><span class="d" style="display:block"></span><span class="m"></span></span>`;
+      b.querySelector('.badge').textContent = l.id; b.querySelector('b').textContent = l.name; b.querySelector('.t > span').textContent = l.cat; b.querySelector('.d').textContent = l.desc;
+      const m = b.querySelector('.m'); l.meta.forEach(([ic, tx]) => { const s = document.createElement('span'); s.innerHTML = IC[ic]; s.append(tx); m.appendChild(s); });
+      b.addEventListener('click', () => select(sel === l.id ? null : l.id, true));
+      li.appendChild(b); list.appendChild(li);
+    });
+    if (!vis.length) { const e = document.createElement('li'); e.className = 'empty'; e.textContent = 'Ничего не найдено. Измените запрос или фильтры.'; list.appendChild(e); }
+    const off = Object.keys(CATS).length - active.size;
+    $('count').replaceChildren(document.createTextNode('Показано ' + vis.length + ' из ' + LOCS.length));
+    if (off || query) { const r = document.createElement('button'); r.type = 'button'; r.textContent = 'Сбросить'; r.addEventListener('click', () => { active = new Set(Object.keys(CATS)); query = ''; $('q').value = ''; buildChips(); renderList(); draw(); }); $('count').appendChild(r); }
+  }
+  $('q').addEventListener('input', e => { query = norm(e.target.value.trim()); if (sel && !visible().some(l => l.id === sel)) sel = null; renderList(); draw(); });
+
+  /* ---------- Тема и мир ---------- */
+  const dark = () => matchMedia('(prefers-color-scheme: dark)').matches;
+  const THEME = () => dark()
+    ? { land: '#161a18', block: '#1f2522', road: '#2d3531', water: '#15303d', park: '#1c3626', stroke: '#101312', ink: '#eceee9', ring: '#ffffff' }
+    : { land: '#ece9df', block: '#e0dccf', road: '#fbfaf5', water: '#b9d3df', park: '#cfdcb9', stroke: '#ffffff', ink: '#16181a', ring: '#16181a' };
+  let world = null, theme = THEME();
+  function rng(seed) { let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+  const PAD = 300;
+  function buildWorld() {
+    theme = THEME();
+    const S = 1.5, oc = document.createElement('canvas'); oc.width = Math.round((W + PAD * 2) * S); oc.height = Math.round((H + PAD * 2) * S);
+    const g = oc.getContext('2d'); g.scale(S, S); g.translate(PAD, PAD);
+    g.fillStyle = theme.land; g.fillRect(-PAD, -PAD, W + PAD * 2, H + PAD * 2);
+    const r = rng(11);
+    g.fillStyle = theme.block;
+    for (let x = -PAD; x < W + PAD; x += 50) for (let y = -PAD; y < H + PAD; y += 50) {
+      const w = 30 + r() * 12, h = 30 + r() * 12;
+      g.beginPath(); g.roundRect ? g.roundRect(x + 6 + r() * 4, y + 6 + r() * 4, w, h, 4) : g.rect(x + 8, y + 8, w, h); g.fill();
     }
+    g.fillStyle = theme.park;
+    [[140, 150, 90, 56], [880, 330, 64, 90], [430, 590, 110, 46], [560, 80, 70, 40], [-180, 420, 110, 70], [1160, 120, 90, 60], [300, -150, 100, 50], [760, 880, 110, 60]].forEach(([cx, cy, rx, ry]) => { g.beginPath(); g.ellipse(cx, cy, rx, ry, 0.2, 0, Math.PI * 2); g.fill(); });
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    g.strokeStyle = theme.water; g.lineWidth = 46; g.beginPath(); g.moveTo(-340, 640); g.bezierCurveTo(-100, 560, 60, 640, 220, 560); g.bezierCurveTo(330, 690, 400, 650, 540, 610); g.bezierCurveTo(760, 530, 860, 650, 1040, 590); g.bezierCurveTo(1160, 560, 1240, 600, 1340, 560); g.stroke();
+    g.strokeStyle = theme.road;
+    [[-PAD, 120, W + PAD, 120, 10], [-PAD, 330, W + PAD, 330, 12], [-PAD, 500, W + PAD, 500, 9], [-PAD, -90, W + PAD, -90, 8], [-PAD, 800, W + PAD, 800, 8],
+     [160, -PAD, 160, H + PAD, 9], [420, -PAD, 420, H + PAD, 12], [700, -PAD, 700, H + PAD, 10], [930, -PAD, 930, H + PAD, 8], [-120, -PAD, -120, H + PAD, 8], [1150, -PAD, 1150, H + PAD, 8]]
+      .forEach(([x1, y1, x2, y2, w]) => { g.lineWidth = w; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); });
+    world = oc;
+  }
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { buildWorld(); draw(); });
 
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+  /* ---------- Камера ---------- */
+  const cv = $('map'), ctx = cv.getContext('2d');
+  let cw = 0, ch = 0, dpr = 1;
+  const view = { cx: W / 2, cy: H / 2, s: 1 };
+  const MIN = 0.5, MAX = 6;
+  const toScreen = (x, y) => [cw / 2 + (x - view.cx) * view.s, ch / 2 + (y - view.cy) * view.s];
+  const toWorld = (px, py) => [view.cx + (px - cw / 2) / view.s, view.cy + (py - ch / 2) / view.s];
+  function clamp() { view.s = Math.max(MIN, Math.min(MAX, view.s)); view.cx = Math.max(-100, Math.min(W + 100, view.cx)); view.cy = Math.max(-100, Math.min(H + 100, view.cy)); }
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cw = cv.clientWidth; ch = cv.clientHeight; if (!cw || !ch) return;
+    cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  }
+  function fitTo(list, animate) {
+    const pts = (list && list.length ? list : LOCS);
+    const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+    const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+    const pad = 110, s = Math.min(cw / (maxX - minX + pad * 2), ch / (maxY - minY + pad * 2), 2.2);
+    fly({ cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, s }, animate);
+  }
+  let anim = 0;
+  function fly(t, animate = true) {
+    cancelAnimationFrame(anim);
+    const a = { ...view }, t0 = performance.now(), dur = reduce || !animate ? 0 : 650;
+    const step = now => {
+      const k = dur ? Math.min((now - t0) / dur, 1) : 1, e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      view.cx = a.cx + (t.cx - a.cx) * e; view.cy = a.cy + (t.cy - a.cy) * e; view.s = a.s * Math.pow(t.s / a.s, e);
+      clamp(); draw(); if (k < 1) anim = requestAnimationFrame(step);
+    };
+    anim = requestAnimationFrame(step);
+  }
+  function zoomAt(px, py, f) {
+    const [wx, wy] = toWorld(px, py); view.s = Math.max(MIN, Math.min(MAX, view.s * f));
+    view.cx = wx - (px - cw / 2) / view.s; view.cy = wy - (py - ch / 2) / view.s; clamp(); draw();
+  }
 
-    // Locations data
-    const locations = [
-      { id: 1, x: canvas.width * 0.35, y: canvas.height * 0.4, type: 'Офис', color: '#3b82f6', size: 20 },
-      { id: 2, x: canvas.width * 0.6, y: canvas.height * 0.3, type: 'Инфраструктура', color: '#10b981', size: 24 },
-      { id: 3, x: canvas.width * 0.25, y: canvas.height * 0.7, type: 'Сервис', color: '#f59e0b', size: 18 },
-      { id: 4, x: canvas.width * 0.7, y: canvas.height * 0.65, type: 'Логистика', color: '#ef4444', size: 22 },
-      { id: 5, x: canvas.width * 0.5, y: canvas.height * 0.55, type: 'R&D', color: '#8b5cf6', size: 26 }
-    ];
-
-    // Zoom state
-    let scale = 1;
-    let offsetX = 0;
-    let offsetY = 0;
-    let isDragging = false;
-    let lastX = 0;
-    let lastY = 0;
-
-    // Draw connection lines
-    function drawConnections() {
-      ctx.strokeStyle = 'rgba(59, 130, 246, 0.2)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-
-      for (let i = 0; i < locations.length; i++) {
-        for (let j = i + 1; j < locations.length; j++) {
-          const x1 = locations[i].x + offsetX;
-          const y1 = locations[i].y + offsetY;
-          const x2 = locations[j].x + offsetX;
-          const y2 = locations[j].y + offsetY;
-
-          // Draw curved line
-          const midX = (x1 + x2) / 2;
-          const midY = (y1 + y2) / 2;
-          const curveX = midX;
-          const curveY = midY + Math.abs(x2 - x1) * 0.1;
-
-          ctx.moveTo(x1, y1);
-          ctx.quadraticCurveTo(curveX, curveY, x2, y2);
-        }
-      }
-
-      ctx.stroke();
-    }
-
-    // Draw markers
-    function drawMarkers() {
-      locations.forEach(loc => {
-        const x = loc.x + offsetX;
-        const y = loc.y + offsetY;
-        const size = loc.size * scale;
-
-        // Draw glow
-        const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 2);
-        gradient.addColorStop(0, loc.color + '40');
-        gradient.addColorStop(1, loc.color + '00');
-
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(x, y, size * 2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Draw marker circle
-        ctx.fillStyle = loc.color;
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Draw border
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-
-        // Draw label
-        ctx.fillStyle = '#1e293b';
-        ctx.font = `600 14px Inter`;
-        ctx.textAlign = 'center';
-        ctx.fillText(loc.type, x, y - size - 8);
-      });
-    }
-
-    // Draw map background (abstract)
-    function drawBackground() {
-      ctx.fillStyle = '#f8fafc';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw grid
-      ctx.strokeStyle = 'rgba(148, 163, 184, 0.1)';
-      ctx.lineWidth = 1;
-
-      const gridSize = 50 * scale;
-
-      ctx.beginPath();
-      for (let x = offsetX % gridSize; x < canvas.width; x += gridSize) {
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-      }
-      for (let y = offsetY % gridSize; y < canvas.height; y += gridSize) {
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-      }
-      ctx.stroke();
-    }
-
-    // Main render - called only when needed
-    function render() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawBackground();
-      drawConnections();
-      drawMarkers();
-    }
-
-    // Mouse interaction
-    canvas.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      lastX = e.clientX;
-      lastY = e.clientY;
+  /* ---------- Отрисовка ---------- */
+  let queued = false;
+  function draw() { if (!queued) { queued = true; requestAnimationFrame(render); } }
+  function render() {
+    queued = false; if (!cw || !world) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = theme.land; ctx.fillRect(0, 0, cw, ch);
+    const [ox, oy] = toScreen(-PAD, -PAD);
+    ctx.imageSmoothingQuality = 'high'; ctx.drawImage(world, ox, oy, (W + PAD * 2) * view.s, (H + PAD * 2) * view.s);
+    const vis = visible(), pulse = reduce ? 0 : (performance.now() % 1600) / 1600;
+    // тонкие связи от выбранной точки
+    if (sel) { const a = LOCS.find(l => l.id === sel); if (a) { ctx.save(); ctx.setLineDash([5, 6]); ctx.strokeStyle = CATS[a.cat]; ctx.globalAlpha = .45; ctx.lineWidth = 1.5; const [ax, ay] = toScreen(a.x, a.y); vis.forEach(l => { if (l.id === sel) return; const [bx, by] = toScreen(l.x, l.y); ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); }); ctx.restore(); } }
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    [...vis].sort((a, b) => (a.id === sel) - (b.id === sel)).forEach(l => {
+      const [x, y] = toScreen(l.x, l.y), on = l.id === sel, hv = l.id === hover, col = CATS[l.cat], r = on ? 18 : hv ? 17 : 15;
+      if (on) { ctx.beginPath(); ctx.arc(x, y, r + 6 + pulse * 14, 0, Math.PI * 2); ctx.strokeStyle = col; ctx.globalAlpha = (1 - pulse) * .5; ctx.lineWidth = 2; ctx.stroke(); ctx.globalAlpha = 1; }
+      ctx.beginPath(); ctx.arc(x, y + 2, r, 0, Math.PI * 2); ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = theme.stroke; ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = '700 13px "JetBrains Mono", monospace'; ctx.fillText(String(l.id), x, y + 1);
+      if (on || view.s >= 1.4) { ctx.font = '600 13px Onest, system-ui, sans-serif'; ctx.lineWidth = 4; ctx.strokeStyle = theme.land; ctx.strokeText(l.name, x, y + r + 16); ctx.fillStyle = theme.ink; ctx.fillText(l.name, x, y + r + 16); }
     });
+    if (sel && !reduce) draw();
+  }
 
-    window.addEventListener('mouseup', () => {
-      isDragging = false;
-    });
+  /* ---------- Выбор ---------- */
+  function select(id, fromList) {
+    sel = id; renderList();
+    if (id) {
+      const l = LOCS.find(x => x.id === id); fly({ cx: l.x, cy: l.y, s: Math.max(view.s, 1.8) });
+      const el = $('list').querySelector('[data-id="' + id + '"]'); if (el) el.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+    } else draw();
+  }
 
-    window.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        const dx = e.clientX - lastX;
-        const dy = e.clientY - lastY;
-        offsetX += dx;
-        offsetY += dy;
-        lastX = e.clientX;
-        lastY = e.clientY;
-        render();
-      }
-    });
+  /* ---------- Ввод ---------- */
+  const pts = new Map(); let lastPinch = 0, moved = 0, downAt = null;
+  const rect = () => cv.getBoundingClientRect();
+  function hit(px, py) { let best = null, bd = 26; visible().forEach(l => { const [x, y] = toScreen(l.x, l.y), d = Math.hypot(x - px, y - py); if (d < bd) { bd = d; best = l; } }); return best; }
+  cv.addEventListener('pointerdown', e => {
+    cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); moved = 0; downAt = { x: e.clientX, y: e.clientY };
+    if (pts.size === 2) { const [a, b] = [...pts.values()]; lastPinch = Math.hypot(a.x - b.x, a.y - b.y); }
+    cv.classList.add('drag'); cancelAnimationFrame(anim);
+  });
+  cv.addEventListener('pointermove', e => {
+    const r = rect(), px = e.clientX - r.left, py = e.clientY - r.top;
+    if (!pts.has(e.pointerId)) { const h = hit(px, py); if ((h && h.id) !== hover) { hover = h ? h.id : null; draw(); } cv.classList.toggle('hit', !!h); tip(h, px, py); return; }
+    const p = pts.get(e.pointerId), dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY; moved += Math.abs(dx) + Math.abs(dy);
+    if (pts.size === 2) {
+      const [a, b] = [...pts.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (lastPinch) zoomAt((a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top, d / lastPinch); lastPinch = d;
+    } else if (pts.size === 1) { view.cx -= dx / view.s; view.cy -= dy / view.s; clamp(); draw(); tip(null); }
+  });
+  const up = e => {
+    const had = pts.delete(e.pointerId); lastPinch = 0; if (!pts.size) cv.classList.remove('drag');
+    if (had && e.type === 'pointerup' && moved < 6 && downAt) { const r = rect(), h = hit(e.clientX - r.left, e.clientY - r.top); if (h) select(h.id); }
+  };
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+  cv.addEventListener('pointerleave', () => { hover = null; tip(null); draw(); });
+  cv.addEventListener('wheel', e => { e.preventDefault(); const r = rect(); zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(-e.deltaY * 0.0015)); }, { passive: false });
+  cv.addEventListener('dblclick', e => { const r = rect(); zoomAt(e.clientX - r.left, e.clientY - r.top, 1.8); });
+  cv.addEventListener('keydown', e => {
+    const k = e.key, st = 70 / view.s; let used = true;
+    if (k === 'ArrowLeft') view.cx -= st; else if (k === 'ArrowRight') view.cx += st; else if (k === 'ArrowUp') view.cy -= st; else if (k === 'ArrowDown') view.cy += st;
+    else if (k === '+' || k === '=') view.s *= 1.25; else if (k === '-' || k === '_') view.s /= 1.25; else if (k === 'Escape') { select(null); } else used = false;
+    if (used) { e.preventDefault(); clamp(); draw(); }
+  });
+  function tip(l, px, py) { const t = $('tip'); if (!l) { t.classList.remove('on'); return; } t.textContent = l.name; t.style.transform = 'translate(' + (px + 18) + 'px,' + (py - 44) + 'px)'; t.classList.add('on'); }
+  $('zin').addEventListener('click', () => zoomAt(cw / 2, ch / 2, 1.4)); $('zout').addEventListener('click', () => zoomAt(cw / 2, ch / 2, 1 / 1.4));
+  $('fit').addEventListener('click', () => { sel = null; renderList(); fitTo(visible(), true); });
 
-    // Zoom controls
-    const zoomInBtn = document.getElementById('zoomIn');
-    const zoomOutBtn = document.getElementById('zoomOut');
-    const resetBtn = document.getElementById('resetView');
-
-    zoomInBtn.addEventListener('click', () => {
-      scale *= 1.2;
-      render();
-    });
-
-    zoomOutBtn.addEventListener('click', () => {
-      scale /= 1.2;
-      render();
-    });
-
-    resetBtn.addEventListener('click', () => {
-      scale = 1;
-      offsetX = 0;
-      offsetY = 0;
-      render();
-    });
-
-    // Location selection
-    const locationCards = document.querySelectorAll('.location-card');
-    const searchInput = document.getElementById('searchInput');
-
-    function selectLocation(id) {
-      locationCards.forEach(card => {
-        card.classList.toggle('active', parseInt(card.dataset.id) === id);
-      });
-
-      const loc = locations.find(l => l.id === id);
-      if (loc) {
-        const centerX = (canvas.width - 350) / 2 - 40 - loc.x;
-        const centerY = canvas.height / 2 - loc.y;
-        offsetX = centerX;
-        offsetY = centerY;
-        scale = 1.5;
-        render();
-      }
-    }
-
-    locationCards.forEach(card => {
-      card.addEventListener('click', () => {
-        selectLocation(parseInt(card.dataset.id));
-      });
-    });
-
-    // Search filter
-    searchInput.addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase();
-      locationCards.forEach(card => {
-        const text = card.textContent.toLowerCase();
-        card.style.display = text.includes(query) ? 'block' : 'none';
-      });
-    });
-
-    // Initial render
-    offsetX = (canvas.width - 350 - 80) / 2 - canvas.width / 2;
-    offsetY = canvas.height / 2 - canvas.height / 2;
-    render();
-  </script>
+  /* ---------- Запуск ---------- */
+  buildChips(); renderList(); buildWorld();
+  new ResizeObserver(() => { resize(); if (!view.init) { view.init = true; fitTo(LOCS, false); } draw(); }).observe(cv);
+  resize(); if (cw) { view.init = true; fitTo(LOCS, false); } draw();
+})();
+</script>
 </body>
 </html>

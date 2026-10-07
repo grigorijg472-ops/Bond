@@ -2,551 +2,206 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Калькулятор стоимости разработки</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Калькулятор стоимости разработки сайта</title>
+<meta name="description" content="Прикиньте стоимость и сроки разработки: выберите тип проекта, функции и срочность. Итог пересчитывается сразу.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="shared/base.css">
 <style>
-:root {
-  --bg: #0a0a0b;
-  --fg: #fafafa;
-  --muted: #71717a;
-  --accent: #22d3ee;
-  --accent-hover: #06b6d4;
-  --card: #18181b;
-  --border: #27272a;
-  --success: #10b981;
-  --warning: #f59e0b;
-}
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg: #fafafa;
-    --fg: #09090b;
-    --muted: #71717a;
-    --accent: #0891b2;
-    --accent-hover: #0e7490;
-    --card: #ffffff;
-    --border: #e4e4e7;
-    color-scheme: light;
+  :root { --accent: #c8381a; --accent-ink: #b02f14; --on-accent: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --accent: #ff8a66; --accent-ink: #ffa186; --on-accent: #1c0b05; } }
+  .page { max-width: 1120px; margin: 0 auto; padding: 8px clamp(16px, 4vw, 40px) 72px; }
+  .head { padding: clamp(12px, 4vh, 40px) 0 32px; max-width: 40rem; }
+  .head h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 700; letter-spacing: -0.04em; }
+  .head p { color: var(--muted); font-size: 1.1rem; margin-top: 14px; }
+  .calc { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
+  .form { display: grid; gap: 36px; }
+  fieldset { border: 0; padding: 0; min-width: 0; }
+  legend { padding: 0; font-weight: 700; font-size: 1.05rem; margin-bottom: 14px; display: flex; align-items: baseline; gap: 12px; }
+  legend small { font-family: var(--mono); font-weight: 500; font-size: .8rem; color: var(--muted); }
+  .opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .opts.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .opt { position: relative; display: block; cursor: pointer; }
+  .opt input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .opt .box { display: grid; gap: 4px; padding: 16px 18px; min-height: 76px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface);
+    transition: border-color .2s, background-color .2s, transform .15s var(--ease); }
+  .opt:hover .box { border-color: color-mix(in srgb, var(--muted) 60%, var(--line)); }
+  .opt input:focus-visible + .box { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt input:checked + .box { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); box-shadow: inset 0 0 0 1px var(--accent); }
+  .opt:active .box { transform: scale(.985); }
+  .opt b { font-weight: 600; }
+  .opt .sub { font-size: .84rem; color: var(--muted); }
+  .opt .price { font-family: var(--mono); font-weight: 500; font-size: .85rem; color: var(--accent-ink); }
+
+  .feat { display: grid; gap: 8px; }
+  .feat .opt .box { grid-template-columns: 24px 1fr auto; align-items: center; gap: 14px; min-height: 64px; padding: 12px 16px; }
+  .tick { width: 22px; height: 22px; border-radius: 7px; border: 1.5px solid var(--line); display: grid; place-items: center; color: transparent; transition: background-color .2s, border-color .2s; }
+  .tick .i { width: 14px; height: 14px; stroke-width: 3; }
+  .opt input:checked + .box .tick { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+  .result { position: sticky; top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 28px; box-shadow: var(--shadow); }
+  .result .lab { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .total { margin-top: 8px; font-family: var(--mono); font-weight: 600; font-size: clamp(2.3rem, 4vw, 3rem); letter-spacing: -0.04em; line-height: 1.05; }
+  .total small { font-size: 1rem; color: var(--muted); font-weight: 500; letter-spacing: 0; margin-right: 6px; }
+  .total .cur { font-size: 1.5rem; color: var(--muted); margin-left: 4px; }
+  .rows { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line); display: grid; gap: 2px; list-style: none; padding-left: 0; }
+  .rows li { display: flex; justify-content: space-between; gap: 16px; padding: 6px 0; font-size: .92rem; }
+  .rows li span:first-child { color: var(--muted); }
+  .rows li span:last-child { font-family: var(--mono); font-weight: 500; white-space: nowrap; }
+  .rows li.sum { margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--line); font-weight: 600; }
+  .rows li.sum span:first-child { color: var(--ink); }
+  .time { margin-top: 20px; padding: 14px 16px; border-radius: 12px; background: var(--surface-2); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .time span { color: var(--muted); font-size: .88rem; }
+  .time b { font-weight: 700; }
+  .btns { margin-top: 20px; display: grid; gap: 10px; }
+  .note { margin-top: 16px; font-size: .82rem; color: var(--muted); }
+  .mini { display: none; }
+  @media (max-width: 860px) {
+    .mini { position: fixed; left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); z-index: 30; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 10px 10px 10px 18px; border-radius: 16px; background: var(--ink); color: var(--bg); box-shadow: var(--shadow); transition: transform .3s var(--ease), opacity .2s; }
+    .mini.off { transform: translateY(140%); opacity: 0; pointer-events: none; }
+    .mini b { font-family: var(--mono); font-weight: 600; font-size: 1.15rem; }
+    .mini small { display: block; font-size: .72rem; opacity: .65; }
+    .mini a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 11px; background: var(--accent); color: var(--on-accent); font-weight: 600; text-decoration: none; }
+    .page { padding-bottom: 110px; }
+    .calc { grid-template-columns: 1fr; }
+    .result { position: static; }
   }
-}
-:root[data-theme="light"] {
-  --bg: #fafafa;
-  --fg: #09090b;
-  --muted: #71717a;
-  --accent: #0891b2;
-  --accent-hover: #0e7490;
-  --card: #ffffff;
-  --border: #e4e4e7;
-  color-scheme: light;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: 'Inter', -apple-system, sans-serif;
-  line-height: 1.6;
-  padding: 24px;
-  min-height: 100vh;
-}
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-header {
-  text-align: center;
-  margin-bottom: 48px;
-  padding-top: 40px;
-}
-h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 800;
-  margin-bottom: 12px;
-  letter-spacing: -0.02em;
-}
-.subtitle {
-  color: var(--muted);
-  font-size: 1.125rem;
-}
-.calculator {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 32px;
-  align-items: start;
-}
-@media (max-width: 800px) {
-  .calculator { grid-template-columns: 1fr; }
-}
-.form-section {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 32px;
-}
-.form-group {
-  margin-bottom: 28px;
-}
-.form-group:last-child { margin-bottom: 0; }
-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 12px;
-  font-size: 0.9375rem;
-}
-.checkbox-group {
-  display: grid;
-  gap: 12px;
-}
-.checkbox-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  user-select: none;
-}
-.checkbox-item:hover {
-  border-color: var(--accent);
-}
-.checkbox-item.checked {
-  border-color: var(--accent);
-  background: rgba(34, 211, 238, 0.05);
-}
-.checkbox-item input { display: none; }
-.checkmark {
-  width: 22px;
-  height: 22px;
-  border: 2px solid var(--border);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.2s;
-}
-.checkbox-item.checked .checkmark {
-  background: var(--accent);
-  border-color: var(--accent);
-}
-.checkmark svg {
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.checkbox-item.checked .checkmark svg { opacity: 1; }
-.checkbox-label {
-  flex: 1;
-}
-.checkbox-title {
-  font-weight: 600;
-  font-size: 0.9375rem;
-  margin-bottom: 2px;
-}
-.checkbox-desc {
-  font-size: 0.8125rem;
-  color: var(--muted);
-}
-.checkbox-price {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 600;
-  color: var(--accent);
-  font-size: 0.875rem;
-}
-.select-wrapper {
-  position: relative;
-}
-select {
-  width: 100%;
-  padding: 16px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  color: var(--fg);
-  font-size: 1rem;
-  font-family: inherit;
-  cursor: pointer;
-  appearance: none;
-}
-.select-wrapper::after {
-  content: '▼';
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.75rem;
-  color: var(--muted);
-  pointer-events: none;
-}
-select:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-.result-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 32px;
-  position: sticky;
-  top: 24px;
-}
-.result-header {
-  text-align: center;
-  margin-bottom: 24px;
-}
-.result-label {
-  font-size: 0.8125rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-.result-total {
-  font-size: 3rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--accent);
-  font-family: 'JetBrains Mono', monospace;
-}
-.result-total span {
-  font-size: 1.5rem;
-  color: var(--muted);
-}
-.breakdown {
-  border-top: 1px solid var(--border);
-  padding-top: 20px;
-  margin-top: 20px;
-}
-.breakdown-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  font-size: 0.875rem;
-}
-.breakdown-item span:first-child { color: var(--muted); }
-.breakdown-item span:last-child {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 500;
-}
-.breakdown-total {
-  border-top: 1px solid var(--border);
-  margin-top: 12px;
-  padding-top: 12px;
-  font-weight: 600;
-}
-.timeline {
-  margin-top: 24px;
-  padding: 16px;
-  background: rgba(34, 211, 238, 0.05);
-  border-radius: 12px;
-  text-align: center;
-}
-.timeline-label {
-  font-size: 0.8125rem;
-  color: var(--muted);
-  margin-bottom: 4px;
-}
-.timeline-value {
-  font-weight: 700;
-  font-size: 1.125rem;
-}
-.cta-btn {
-  display: block;
-  width: 100%;
-  padding: 16px;
-  margin-top: 24px;
-  background: var(--accent);
-  color: #000;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-  text-decoration: none;
-}
-.cta-btn:hover {
-  background: var(--accent-hover);
-  transform: translateY(-2px);
-}
-.note {
-  margin-top: 20px;
-  padding: 16px;
-  background: var(--bg);
-  border-radius: 12px;
-  font-size: 0.8125rem;
-  color: var(--muted);
-  text-align: center;
-}
-.checkbox-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-@media (max-width: 480px) { body { overflow-x: hidden; } }
+  @media (max-width: 520px) { .opts.three { grid-template-columns: 1fr; } .opts { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<header class="topbar">
+  <a class="back" href="../index.html#projects"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path><path d="M5 12l6 6"></path><path d="M5 12l6 -6"></path></svg><span>Портфолио</span></a>
+  <span class="name">Калькулятор стоимости</span>
+  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg><span>Написать</span></a>
+</header>
 
-<div class="container">
-  <header>
-    <h1>Калькулятор стоимости</h1>
-    <p class="subtitle">Рассчитайте примерную стоимость разработки вашего проекта</p>
-  </header>
-
-  <div class="calculator">
-    <div class="form-section">
-      <div class="form-group">
-        <label>Тип проекта</label>
-        <div class="select-wrapper">
-          <select id="projectType">
-            <option value="landing" data-multiplier="1">Лендинг</option>
-            <option value="webapp" data-multiplier="2.5">Веб-приложение</option>
-            <option value="automation" data-multiplier="2">Скрипт автоматизации</option>
-            <option value="ecommerce" data-multiplier="3">Интернет-магазин</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Функционал</label>
-        <div class="checkbox-group" id="features">
-          <label class="checkbox-item" data-price="15000">
-            <input type="checkbox" value="adaptive">
-            <div class="checkmark">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </div>
-            <div class="checkbox-label">
-              <div class="checkbox-title">Адаптивный дизайн</div>
-              <div class="checkbox-desc">Корректное отображение на всех устройствах</div>
-            </div>
-            <div class="checkbox-price">+15 000 ₽</div>
-          </label>
-
-          <label class="checkbox-item" data-price="25000">
-            <input type="checkbox" value="cms">
-            <div class="checkmark">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </div>
-            <div class="checkbox-label">
-              <div class="checkbox-title">Панель управления</div>
-              <div class="checkbox-desc">Возможность редактировать контент</div>
-            </div>
-            <div class="checkbox-price">+25 000 ₽</div>
-          </label>
-
-          <label class="checkbox-item" data-price="30000">
-            <input type="checkbox" value="auth">
-            <div class="checkmark">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </div>
-            <div class="checkbox-label">
-              <div class="checkbox-title">Авторизация пользователей</div>
-              <div class="checkbox-desc">Регистрация, вход, личный кабинет</div>
-            </div>
-            <div class="checkbox-price">+30 000 ₽</div>
-          </label>
-
-          <label class="checkbox-item" data-price="20000">
-            <input type="checkbox" value="api">
-            <div class="checkmark">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </div>
-            <div class="checkbox-label">
-              <div class="checkbox-title">Интеграция с API</div>
-              <div class="checkbox-desc">Подключение внешних сервисов</div>
-            </div>
-            <div class="checkbox-price">+20 000 ₽</div>
-          </label>
-
-          <label class="checkbox-item" data-price="35000">
-            <input type="checkbox" value="database">
-            <div class="checkmark">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </div>
-            <div class="checkbox-label">
-              <div class="checkbox-title">База данных</div>
-              <div class="checkbox-desc">Хранение и обработка данных</div>
-            </div>
-            <div class="checkbox-price">+35 000 ₽</div>
-          </label>
-
-          <label class="checkbox-item" data-price="15000">
-            <input type="checkbox" value="seo">
-            <div class="checkmark">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </div>
-            <div class="checkbox-label">
-              <div class="checkbox-title">SEO-оптимизация</div>
-              <div class="checkbox-desc">Настройка для поисковых систем</div>
-            </div>
-            <div class="checkbox-price">+15 000 ₽</div>
-          </label>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Срочность</label>
-        <div class="select-wrapper">
-          <select id="urgency">
-            <option value="normal" data-multiplier="1">Стандартные сроки</option>
-            <option value="fast" data-multiplier="1.3">Срочно (+30% к стоимости)</option>
-            <option value="veryfast" data-multiplier="1.5">Очень срочно (+50% к стоимости)</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="result-card">
-      <div class="result-header">
-        <div class="result-label">Примерная стоимость</div>
-        <div class="result-total"><span>от </span><span id="totalPrice">30 000</span><span> ₽</span></div>
-      </div>
-
-      <div class="breakdown" id="breakdown">
-        <div class="breakdown-item">
-          <span>Базовая стоимость</span>
-          <span id="basePrice">30 000 ₽</span>
-        </div>
-      </div>
-
-      <div class="timeline">
-        <div class="timeline-label">Примерный срок</div>
-        <div class="timeline-value" id="timeline">1–2 недели</div>
-      </div>
-
-      <a href="https://t.me/Bond8848" class="cta-btn" target="_blank" rel="noopener">
-        Обсудить проект
-      </a>
-
-      <div class="note">
-        Точная стоимость определяется после проработки технического задания
-      </div>
-    </div>
+<main class="page">
+  <div class="head">
+    <h1>Сколько стоит ваш сайт</h1>
+    <p>Выберите тип проекта и функции. Ориентировочная цена и срок пересчитываются сразу.</p>
   </div>
-</div>
+
+  <div class="calc">
+    <div class="form">
+      <fieldset>
+        <legend><small>01</small>Тип проекта</legend>
+        <div class="opts" id="types">
+          <label class="opt"><input type="radio" name="type" value="landing" checked><span class="box"><b>Лендинг</b><span class="sub">Одна страница с заявкой</span><span class="price">от 30 000 ₽</span></span></label>
+          <label class="opt"><input type="radio" name="type" value="webapp"><span class="box"><b>Веб-приложение</b><span class="sub">Интерфейс с логикой и данными</span><span class="price">от 80 000 ₽</span></span></label>
+          <label class="opt"><input type="radio" name="type" value="automation"><span class="box"><b>Автоматизация</b><span class="sub">Скрипты, парсеры, боты</span><span class="price">от 50 000 ₽</span></span></label>
+          <label class="opt"><input type="radio" name="type" value="ecommerce"><span class="box"><b>Интернет-магазин</b><span class="sub">Каталог, корзина, оплата</span><span class="price">от 120 000 ₽</span></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><small>02</small>Функционал</legend>
+        <div class="feat" id="feats">
+          <label class="opt"><input type="checkbox" name="f" value="adaptive" data-price="15000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Адаптивный дизайн</b><br><span class="sub">Корректно выглядит на всех устройствах</span></span><span class="price">+15 000 ₽</span></span></label>
+          <label class="opt"><input type="checkbox" name="f" value="cms" data-price="25000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Панель управления</b><br><span class="sub">Редактирование контента без разработчика</span></span><span class="price">+25 000 ₽</span></span></label>
+          <label class="opt"><input type="checkbox" name="f" value="auth" data-price="30000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Авторизация пользователей</b><br><span class="sub">Регистрация, вход, личный кабинет</span></span><span class="price">+30 000 ₽</span></span></label>
+          <label class="opt"><input type="checkbox" name="f" value="api" data-price="20000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Интеграция с API</b><br><span class="sub">Подключение внешних сервисов</span></span><span class="price">+20 000 ₽</span></span></label>
+          <label class="opt"><input type="checkbox" name="f" value="database" data-price="35000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>База данных</b><br><span class="sub">Хранение и обработка данных</span></span><span class="price">+35 000 ₽</span></span></label>
+          <label class="opt"><input type="checkbox" name="f" value="seo" data-price="15000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>SEO-оптимизация</b><br><span class="sub">Настройка под поисковые системы</span></span><span class="price">+15 000 ₽</span></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><small>03</small>Срочность</legend>
+        <div class="opts three" id="urg">
+          <label class="opt"><input type="radio" name="urgency" value="normal" checked><span class="box"><b>Стандарт</b><span class="sub">Без наценки</span></span></label>
+          <label class="opt"><input type="radio" name="urgency" value="fast"><span class="box"><b>Срочно</b><span class="sub">+30% к стоимости</span></span></label>
+          <label class="opt"><input type="radio" name="urgency" value="veryfast"><span class="box"><b>Очень срочно</b><span class="sub">+50% к стоимости</span></span></label>
+        </div>
+      </fieldset>
+    </div>
+
+    <aside class="result" aria-labelledby="resLab">
+      <p class="lab" id="resLab">Ориентировочная стоимость</p>
+      <p class="total" aria-live="polite" aria-atomic="true"><small>от</small><span id="total" class="num">30 000</span><span class="cur">₽</span></p>
+      <ul class="rows" id="rows"></ul>
+      <div class="time"><span>Примерный срок</span><b id="time">1-2 недели</b></div>
+      <div class="btns">
+        <a class="btn btn-primary" href="https://t.me/Bond8848" target="_blank" rel="noopener">Обсудить проект <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17 7l-10 10"></path><path d="M8 7l9 0l0 9"></path></svg></a>
+        <button class="btn btn-ghost" id="copy" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"></path><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"></path></svg><span>Скопировать смету</span></button>
+      </div>
+      <p class="note">Точная цена определяется после разбора задачи и технического задания.</p>
+    </aside>
+  </div>
+</main>
+
+<div class="mini off" id="mini"><div><small>Ориентировочно</small><b id="miniTotal" class="num"></b></div><a href="#resLab" id="miniGo">К смете</a></div>
 
 <script>
-const basePrices = {
-  landing: 30000,
-  webapp: 80000,
-  automation: 50000,
-  ecommerce: 120000
-};
-
-const timelines = {
-  landing: '1–2 недели',
-  webapp: '3–6 недель',
-  automation: '1–3 недели',
-  ecommerce: '4–8 недель'
-};
-
-const urgencyMultipliers = {
-  normal: 1,
-  fast: 1.3,
-  veryfast: 1.5
-};
-
-const urgencyTimelines = {
-  normal: '',
-  fast: ' (ускоренный)',
-  veryfast: ' (максимально сжатый)'
-};
-
-const projectTypeSelect = document.getElementById('projectType');
-const urgencySelect = document.getElementById('urgency');
-const featuresContainer = document.getElementById('features');
-const totalPriceEl = document.getElementById('totalPrice');
-const basePriceEl = document.getElementById('basePrice');
-const breakdownEl = document.getElementById('breakdown');
-const timelineEl = document.getElementById('timeline');
-
-function formatPrice(price) {
-  return new Intl.NumberFormat('ru-RU').format(Math.round(price));
-}
-
-function calculate() {
-  const projectType = projectTypeSelect.value;
-  const urgency = urgencySelect.value;
-  let basePrice = basePrices[projectType];
-  let featuresPrice = 0;
-
-  const checkedItems = featuresContainer.querySelectorAll('.checkbox-item.checked');
-  const featuresList = [];
-
-  checkedItems.forEach(item => {
-    const price = parseInt(item.dataset.price);
-    featuresPrice += price;
-    const title = item.querySelector('.checkbox-title').textContent;
-    featuresList.push({ title, price });
-  });
-
-  const subtotal = basePrice + featuresPrice;
-  const urgencyMult = urgencyMultipliers[urgency];
-  const total = subtotal * urgencyMult;
-
-  // Update display
-  totalPriceEl.textContent = formatPrice(total);
-  basePriceEl.textContent = formatPrice(basePrice) + ' ₽';
-
-  // Update breakdown
-  let breakdownHTML = `<div class="breakdown-item">
-    <span>Базовая стоимость</span>
-    <span>${formatPrice(basePrice)} ₽</span>
-  </div>`;
-
-  featuresList.forEach(f => {
-    breakdownHTML += `<div class="breakdown-item">
-      <span>${f.title}</span>
-      <span>+${formatPrice(f.price)} ₽</span>
-    </div>`;
-  });
-
-  if (featuresPrice > 0) {
-    breakdownHTML += `<div class="breakdown-item">
-      <span>Дополнительный функционал</span>
-      <span>+${formatPrice(featuresPrice)} ₽</span>
-    </div>`;
-  }
-
-  if (urgency !== 'normal') {
-    const extraPercent = urgency === 'fast' ? '30%' : '50%';
-    const extraAmount = subtotal * (urgencyMult - 1);
-    breakdownHTML += `<div class="breakdown-item">
-      <span>Срочность (+${extraPercent})</span>
-      <span>+${formatPrice(extraAmount)} ₽</span>
-    </div>`;
-  }
-
-  breakdownHTML += `<div class="breakdown-item breakdown-total">
-    <span>Итого</span>
-    <span>${formatPrice(total)} ₽</span>
-  </div>`;
-
-  breakdownEl.innerHTML = breakdownHTML;
-
-  // Update timeline
-  timelineEl.textContent = timelines[projectType] + urgencyTimelines[urgency];
-}
-
-// Event listeners
-featuresContainer.querySelectorAll('.checkbox-item').forEach(item => {
-  item.setAttribute('role', 'checkbox');
-  item.setAttribute('tabindex', '0');
-  item.setAttribute('aria-checked', item.classList.contains('checked'));
-  const toggle = (e) => {
-    e.preventDefault();
-    item.classList.toggle('checked');
-    item.setAttribute('aria-checked', item.classList.contains('checked'));
-    calculate();
+(() => {
+  const TYPES = {
+    landing: { name: 'Лендинг', base: 30000, time: '1-2 недели' },
+    webapp: { name: 'Веб-приложение', base: 80000, time: '3-6 недель' },
+    automation: { name: 'Автоматизация', base: 50000, time: '1-3 недели' },
+    ecommerce: { name: 'Интернет-магазин', base: 120000, time: '4-8 недель' }
   };
-  item.addEventListener('click', toggle);
-  item.addEventListener('keydown', (e) => { if (e.key === ' ' || e.key === 'Enter') toggle(e); });
-});
+  const URG = { normal: { m: 1, t: '', label: '' }, fast: { m: 1.3, t: ', ускоренно', label: 'Срочность +30%' }, veryfast: { m: 1.5, t: ', максимально сжато', label: 'Срочность +50%' } };
+  const $ = id => document.getElementById(id);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = n => new Intl.NumberFormat('ru-RU').format(Math.round(n)).replace(/\u00a0|\u202f/g, ' ');
+  let shown = 30000, raf, last = null;
 
-projectTypeSelect.addEventListener('change', calculate);
-urgencySelect.addEventListener('change', calculate);
+  function animate(to) {
+    cancelAnimationFrame(raf);
+    const from = shown, t0 = performance.now(), dur = reduce ? 0 : 380;
+    const step = now => {
+      const k = dur ? Math.min((now - t0) / dur, 1) : 1, e = 1 - Math.pow(1 - k, 3);
+      shown = from + (to - from) * e; $('total').textContent = fmt(shown); $('miniTotal').textContent = 'от ' + fmt(shown) + ' ₽';
+      if (k < 1) raf = requestAnimationFrame(step); else { shown = to; $('total').textContent = fmt(to); $('miniTotal').textContent = 'от ' + fmt(to) + ' ₽'; }
+    };
+    raf = requestAnimationFrame(step);
+  }
 
-// Initial calculation
-calculate();
+  function state() {
+    const type = TYPES[document.querySelector('input[name=type]:checked').value];
+    const urg = URG[document.querySelector('input[name=urgency]:checked').value];
+    const feats = [...document.querySelectorAll('input[name=f]:checked')].map(i => ({ title: i.closest('.opt').querySelector('b').textContent, price: +i.dataset.price }));
+    const subtotal = type.base + feats.reduce((s, f) => s + f.price, 0);
+    return { type, urg, feats, subtotal, total: subtotal * urg.m };
+  }
+
+  function render() {
+    const s = state(); last = s;
+    const rows = $('rows'); rows.replaceChildren();
+    const add = (a, b, cls) => { const li = document.createElement('li'); if (cls) li.className = cls; const x = document.createElement('span'), y = document.createElement('span'); x.textContent = a; y.textContent = b; li.append(x, y); rows.appendChild(li); };
+    add(s.type.name, fmt(s.type.base) + ' ₽');
+    s.feats.forEach(f => add(f.title, '+' + fmt(f.price) + ' ₽'));
+    if (s.urg.m > 1) add(s.urg.label, '+' + fmt(s.subtotal * (s.urg.m - 1)) + ' ₽');
+    add('Итого', fmt(s.total) + ' ₽', 'sum');
+    $('time').textContent = s.type.time + s.urg.t;
+    animate(s.total);
+  }
+
+  document.querySelectorAll('input').forEach(i => i.addEventListener('change', render));
+
+  $('copy').addEventListener('click', async () => {
+    const s = last, lines = ['Смета: ' + s.type.name, '- Базовая стоимость: ' + fmt(s.type.base) + ' ₽'];
+    s.feats.forEach(f => lines.push('- ' + f.title + ': +' + fmt(f.price) + ' ₽'));
+    if (s.urg.m > 1) lines.push('- ' + s.urg.label + ': +' + fmt(s.subtotal * (s.urg.m - 1)) + ' ₽');
+    lines.push('Итого: от ' + fmt(s.total) + ' ₽', 'Срок: ' + s.type.time + s.urg.t);
+    const text = lines.join('\n'), btn = $('copy'), label = btn.querySelector('span');
+    let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+      const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select();
+      try { ok = document.execCommand('copy'); } catch (_) {} ta.remove();
+    }
+    label.textContent = ok ? 'Скопировано' : 'Не удалось скопировать';
+    setTimeout(() => label.textContent = 'Скопировать смету', 2000);
+  });
+
+  const res = document.querySelector('.result');
+  if ('IntersectionObserver' in window) new IntersectionObserver(es => $('mini').classList.toggle('off', es[0].isIntersecting)).observe(res);
+  $('miniGo').addEventListener('click', e => { e.preventDefault(); res.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); });
+  render();
+})();
 </script>
 </body>
 </html>
