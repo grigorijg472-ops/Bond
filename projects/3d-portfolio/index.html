@@ -230,12 +230,20 @@
     c.addEventListener('click', on);
   });
 
-  const v = new THREE.Vector3(), clock = new THREE.Clock();
+  // Самостоятельное вращение не зависит от частоты кадров; при наведении на навык замедляется
+  const IDLE = 0.32; // рад/с, полный оборот примерно за 20 секунд
+  const v = new THREE.Vector3(), t0 = performance.now() / 1000;
+  let last = t0, spin = 1;
   function draw() {
-    const t = clock.getElapsedTime();
-    if (!reduce && !dragging) { ry += 0.0016 + vy * 0.9; vy *= 0.94; rx += vx * 0.9; vx *= 0.9; rx += (0.25 - rx) * 0.004; }
+    const now = performance.now() / 1000, t = now - t0, dt = Math.min(0.05, now - last), f = dt * 60; last = now;
+    if (!reduce && !dragging) {
+      spin += ((active !== null ? 0.15 : 1) - spin) * Math.min(1, 0.1 * f);
+      ry += IDLE * spin * dt + vy * 0.9 * f; vy *= Math.pow(0.94, f);
+      rx += vx * 0.9 * f; vx *= Math.pow(0.9, f);
+      rx += (0.25 + Math.sin(t * 0.45) * 0.12 - rx) * Math.min(1, 0.02 * f);
+    }
     world.rotation.set(rx, ry, 0);
-    wire.rotation.y = reduce ? 0 : t * 0.12;
+    wire.rotation.y = reduce ? 0 : t * 0.22; wire.rotation.x = reduce ? 0 : t * 0.08;
     const k = reduce ? 1 : 1 + Math.sin(t * 1.6) * 0.03;
     wire.scale.setScalar(k);
     coreMat.uniforms.time.value = t;
@@ -269,6 +277,7 @@
 })();
 </script>
 <script type="application/json" id="case-data">{"title": "3D Portfolio", "task": "Показать лендинг с настоящей 3D-сценой, которую можно взять и повернуть, а не просто смотреть как фон.", "features": ["Частицы-галактика, каркасная сфера и светящееся ядро с шейдером.", "Поворот перетаскиванием с инерцией, на телефоне то же жестом.", "Подписи навыков привязаны к 3D-узлам и едут вместе со сценой.", "Если WebGL недоступен, страница остаётся читаемой. Анимации отключаются при настройке «уменьшить движение»."], "stack": ["Three.js r128", "WebGL", "GLSL", "JavaScript"]}</script>
+<script src="../shared/fx.js"></script>
 <script src="../shared/about.js"></script>
 </body>
 </html>

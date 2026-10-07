@@ -89,6 +89,26 @@
     .kpis { width: 100%; justify-content: space-between; }
     .row { grid-template-columns: 1fr; }
   }
+  /* Движение */
+  .check, .del, .add { transition-property: background-color, border-color, color, opacity, transform, box-shadow; transition-duration: .2s; transition-timing-function: var(--ease); }
+  .check:active { transform: scale(.86); }
+  .del:active { transform: scale(.88); }
+  .habit.pop .check { animation: check-pop .5s var(--ease); }
+  .habit.pop .check .i path { stroke-dasharray: 24; animation: draw .35s .06s var(--ease) backwards; }
+  @keyframes check-pop { 0% { transform: scale(.82); } 50% { transform: scale(1.16); } 100% { transform: none; } }
+  .habit.pop .nm { animation: nm-in .4s var(--ease); }
+  @keyframes nm-in { from { opacity: .4; transform: translateX(-4px); } }
+  .habit.enter { animation: row-in .4s var(--ease) both; }
+  #chart.intro rect.bar { transform-box: fill-box; transform-origin: 50% 100%; animation: bar-grow .7s var(--ease) backwards; }
+  #chart.intro rect.bar:nth-of-type(2) { animation-delay: .05s; } #chart.intro rect.bar:nth-of-type(3) { animation-delay: .1s; }
+  #chart.intro rect.bar:nth-of-type(4) { animation-delay: .15s; } #chart.intro rect.bar:nth-of-type(5) { animation-delay: .2s; }
+  #chart.intro rect.bar:nth-of-type(6) { animation-delay: .25s; } #chart.intro rect.bar:nth-of-type(7) { animation-delay: .3s; }
+  @keyframes bar-grow { from { transform: scaleY(0); } }
+  #heat.intro i { animation: cell-in .45s var(--ease) backwards; animation-delay: var(--d, 0ms); }
+  @keyframes cell-in { from { opacity: 0; transform: scale(.4); } }
+  .streak .num { display: inline-block; }
+  .habit.pop .streak .num { animation: nm-in .4s var(--ease); }
+
 </style>
 </head>
 <body>
@@ -220,6 +240,7 @@
   const ratio = k => state.habits.length ? state.habits.filter(h => done(h.id, k)).length / state.habits.length : 0;
   const plural = (n, a, b, c) => { const m = n % 100, d = n % 10; return m > 10 && m < 20 ? c : d === 1 ? a : d > 1 && d < 5 ? b : c; };
 
+  const fxs = { pop: null, enter: null, intro: true };
   function render() {
     const t = today(), tk = key(t);
     const ds = t.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }); $('today').textContent = ds[0].toUpperCase() + ds.slice(1);
@@ -227,7 +248,7 @@
     if (!state.habits.length) { const e = document.createElement('li'); e.className = 'empty'; e.textContent = 'Пока пусто. Добавьте первую привычку.'; list.appendChild(e); }
     state.habits.forEach(h => {
       const li = document.createElement('li'); const isDone = done(h.id, tk);
-      li.className = 'habit' + (isDone ? ' done' : '');
+      li.className = 'habit' + (isDone ? ' done' : '') + (fxs.pop === h.id ? ' pop' : '') + (fxs.enter === h.id ? ' enter' : '');
       const st = streakOf(h.id);
       let dots = ''; for (let i = 6; i >= 0; i--) dots += `<i class="${done(h.id, key(addDays(t, -i))) ? 'on' : ''}"></i>`;
       li.innerHTML = `<button class="check" type="button" role="checkbox" aria-checked="${isDone}" aria-label="Отметить: "></button>
@@ -242,11 +263,13 @@
       li.querySelector('.del').addEventListener('click', () => remove(h.id));
       list.appendChild(li);
     });
+    fxs.pop = fxs.enter = null;
     const w = weekStats(), nd = state.habits.filter(h => done(h.id, tk)).length;
     $('kStreak').textContent = perfectStreak(); $('kWeek').textContent = w.pct + '%'; $('kToday').textContent = nd + '/' + state.habits.length;
     $('weekText').textContent = `${w.got} из ${w.goal} за 7 дней`;
     const bar = $('bar'); bar.setAttribute('aria-valuenow', w.pct); bar.firstElementChild.style.width = w.pct + '%';
     drawChart(); drawHeat();
+    if (fxs.intro) { fxs.intro = false; if (!(window.fx && fx.reduce())) { $('chart').classList.add('intro'); $('heat').classList.add('intro'); setTimeout(() => { $('chart').classList.remove('intro'); $('heat').classList.remove('intro'); }, 1600); } }
   }
 
   function drawChart() {
@@ -272,14 +295,16 @@
       if (d > t) c.className = 'future';
       else { c.dataset.l = r === 0 ? 0 : Math.min(4, Math.ceil(r * 4)); sum += r; cnt++; if (key(d) === key(t)) c.className = 'now'; }
       c.title = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + (d > t ? '' : ': ' + Math.round(r * 100) + '%');
-      el.appendChild(c);
+      c.style.setProperty('--d', (i * 14) + 'ms'); el.appendChild(c);
     }
     el.setAttribute('aria-label', 'Календарь за пять недель, в среднем ' + Math.round(sum / cnt * 100) + '% выполнено');
   }
 
   function toggle(id) {
     const k = key(today()), arr = state.log[k] || [];
-    state.log[k] = arr.includes(id) ? arr.filter(x => x !== id) : [...arr, id];
+    const was = arr.includes(id);
+    state.log[k] = was ? arr.filter(x => x !== id) : [...arr, id];
+    fxs.pop = was ? null : id;
     save(); render();
     const b = [...document.querySelectorAll('.check')].find(x => x.getAttribute('aria-label') === 'Отметить: ' + state.habits.find(h => h.id === id).name);
     if (b) b.focus({ preventScroll: true });
@@ -293,8 +318,12 @@
   $('undo').addEventListener('click', () => { if (undoFn) undoFn(); undoFn = null; $('toast').classList.remove('show'); });
   function remove(id) {
     const i = state.habits.findIndex(h => h.id === id), h = state.habits[i];
-    state.habits.splice(i, 1); save(); render();
-    toast('Привычка «' + h.name + '» удалена', () => { state.habits.splice(i, 0, h); save(); render(); });
+    const go = () => {
+      state.habits.splice(i, 1); save(); render();
+      toast('Привычка «' + h.name + '» удалена', () => { state.habits.splice(i, 0, h); fxs.enter = h.id; save(); render(); });
+    };
+    const li = $('list').children[i];
+    if (window.fx && li) fx.leave(li, go); else go();
   }
 
   const dlg = $('dlg'), fName = $('fName'), fErr = $('fErr');
@@ -306,7 +335,8 @@
     const name = fName.value.trim();
     if (!name) { fErr.textContent = 'Введите название привычки'; fName.setAttribute('aria-invalid', 'true'); fName.focus(); return; }
     const target = Math.min(7, Math.max(1, parseInt($('fTarget').value, 10) || 7));
-    state.habits.push({ id: 'h' + Date.now().toString(36), name, cat: $('fCat').value, target });
+    const nid = 'h' + Date.now().toString(36); fxs.enter = nid;
+    state.habits.push({ id: nid, name, cat: $('fCat').value, target });
     save(); render(); dlg.close(); toast('Привычка добавлена', null);
   });
   fName.addEventListener('input', () => { fErr.textContent = ''; fName.removeAttribute('aria-invalid'); });
@@ -316,6 +346,7 @@
 })();
 </script>
 <script type="application/json" id="case-data">{"title": "Habits Tracker", "task": "Трекер, в котором данные не пропадают после перезагрузки и видна динамика, а не только галочки.", "features": ["Добавление и удаление привычек, у удаления есть отмена.", "Серии дней подряд, график за 7 дней, тепловая карта за 5 недель.", "Всё сохраняется в localStorage."], "stack": ["JavaScript", "localStorage", "HTML dialog", "CSS"], "note": "Данные живут только в этом браузере. Аккаунтов и синхронизации между устройствами нет."}</script>
+<script src="../shared/fx.js"></script>
 <script src="../shared/about.js"></script>
 </body>
 </html>

@@ -65,6 +65,14 @@
     .list { overflow: visible; }
     .hint { display: none; }
   }
+  /* Движение */
+  .loc { transition-property: background-color, border-color, transform; transition-duration: .2s; transition-timing-function: var(--ease); }
+  .loc:active { transform: scale(.985); }
+  .loc[aria-pressed="true"] .m { animation: row-in .32s var(--ease) both; }
+  #chips button { transition-property: background-color, border-color, color, transform; transition-duration: .2s; transition-timing-function: var(--ease); }
+  #chips button:active { transform: scale(.94); }
+  .ctl .btn:active { transform: scale(.9); }
+
 </style>
 </head>
 <body>
@@ -292,6 +300,7 @@
 })();
 </script>
 <script type="application/json" id="case-data">{"title": "Interactive Map", "task": "Сделать карту без Google Maps и Leaflet, на собственном движке, чтобы показать работу с графикой.", "features": ["Перетаскивание, колесо, щипок, двойной клик и управление с клавиатуры.", "Город рисуется программно, без картинок и тайлов.", "Нумерованные маркеры, поиск и фильтры по категориям, плавный перелёт к точке.", "Светлая и тёмная тема."], "stack": ["Canvas API", "Pointer Events", "JavaScript"], "note": "Город и локации выдуманные, геоданных нет. Для реальных карт подключается Leaflet или MapLibre."}</script>
+<script src="../shared/fx.js"></script>
 <script src="../shared/about.js"></script>
 </body>
 </html>

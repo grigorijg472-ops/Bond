@@ -72,6 +72,15 @@
     .caps { order: 3; }
   }
   @media (max-width: 900px) { .intro { display: contents; } .intro .head { order: 1; } .caps { order: 3; } .demo-note { order: 4; } }
+  /* Движение */
+  .send .i, .send svg { transition: transform .25s var(--ease); }
+  .send:hover .i, .send:hover svg { transform: translate(1px, -1px); }
+  .send:active .i, .send:active svg { transform: translate(4px, -4px) scale(.9); }
+  .send { transition-property: filter, transform, opacity; transition-duration: .2s; transition-timing-function: var(--ease); }
+  .quick button { transition-property: border-color, background-color, transform; transition-duration: .2s; transition-timing-function: var(--ease); }
+  .quick button:hover { transform: translateY(-1px); }
+  .quick button:active { transform: scale(.95); }
+
 </style>
 </head>
 <body>
@@ -186,6 +195,7 @@
 })();
 </script>
 <script type="application/json" id="case-data">{"title": "AI Chat Bot", "task": "Показать, как мог бы выглядеть диалог бота для бизнеса: вопросы об услугах, расчёт цены, переход к заказу.", "features": ["Распознавание намерений по ключевым словам.", "Индикатор набора текста и быстрые ответы.", "Сценарий расчёта цены со ссылкой на калькулятор."], "stack": ["JavaScript", "HTML", "CSS"], "note": "Это демо в браузере с заготовленными ответами. Нейросети и сервера здесь нет. Рабочий бот строится на Telegram Bot API и бэкенде."}</script>
+<script src="../shared/fx.js"></script>
 <script src="../shared/about.js"></script>
 </body>
 </html>

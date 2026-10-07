@@ -100,6 +100,14 @@
     .sheet { box-shadow: none; max-width: none; border-radius: 0; min-height: 297mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .t-classic { padding: 16mm; }
   }
+  /* Движение */
+  .seg input:checked + span { animation: sel-pop .38s var(--ease); }
+  .swatches input:checked + span { animation: sw-pop .45s var(--ease); }
+  @keyframes sw-pop { 0% { transform: scale(.85); } 50% { transform: scale(1.14); } 100% { transform: none; } }
+  .job.enter { animation: row-in .4s var(--ease) both; }
+  .job .rm, .addrow { transition-property: background-color, border-color, color, transform; transition-duration: .2s; transition-timing-function: var(--ease); }
+  .job .rm:active { transform: scale(.88); }
+
 </style>
 </head>
 <body>
@@ -220,11 +228,11 @@
         <div class="row"><div class="field"><label>Компания</label><input class="input c" type="text"></div><div class="field"><label>Период</label><input class="input p" type="text" placeholder="2022 - настоящее время"></div></div>
         <div class="field"><label>Что делали (каждая строка станет пунктом)</label><textarea class="textarea d" rows="3"></textarea></div>`;
       [['t', 't'], ['c', 'c'], ['p', 'p'], ['d', 'd']].forEach(([cls, k]) => { const f = el.querySelector('.' + cls); f.value = j[k] || ''; f.addEventListener('input', () => { j[k] = f.value; save(); paint(); }); });
-      el.querySelector('.rm').addEventListener('click', () => { if (st.jobs.length === 1) st.jobs[0] = { t: '', c: '', p: '', d: '' }; else st.jobs.splice(i, 1); save(); jobs(); paint(); });
+      el.querySelector('.rm').addEventListener('click', () => { const go = () => { if (st.jobs.length === 1) st.jobs[0] = { t: '', c: '', p: '', d: '' }; else st.jobs.splice(i, 1); save(); jobs(); paint(); }; if (window.fx && st.jobs.length > 1) fx.leave(el, go); else go(); });
       box.appendChild(el);
     });
   }
-  $('addJob').addEventListener('click', () => { st.jobs.push({ t: '', c: '', p: '', d: '' }); save(); jobs(); paint(); const t = $('jobs').querySelectorAll('.t'); t[t.length - 1].focus(); });
+  $('addJob').addEventListener('click', () => { st.jobs.push({ t: '', c: '', p: '', d: '' }); save(); jobs(); paint(); if (window.fx) fx.enter($('jobs').lastElementChild); const t = $('jobs').querySelectorAll('.t'); t[t.length - 1].focus(); });
 
   const h = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   const sec = (title, ...kids) => { const s = h('section', 'sec'); s.appendChild(h('h3', null, title)); kids.forEach(k => s.appendChild(k)); return s; };
@@ -284,6 +292,7 @@
 })();
 </script>
 <script type="application/json" id="case-data">{"title": "Resume Generator", "task": "Собрать резюме без конструктора с подпиской: сразу видеть результат и получить PDF.", "features": ["Предпросмотр формата A4 обновляется при вводе.", "Два шаблона, пять цветов, несколько мест работы.", "Текст сохраняется в localStorage, введённые данные экранируются.", "PDF через печать браузера, отдельные стили для печати."], "stack": ["JavaScript", "CSS print", "localStorage"], "note": "PDF создаёт диалог печати браузера, серверной части нет."}</script>
+<script src="../shared/fx.js"></script>
 <script src="../shared/about.js"></script>
 </body>
 </html>

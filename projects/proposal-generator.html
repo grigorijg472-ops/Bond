@@ -70,6 +70,11 @@
     .out { position: static; } .sheetwrap { padding: 0; background: none; overflow: visible; }
     .sheet { box-shadow: none; padding: 0; max-width: none; border-radius: 0; min-height: 0; }
   }
+  /* Движение */
+  .item.enter { animation: row-in .4s var(--ease) both; }
+  .item .rm, .addrow { transition-property: background-color, border-color, color, transform; transition-duration: .2s; transition-timing-function: var(--ease); }
+  .item .rm:active { transform: scale(.88); }
+
 </style>
 </head>
 <body>
@@ -186,13 +191,13 @@
       [n, q, p].forEach(x => x.addEventListener('input', upd));
       el.querySelector('.sum').textContent = 'Сумма: ' + money(it.q * it.p);
       el.querySelector('.rm').addEventListener('click', () => {
-        if (st.items.length === 1) { it.n = ''; it.q = 1; it.p = 0; } else st.items.splice(i, 1);
-        save(); rows(); paint();
+        const go = () => { if (st.items.length === 1) { it.n = ''; it.q = 1; it.p = 0; } else st.items.splice(i, 1); save(); rows(); paint(); };
+        if (window.fx && st.items.length > 1) fx.leave(el, go); else go();
       });
       box.appendChild(el);
     });
   }
-  $('add').addEventListener('click', () => { st.items.push({ n: '', q: 1, p: 0 }); save(); rows(); paint(); const l = $('items').querySelectorAll('.n'); l[l.length - 1].focus(); });
+  $('add').addEventListener('click', () => { st.items.push({ n: '', q: 1, p: 0 }); save(); rows(); paint(); if (window.fx) fx.enter($('items').lastElementChild); const l = $('items').querySelectorAll('.n'); l[l.length - 1].focus(); });
 
   function totals() {
     const sub = st.items.reduce((s, it) => s + it.q * it.p, 0);
@@ -239,6 +244,7 @@
 })();
 </script>
 <script type="application/json" id="case-data">{"title": "Генератор КП", "task": "Собирать коммерческое предложение с таблицей услуг и итогом, не оформляя документ каждый раз с нуля.", "features": ["Документ обновляется по мере ввода: позиции, количество, цена.", "Скидка и срок действия предложения.", "Сохранение в localStorage, печать на A4, копирование текстом."], "stack": ["JavaScript", "CSS print", "localStorage"]}</script>
+<script src="shared/fx.js"></script>
 <script src="shared/about.js"></script>
 </body>
 </html>

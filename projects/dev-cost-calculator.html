@@ -70,6 +70,14 @@
     .result { position: static; }
   }
   @media (max-width: 520px) { .opts.three { grid-template-columns: 1fr; } .opts { grid-template-columns: 1fr; } }
+  /* Движение */
+  .opt input:checked + .box { animation: sel-pop .38s var(--ease); }
+  .opt input:checked + .box .tick .i path { stroke-dasharray: 24; animation: draw .3s .05s var(--ease) backwards; }
+  .opt:hover .box { transform: translateY(-1px); }
+  .opt:active .box { transform: scale(.975); }
+  .opt .box { transition-property: border-color, background-color, box-shadow, transform; transition-duration: .2s; transition-timing-function: var(--ease); }
+  @media (hover: none) { .opt:hover .box { transform: none; } }
+
 </style>
 </head>
 <body>
@@ -204,6 +212,7 @@
 })();
 </script>
 <script type="application/json" id="case-data">{"title": "Калькулятор стоимости", "task": "Дать клиенту примерную цену и срок за минуту, чтобы разговор о бюджете начинался не вслепую.", "features": ["Тип проекта, функции и срочность, сумма и срок пересчитываются сразу.", "Разбивка по пунктам, копирование сметы одним нажатием.", "На телефоне итог закреплён внизу экрана."], "stack": ["JavaScript", "HTML", "CSS"], "note": "Цены ориентировочные. Точная оценка делается после технического задания."}</script>
+<script src="shared/fx.js"></script>
 <script src="shared/about.js"></script>
 </body>
 </html>

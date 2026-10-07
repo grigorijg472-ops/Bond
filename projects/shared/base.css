@@ -186,3 +186,33 @@ p { text-wrap: pretty; }
 .case-body ul.case-stack { display: flex; flex-wrap: wrap; padding: 0; gap: 8px; }
 .case-body ul.case-stack li { width: auto; }
 .case-close { background: transparent; }
+
+/* Движение: нажатия, волна, появление строк */
+@keyframes fx-ripple { from { transform: scale(0); opacity: .26; } to { transform: scale(1); opacity: 0; } }
+@keyframes row-in { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes row-out { to { opacity: 0; transform: translateX(18px) scale(.98); } }
+@keyframes sel-pop { 0% { transform: scale(.98); } 45% { transform: scale(1.025); } 100% { transform: none; } }
+@keyframes draw { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+.fx-ripple {
+  position: absolute; border-radius: 50%; background: currentColor; pointer-events: none;
+  transform: scale(0); opacity: 0; animation: fx-ripple .65s cubic-bezier(.2, .7, .2, 1) forwards;
+}
+.enter { animation: row-in .38s var(--ease) both; }
+.leaving { animation: row-out .2s var(--ease) forwards; pointer-events: none; }
+
+.btn { position: relative; overflow: hidden; isolation: isolate; }
+.btn-primary::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(100deg, transparent 32%, rgba(255,255,255,.3) 50%, transparent 68%);
+  transform: translateX(-125%); transition: transform .75s var(--ease);
+}
+.btn .i { transition: transform .25s var(--ease); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .btn:not([disabled]):not([aria-disabled="true"]):hover { transform: translateY(-1px); }
+  .btn-primary:hover { box-shadow: 0 10px 22px -10px color-mix(in srgb, var(--accent) 80%, transparent); }
+  .btn-primary:hover::before { transform: translateX(125%); }
+  .btn:hover > .i:last-child:not(:first-child) { transform: translateX(3px); }
+}
+.btn:not([disabled]):not([aria-disabled="true"]):active { transform: translateY(1px) scale(.96); transition-duration: .08s; }
+.topbar .about:active, .case-close:active { transform: scale(.93); }
+.topbar .about, .case-close { position: relative; overflow: hidden; transition: color .2s var(--ease), background-color .2s, transform .15s var(--ease); }
