@@ -1,287 +1,563 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Resume Generator: резюме с живым предпросмотром и экспортом в PDF</title>
-<meta name="description" content="Заполните форму, выберите шаблон и цвет, сохраните резюме в PDF. Данные остаются в вашем браузере.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
-<link rel="stylesheet" href="../shared/base.css">
-<style>
-  :root { --accent: #0f766e; --accent-ink: #0c5f58; --on-accent: #fff; }
-  @media (prefers-color-scheme: dark) { :root { --accent: #4fd1c5; --accent-ink: #7fe3da; --on-accent: #052421; } }
-  .page { max-width: 1280px; margin: 0 auto; padding: 8px clamp(16px, 3vw, 40px) 72px; }
-  .head { padding: clamp(8px, 3vh, 28px) 0 28px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; }
-  .head h1 { font-size: clamp(2rem, 4vw, 2.9rem); font-weight: 700; letter-spacing: -0.04em; max-width: 24ch; }
-  .head p { color: var(--muted); max-width: 26rem; }
-  .app { display: grid; grid-template-columns: minmax(0, 480px) minmax(0, 1fr); gap: 24px; align-items: start; }
-  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: clamp(18px, 2.4vw, 28px); display: grid; gap: 28px; }
-  fieldset { border: 0; padding: 0; min-width: 0; display: grid; gap: 14px; }
-  legend { padding: 0; margin-bottom: 14px; font-weight: 700; font-size: 1.02rem; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .seg label { position: relative; }
-  .seg input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer; margin: 0; }
-  .seg span { display: grid; place-items: center; min-height: 46px; border: 1px solid var(--line); border-radius: 12px; font-weight: 600; background: var(--bg); transition: border-color .2s, background-color .2s; }
-  .seg input:checked + span { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); box-shadow: inset 0 0 0 1px var(--accent); }
-  .seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
-  .swatches label { position: relative; width: 44px; height: 44px; }
-  .swatches input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
-  .swatches span { display: block; width: 100%; height: 100%; border-radius: 50%; background: var(--c); border: 3px solid var(--surface); box-shadow: 0 0 0 1.5px var(--line); transition: box-shadow .2s, transform .15s; }
-  .swatches input:checked + span { box-shadow: 0 0 0 2.5px var(--ink); }
-  .swatches input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .swatches label:active span { transform: scale(.92); }
-  .jobs { display: grid; gap: 12px; }
-  .job { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); }
-  .job .top { display: flex; justify-content: space-between; align-items: center; }
-  .job .top b { font-size: .84rem; color: var(--muted); }
-  .job .rm { width: 40px; height: 40px; border-radius: 10px; color: var(--muted); display: grid; place-items: center; }
-  .job .rm:hover { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
-  .job .input, .job .textarea { background: var(--surface); }
-  .addrow { justify-content: center; border: 1.5px dashed var(--line); color: var(--muted); min-height: 46px; border-radius: 12px; }
-  .addrow:hover { border-color: var(--accent); color: var(--accent-ink); }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResumeGen — Генератор резюме в PDF</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  .out { position: sticky; top: 12px; display: grid; gap: 14px; }
-  .bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
-  .bar .ttl { font-weight: 600; color: var(--muted); font-size: .9rem; }
-  .bar .acts { display: flex; gap: 8px; flex-wrap: wrap; }
-  .sheetwrap { overflow: auto; border-radius: 16px; background: var(--surface-2); padding: clamp(10px, 2vw, 24px); max-height: calc(100dvh - 130px); }
-  .sheet { --a: #0f766e; background: #fff; color: #1b1d20; max-width: 760px; margin: 0 auto; min-height: 1000px; box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 18px 40px rgba(0,0,0,.12); font-size: 13.5px; line-height: 1.5; border-radius: 4px; overflow: hidden; }
-  .sheet h1, .sheet h2, .sheet h3, .sheet p, .sheet ul { margin: 0; }
-  .sheet .name { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; overflow-wrap: anywhere; }
-  .sheet .role { color: var(--a); font-weight: 600; font-size: 1.1rem; margin-top: 4px; }
-  .sheet .sec { margin-top: 22px; }
-  .sheet .sec > h3 { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--a); font-weight: 700; margin-bottom: 8px; }
-  .sheet .job2 { margin-top: 12px; }
-  .sheet .job2:first-of-type { margin-top: 0; }
-  .sheet .j-top { display: flex; justify-content: space-between; gap: 12px; }
-  .sheet .j-top b { font-weight: 600; overflow-wrap: anywhere; }
-  .sheet .j-top span { color: #666b72; white-space: nowrap; font-size: .92em; }
-  .sheet .j-sub { color: #555a61; }
-  .sheet ul { padding-left: 18px; margin-top: 4px; display: grid; gap: 2px; }
-  .sheet .muted { color: #8b9097; }
-  .sheet .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .sheet .tags span { padding: 3px 10px; border-radius: 99px; border: 1px solid color-mix(in srgb, var(--a) 40%, #fff); background: color-mix(in srgb, var(--a) 8%, #fff); font-size: .92em; }
-  .sheet .ct { display: grid; gap: 3px; overflow-wrap: anywhere; }
-  .sheet .about { white-space: pre-line; overflow-wrap: anywhere; }
-  /* Классика */
-  .t-classic { padding: clamp(24px, 4vw, 48px); }
-  .t-classic .hd { padding-bottom: 18px; border-bottom: 3px solid var(--a); }
-  .t-classic .ct { margin-top: 12px; grid-auto-flow: column; justify-content: start; gap: 4px 20px; flex-wrap: wrap; color: #50555c; }
-  .t-classic .ct { display: flex; flex-wrap: wrap; }
-  /* Боковая колонка */
-  .t-side { display: grid; grid-template-columns: 236px 1fr; }
-  .t-side .side { background: var(--a); color: #fff; padding: 36px 20px; }
-  .t-side .side h3 { color: rgba(255,255,255,.8) !important; }
-  .t-side .side .tags span { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.3); color: #fff; }
-  .t-side .main { padding: 36px 30px; }
-  .t-side .name { font-size: 1.9rem; }
-  .t-side .role { color: #50555c; }
-  .t-side .hd-side { margin-bottom: 24px; }
-  .t-side .ct { color: #fff; font-size: .88em; }
-  .t-classic .side { display: contents; }
-  .live { min-height: 1.3em; font-size: .85rem; color: var(--muted); }
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
 
-  @media (max-width: 980px) { .app { grid-template-columns: 1fr; } .out { position: static; } .sheetwrap { max-height: none; } }
-  @media (max-width: 560px) {
-    .row { grid-template-columns: 1fr; }
-    .t-side { grid-template-columns: 1fr; }
-    .sheet { font-size: 13px; min-height: 0; }
-  }
-  @page { size: A4; margin: 0; }
-  @media print {
-    body { background: #fff; }
-    .topbar, .head, .panel, .bar, .live { display: none !important; }
-    .page { padding: 0; max-width: none; } .app { display: block; } .out { position: static; }
-    .sheetwrap { padding: 0; background: none; overflow: visible; max-height: none; }
-    .sheet { box-shadow: none; max-width: none; border-radius: 0; min-height: 297mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .t-classic { padding: 16mm; }
-  }
-</style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 800;
+      color: white;
+      margin-bottom: 16px;
+    }
+
+    .header p {
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.9);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .editor-section {
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      height: 700px;
+      overflow-y: auto;
+    }
+
+    .editor-section h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 0.9375rem;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #667eea;
+      margin: 24px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #667eea;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      background: #5a6fd6;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .preview-section {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      height: 700px;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .resume-header {
+      text-align: center;
+      margin-bottom: 32px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 24px;
+    }
+
+    .resume-name {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+    }
+
+    .resume-title {
+      font-size: 1.25rem;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .resume-contact {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 16px;
+      font-size: 0.9375rem;
+      color: #6b7280;
+    }
+
+    .resume-section {
+      margin-bottom: 24px;
+    }
+
+    .resume-section-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .resume-item {
+      margin-bottom: 16px;
+    }
+
+    .resume-item-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .resume-item-title {
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .resume-item-date {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .resume-item-subtitle {
+      font-size: 1rem;
+      color: #6b7280;
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+
+    .resume-item-desc {
+      font-size: 0.9375rem;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skill-tag {
+      background: #667eea;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 24px;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      font-size: 0.9375rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .main-content { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      .preview-section, .preview-section * { visibility: visible; }
+      .preview-section {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+        background: white;
+        padding: 20px;
+      }
+      .header, .editor-section, .btn-group { display: none; }
+    }
+  </style>
 </head>
 <body>
-<header class="topbar">
-  <a class="back" href="../../index.html#projects"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path><path d="M5 12l6 6"></path><path d="M5 12l6 -6"></path></svg><span>Портфолио</span></a>
-  <span class="name">Resume Generator</span>
-  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg><span>Написать</span></a>
-</header>
+  <div class="container">
+    <div class="header">
+      <h1>📄 ResumeGen</h1>
+      <p>Создайте профессиональное резюме за 5 минут. Экспорт в PDF с красивым дизайном.</p>
+    </div>
 
-<main class="page">
-  <div class="head">
-    <h1>Резюме с живым предпросмотром</h1>
-    <p>Заполните форму, выберите шаблон и цвет, сохраните в PDF. Данные остаются в вашем браузере.</p>
-  </div>
+    <div class="main-content">
+      <div class="editor-section">
+        <h3>Редактор резюме</h3>
 
-  <div class="app">
-    <form class="panel" id="form" autocomplete="off" onsubmit="return false">
-      <fieldset>
-        <legend>Оформление</legend>
-        <div class="seg" role="radiogroup" aria-label="Шаблон">
-          <label><input type="radio" name="tpl" value="classic"><span>Классика</span></label>
-          <label><input type="radio" name="tpl" value="side"><span>С боковой колонкой</span></label>
+        <div class="form-group">
+          <label>ФИО</label>
+          <input type="text" id="fullName" placeholder="Иванов Иван Иванович">
         </div>
-        <div class="swatches" role="radiogroup" aria-label="Цвет">
-          <label><input type="radio" name="clr" value="#0f766e" aria-label="Бирюзовый"><span style="--c:#0f766e"></span></label>
-          <label><input type="radio" name="clr" value="#1f4fd8" aria-label="Синий"><span style="--c:#1f4fd8"></span></label>
-          <label><input type="radio" name="clr" value="#9f1d3a" aria-label="Бордовый"><span style="--c:#9f1d3a"></span></label>
-          <label><input type="radio" name="clr" value="#4d6b1f" aria-label="Оливковый"><span style="--c:#4d6b1f"></span></label>
-          <label><input type="radio" name="clr" value="#2a2d33" aria-label="Графитовый"><span style="--c:#2a2d33"></span></label>
+
+        <div class="form-group">
+          <label>Должность</label>
+          <input type="text" id="jobTitle" placeholder="Веб-разработчик">
         </div>
-      </fieldset>
 
-      <fieldset>
-        <legend>Основное</legend>
-        <div class="field"><label for="name">ФИО</label><input class="input" id="name" type="text" placeholder="Иванов Иван Иванович"></div>
-        <div class="field"><label for="role">Должность</label><input class="input" id="role" type="text" placeholder="Веб-разработчик"></div>
-        <div class="row">
-          <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" placeholder="name@example.com"></div>
-          <div class="field"><label for="phone">Телефон</label><input class="input" id="phone" type="tel" placeholder="+7 999 000-00-00"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="email" placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label>Телефон</label>
+            <input type="tel" id="phone" placeholder="+7 (999) 000-00-00">
+          </div>
         </div>
-        <div class="field"><label for="link">Telegram или ссылка</label><input class="input" id="link" type="text" placeholder="@username"></div>
-        <div class="field"><label for="about">О себе</label><textarea class="textarea" id="about" rows="4" placeholder="Коротко об опыте и целях"></textarea></div>
-      </fieldset>
 
-      <fieldset>
-        <legend>Опыт работы</legend>
-        <div class="jobs" id="jobs"></div>
-        <button class="btn addrow" id="addJob" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg>Добавить место работы</button>
-      </fieldset>
-
-      <fieldset>
-        <legend>Образование</legend>
-        <div class="row">
-          <div class="field"><label for="school">Учебное заведение</label><input class="input" id="school" type="text"></div>
-          <div class="field"><label for="years">Годы</label><input class="input" id="years" type="text" placeholder="2018-2022"></div>
+        <div class="form-group">
+          <label>Telegram / Ссылка</label>
+          <input type="text" id="social" placeholder="@username">
         </div>
-        <div class="field"><label for="field">Специальность</label><input class="input" id="field" type="text"></div>
-      </fieldset>
 
-      <fieldset>
-        <legend>Навыки</legend>
-        <div class="field"><label for="skills">Через запятую</label><input class="input" id="skills" type="text" placeholder="HTML, CSS, JavaScript"><p class="help">Каждый навык станет отдельной меткой.</p></div>
-      </fieldset>
-    </form>
+        <div class="form-group">
+          <label>О себе</label>
+          <textarea id="about" rows="4" placeholder="Краткое описание вашего опыта и целей..."></textarea>
+        </div>
 
-    <section class="out" aria-label="Предпросмотр">
-      <div class="bar">
-        <span class="ttl">Предпросмотр</span>
-        <div class="acts">
-          <button class="btn btn-ghost btn-sm" id="example" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"></path><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path></svg>Пример</button>
-          <button class="btn btn-ghost btn-sm" id="clear" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 20h-10.5l-4.21 -4.3a1 1 0 0 1 0 -1.41l10 -10a1 1 0 0 1 1.41 0l5 5a1 1 0 0 1 0 1.41l-9.2 9.3"></path><path d="M18 13.3l-6.3 -6.3"></path></svg>Очистить</button>
-          <button class="btn btn-primary btn-sm" id="print" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path><path d="M7 11l5 5l5 -5"></path><path d="M12 4l0 12"></path></svg>Скачать PDF</button>
+        <div class="section-title">Опыт работы</div>
+
+        <div id="experienceContainer">
+          <div class="resume-item" style="background: #f9fafb; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <div class="resume-item-header">
+              <span class="resume-item-title">Senior Web Developer</span>
+              <span class="resume-item-date">2022 - Настоящее время</span>
+            </div>
+            <div class="resume-item-subtitle">Tech Company, Москва</div>
+            <div class="resume-item-desc">
+              - Разработка веб-приложений на React<br>
+              - Архитектура и оптимизация производительности<br>
+              - Работа в команде из 10 разработчиков
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary" id="addExpBtn" style="width: 100%; margin-bottom: 24px;">
+          + Добавить опыт
+        </button>
+
+        <div class="section-title">Образование</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Учебное заведение</label>
+            <input type="text" id="education" placeholder="МГУ им. Ломоносова">
+          </div>
+          <div class="form-group">
+            <label>Годы обучения</label>
+            <input type="text" id="educationYears" placeholder="2018 - 2022">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Факультет и специальность</label>
+          <input type="text" id="educationField" placeholder="Факультет информационных технологий">
+        </div>
+
+        <div class="section-title">Навыки</div>
+
+        <div class="form-group">
+          <label>Навыки (через запятую)</label>
+          <input type="text" id="skills" placeholder="HTML, CSS, JavaScript, React, Node.js, Python">
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="window.print()">💾 Скачать PDF</button>
+          <button class="btn btn-secondary" onclick="resetResume()">🔄 Сбросить</button>
         </div>
       </div>
-      <p class="live" id="live" role="status"></p>
-      <div class="sheetwrap"><article class="sheet t-classic" id="sheet"></article></div>
-    </section>
+
+      <div class="preview-section" id="resumePreview">
+        <div class="resume-header">
+          <div class="resume-name" id="previewName">Иванов Иван Иванович</div>
+          <div class="resume-title" id="previewTitle">Веб-разработчик</div>
+          <div class="resume-contact">
+            <span id="previewEmail">email@example.com</span>
+            <span id="previewPhone">+7 (999) 000-00-00</span>
+            <span id="previewSocial">@username</span>
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-section-title">Обо мне</div>
+          <div class="resume-item-desc" id="previewAbout">
+            Опытный разработчик с 5 годами опыта в создании веб-приложений. Специализируюсь на React и Node.js. Люблю создавать пользовательские интерфейсы и решать сложные технические задачи.
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-section-title">Опыт работы</div>
+          <div class="resume-item">
+            <div class="resume-item-header">
+              <span class="resume-item-title" id="previewExpTitle">Senior Web Developer</span>
+              <span class="resume-item-date">2022 - Настоящее время</span>
+            </div>
+            <div class="resume-item-subtitle" id="previewExpCompany">Tech Company, Москва</div>
+            <div class="resume-item-desc" id="previewExpDesc">
+              - Разработка веб-приложений на React<br>
+              - Архитектура и оптимизация производительности<br>
+              - Работа в команде из 10 разработчиков
+            </div>
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-section-title">Образование</div>
+          <div class="resume-item">
+            <div class="resume-item-header">
+              <span class="resume-item-title" id="previewEducation">МГУ им. Ломоносова</span>
+              <span class="resume-item-date" id="previewEducationYears">2018 - 2022</span>
+            </div>
+            <div class="resume-item-subtitle" id="previewEducationField">Факультет информационных технологий</div>
+          </div>
+        </div>
+
+        <div class="resume-section">
+          <div class="resume-section-title">Навыки</div>
+          <div class="skills-list" id="previewSkills">
+            <span class="skill-tag">HTML</span>
+            <span class="skill-tag">CSS</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">Node.js</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">✨</div>
+        <h3>Красивый дизайн</h3>
+        <p>Профессиональное оформление резюме, которое выделит вас среди других кандидатов.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>PDF экспорт</h3>
+        <p>Один клик для сохранения резюме в формате PDF — готово к отправке работодателям.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Быстро</h3>
+        <p>Создайте полноценное резюме за 5 минут без сложных инструментов.</p>
+      </div>
+    </div>
   </div>
-</main>
 
-<script>
-(() => {
-  const KEY = 'resume.v2', $ = id => document.getElementById(id);
-  const RM = `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6l-12 12"></path><path d="M6 6l12 12"></path></svg>`;
-  const EXAMPLE = {
-    tpl: 'classic', clr: '#0f766e',
-    name: 'Алексей Морозов', role: 'Frontend-разработчик', email: 'alexey.morozov@example.com', phone: '+7 999 123-45-67', link: '@alexey_dev',
-    about: 'Пять лет делаю интерфейсы для сервисов и интернет-магазинов. Люблю быстрые страницы, аккуратную вёрстку и понятный код.',
-    jobs: [
-      { t: 'Senior Frontend-разработчик', c: 'Студия «Пиксель», Москва', p: '2022 - настоящее время', d: 'Перевёл каталог с jQuery на React, время загрузки упало с 4 до 1,5 секунды\nВвёл дизайн-систему и ревью компонентов в команде из 8 человек' },
-      { t: 'Frontend-разработчик', c: 'Интернет-магазин «Сезон», Казань', p: '2020 - 2022', d: 'Сверстал адаптивные шаблоны под 12 лендингов\nНастроил сборку на Webpack и автотесты' }
-    ],
-    school: 'КФУ, Казань', years: '2015-2019', field: 'Прикладная информатика', skills: 'HTML, CSS, JavaScript, TypeScript, React, Node.js, Git, Figma'
-  };
-  const EMPTY = { tpl: 'classic', clr: '#0f766e', name: '', role: '', email: '', phone: '', link: '', about: '', jobs: [{ t: '', c: '', p: '', d: '' }], school: '', years: '', field: '', skills: '' };
-  const clone = o => JSON.parse(JSON.stringify(o));
-  let st; try { st = Object.assign(clone(EXAMPLE), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { st = clone(EXAMPLE); }
-  if (!Array.isArray(st.jobs)) st.jobs = clone(EXAMPLE.jobs);
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} };
+  <script>
+    // Update preview on input
+    const inputs = {
+      fullName: document.getElementById('fullName'),
+      jobTitle: document.getElementById('jobTitle'),
+      email: document.getElementById('email'),
+      phone: document.getElementById('phone'),
+      social: document.getElementById('social'),
+      about: document.getElementById('about'),
+      education: document.getElementById('education'),
+      educationYears: document.getElementById('educationYears'),
+      educationField: document.getElementById('educationField'),
+      skills: document.getElementById('skills')
+    };
 
-  const simple = ['name', 'role', 'email', 'phone', 'link', 'about', 'school', 'years', 'field', 'skills'];
-  simple.forEach(id => $(id).addEventListener('input', () => { st[id] = $(id).value; save(); paint(); }));
-  document.querySelectorAll('input[name=tpl]').forEach(r => r.addEventListener('change', () => { st.tpl = r.value; save(); paint(); }));
-  document.querySelectorAll('input[name=clr]').forEach(r => r.addEventListener('change', () => { st.clr = r.value; save(); paint(); }));
+    const previews = {
+      name: document.getElementById('previewName'),
+      title: document.getElementById('previewTitle'),
+      email: document.getElementById('previewEmail'),
+      phone: document.getElementById('previewPhone'),
+      social: document.getElementById('previewSocial'),
+      about: document.getElementById('previewAbout'),
+      education: document.getElementById('previewEducation'),
+      educationYears: document.getElementById('previewEducationYears'),
+      educationField: document.getElementById('previewEducationField'),
+      skills: document.getElementById('previewSkills')
+    };
 
-  function fillForm() {
-    simple.forEach(id => $(id).value = st[id] || '');
-    document.querySelectorAll('input[name=tpl]').forEach(r => r.checked = r.value === st.tpl);
-    document.querySelectorAll('input[name=clr]').forEach(r => r.checked = r.value === st.clr);
-    jobs();
-  }
-  function jobs() {
-    const box = $('jobs'); box.replaceChildren();
-    st.jobs.forEach((j, i) => {
-      const el = document.createElement('div'); el.className = 'job';
-      el.innerHTML = `<div class="top"><b>Место работы ${i + 1}</b><button class="rm" type="button" aria-label="Удалить место работы ${i + 1}">${RM}</button></div>
-        <div class="field"><label>Должность</label><input class="input t" type="text"></div>
-        <div class="row"><div class="field"><label>Компания</label><input class="input c" type="text"></div><div class="field"><label>Период</label><input class="input p" type="text" placeholder="2022 - настоящее время"></div></div>
-        <div class="field"><label>Что делали (каждая строка станет пунктом)</label><textarea class="textarea d" rows="3"></textarea></div>`;
-      [['t', 't'], ['c', 'c'], ['p', 'p'], ['d', 'd']].forEach(([cls, k]) => { const f = el.querySelector('.' + cls); f.value = j[k] || ''; f.addEventListener('input', () => { j[k] = f.value; save(); paint(); }); });
-      el.querySelector('.rm').addEventListener('click', () => { if (st.jobs.length === 1) st.jobs[0] = { t: '', c: '', p: '', d: '' }; else st.jobs.splice(i, 1); save(); jobs(); paint(); });
-      box.appendChild(el);
+    inputs.fullName.addEventListener('input', (e) => previews.name.textContent = e.target.value || 'Иванов Иван Иванович');
+    inputs.jobTitle.addEventListener('input', (e) => previews.title.textContent = e.target.value || 'Веб-разработчик');
+    inputs.email.addEventListener('input', (e) => previews.email.textContent = e.target.value || 'email@example.com');
+    inputs.phone.addEventListener('input', (e) => previews.phone.textContent = e.target.value || '+7 (999) 000-00-00');
+    inputs.social.addEventListener('input', (e) => previews.social.textContent = e.target.value || '@username');
+    inputs.about.addEventListener('input', (e) => previews.about.textContent = e.target.value || 'Опытный разработчик с 5 годами опыта в создании веб-приложений. Специализируюсь на React и Node.js. Люблю создавать пользовательские интерфейсы и решать сложные технические задачи.');
+    inputs.education.addEventListener('input', (e) => previews.education.textContent = e.target.value || 'МГУ им. Ломоносова');
+    inputs.educationYears.addEventListener('input', (e) => previews.educationYears.textContent = e.target.value || '2018 - 2022');
+    inputs.educationField.addEventListener('input', (e) => previews.educationField.textContent = e.target.value || 'Факультет информационных технологий');
+
+    inputs.skills.addEventListener('input', (e) => {
+      const skills = e.target.value.split(',').map(s => s.trim()).filter(s => s);
+      previews.skills.innerHTML = skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('');
+      if (skills.length === 0) {
+        previews.skills.innerHTML = '<span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">JavaScript</span>';
+      }
     });
-  }
-  $('addJob').addEventListener('click', () => { st.jobs.push({ t: '', c: '', p: '', d: '' }); save(); jobs(); paint(); const t = $('jobs').querySelectorAll('.t'); t[t.length - 1].focus(); });
 
-  const h = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-  const sec = (title, ...kids) => { const s = h('section', 'sec'); s.appendChild(h('h3', null, title)); kids.forEach(k => s.appendChild(k)); return s; };
+    // Add experience
+    const addExpBtn = document.getElementById('addExpBtn');
+    const experienceContainer = document.getElementById('experienceContainer');
 
-  function paint() {
-    const sh = $('sheet'); sh.className = 'sheet ' + (st.tpl === 'side' ? 't-side' : 't-classic'); sh.style.setProperty('--a', st.clr || '#0f766e');
-    sh.replaceChildren();
-    const contacts = [st.email, st.phone, st.link].filter(Boolean);
-    const ct = h('div', 'ct'); contacts.forEach(c => ct.appendChild(h('span', null, c)));
+    addExpBtn.addEventListener('click', () => {
+      const count = experienceContainer.children.length + 1;
+      const expDiv = document.createElement('div');
+      expDiv.className = 'resume-item';
+      expDiv.style.cssText = 'background: #f9fafb; padding: 16px; border-radius: 8px; margin-bottom: 16px;';
+      expDiv.innerHTML = `
+        <div class="resume-item-header">
+          <span class="resume-item-title" contenteditable="true">Должность ${count}</span>
+          <span class="resume-item-date">2023 - Настоящее время</span>
+        </div>
+        <div class="resume-item-subtitle" contenteditable="true">Компания, Город</div>
+        <div class="resume-item-desc" contenteditable="true">
+          - Описание обязанностей<br>
+          - Достижения
+        </div>
+      `;
+      experienceContainer.appendChild(expDiv);
+    });
 
-    const head = h('header', 'hd');
-    head.appendChild(h('h1', 'name' + (st.name ? '' : ' muted'), st.name || 'Ваше имя'));
-    head.appendChild(h('p', 'role' + (st.role ? '' : ' muted'), st.role || 'Должность'));
-
-    const main = h('div', 'main');
-    if (st.about.trim()) main.appendChild(sec('Обо мне', h('p', 'about', st.about)));
-    const filled = st.jobs.filter(j => j.t || j.c || j.d || j.p);
-    if (filled.length) {
-      const s = sec('Опыт работы');
-      filled.forEach(j => {
-        const b = h('div', 'job2'), top = h('div', 'j-top'); top.appendChild(h('b', null, j.t || 'Должность')); if (j.p) top.appendChild(h('span', null, j.p)); b.appendChild(top);
-        if (j.c) b.appendChild(h('p', 'j-sub', j.c));
-        const lines = j.d.split('\n').map(x => x.replace(/^[\s\-•*]+/, '').trim()).filter(Boolean);
-        if (lines.length) { const ul = h('ul'); lines.forEach(l => ul.appendChild(h('li', null, l))); b.appendChild(ul); }
-        s.appendChild(b);
-      });
-      main.appendChild(s);
+    // Reset function
+    function resetResume() {
+      document.querySelectorAll('input, textarea').forEach(input => input.value = '');
+      previews.name.textContent = 'Иванов Иван Иванович';
+      previews.title.textContent = 'Веб-разработчик';
+      previews.email.textContent = 'email@example.com';
+      previews.phone.textContent = '+7 (999) 000-00-00';
+      previews.social.textContent = '@username';
+      previews.about.textContent = 'Опытный разработчик с 5 годами опыта в создании веб-приложений.';
+      previews.education.textContent = 'МГУ им. Ломоносова';
+      previews.educationYears.textContent = '2018 - 2022';
+      previews.educationField.textContent = 'Факультет информационных технологий';
+      previews.skills.innerHTML = '<span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">JavaScript</span>';
     }
-    if (st.school || st.field || st.years) {
-      const b = h('div', 'job2'), top = h('div', 'j-top'); top.appendChild(h('b', null, st.school || 'Учебное заведение')); if (st.years) top.appendChild(h('span', null, st.years)); b.appendChild(top);
-      if (st.field) b.appendChild(h('p', 'j-sub', st.field));
-      main.appendChild(sec('Образование', b));
-    }
-    const skills = st.skills.split(',').map(s => s.trim()).filter(Boolean);
-    const skillBox = h('div', 'tags'); skills.forEach(k => skillBox.appendChild(h('span', null, k)));
-
-    if (st.tpl === 'side') {
-      const side = h('aside', 'side');
-      const hs = h('div', 'hd-side'); hs.appendChild(head.querySelector('h1').cloneNode(true)); side.appendChild(hs);
-      const rl = head.querySelector('p').cloneNode(true); rl.style.color = 'rgba(255,255,255,.85)'; hs.appendChild(rl);
-      if (contacts.length) side.appendChild(sec('Контакты', ct));
-      if (skills.length) side.appendChild(sec('Навыки', skillBox));
-      sh.append(side, main);
-    } else {
-      head.appendChild(ct); sh.appendChild(head);
-      sh.appendChild(Object.assign(main, { className: 'main' }));
-      if (skills.length) main.appendChild(sec('Навыки', skillBox));
-    }
-  }
-
-  function say(m) { $('live').textContent = m; clearTimeout(say.t); say.t = setTimeout(() => $('live').textContent = '', 2500); }
-  $('print').addEventListener('click', () => { say('В окне печати выберите «Сохранить как PDF»'); setTimeout(() => window.print(), 50); });
-  $('example').addEventListener('click', () => { st = clone(EXAMPLE); save(); fillForm(); paint(); say('Подставлен пример'); });
-  $('clear').addEventListener('click', () => { st = Object.assign(clone(EMPTY), { tpl: st.tpl, clr: st.clr }); save(); fillForm(); paint(); say('Форма очищена'); $('name').focus(); });
-
-  fillForm(); paint();
-})();
-</script>
+  </script>
 </body>
 </html>
