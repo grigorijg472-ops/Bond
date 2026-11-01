@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Лендинг с квизом для ремонта квартир: демо</title>
+<meta name="description" content="Демо продающего лендинга: слайдер «до/после», пакеты с ценами, этапы работ и квиз-калькулятор, который собирает заявки.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="../shared/base.css">
+<style>
+  :root { --accent: #0f766e; --accent-ink: #0b5f58; --on-accent: #fff; --bg: #f7f5f0; --sand: #efe9dd; --dark: #11201e; }
+  @media (prefers-color-scheme: dark) { :root { --accent: #2dd4bf; --accent-ink: #5eead4; --on-accent: #04201d; --bg: #0d1312; --surface: #141c1b; --surface-2: #1b2524; --line: #26312f; --sand: #151e1d; --dark: #0a1110; } }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+  section { padding: clamp(56px, 9vw, 104px) 0; scroll-margin-top: 64px; }
+  .eyebrow { font-family: var(--mono); font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-ink); }
+  h2.t { font-size: clamp(2rem, 4.4vw, 3.2rem); font-weight: 800; letter-spacing: -0.04em; margin-top: 10px; max-width: 18ch; }
+  .lead { color: var(--muted); font-size: 1.1rem; max-width: 38rem; margin-top: 14px; }
+
+  .site-nav { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .site-nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+  .brand { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.03em; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand i { width: 30px; height: 30px; border-radius: 8px; background: var(--accent); display: grid; place-items: center; }
+  .brand i::before { content: ''; width: 14px; height: 3px; background: var(--on-accent); border-radius: 2px; box-shadow: 0 -5px 0 var(--on-accent), 0 5px 0 var(--on-accent); }
+  .links { display: flex; gap: 4px; list-style: none; padding: 0; }
+  .links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; color: var(--muted); font-weight: 500; }
+  .links a:hover { color: var(--ink); background: var(--surface-2); }
+
+  /* Hero */
+  .hero { padding-top: clamp(28px, 6vw, 64px); }
+  .hero .wrap { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(24px, 4vw, 56px); align-items: center; }
+  .hero h1 { font-size: clamp(2.3rem, 4.6vw, 3.9rem); font-weight: 800; letter-spacing: -0.045em; line-height: 1; }
+  .hero h1 span { color: var(--accent); }
+  .hero .lead { margin-top: 20px; }
+  .hero .cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+  .btn-lg { min-height: 56px; padding: 0 26px; border-radius: 14px; font-size: 1.05rem; }
+  .facts { display: grid; grid-template-columns: repeat(3, auto); gap: 22px; margin-top: 34px; justify-content: start; }
+  .facts b { display: block; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; }
+  .facts span { color: var(--muted); font-size: .86rem; }
+
+  /* До/после */
+  .ba { position: relative; aspect-ratio: 4 / 3; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 60px -30px rgba(0,0,0,.4); user-select: none; touch-action: pan-y; cursor: ew-resize; background: #ccc; }
+  .ba svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ba .after { clip-path: inset(0 0 0 var(--x, 50%)); }
+  .ba .handle { position: absolute; top: 0; bottom: 0; left: var(--x, 50%); width: 3px; margin-left: -1.5px; background: #fff; box-shadow: 0 0 12px rgba(0,0,0,.3); pointer-events: none; }
+  .ba .handle::after { content: '‹ ›'; position: absolute; top: 50%; left: 50%; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%; background: #fff; color: #111; display: grid; place-items: center; font-weight: 800; font-size: 1.1rem; letter-spacing: 2px; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+  .ba .tag { position: absolute; top: 14px; padding: 6px 12px; border-radius: 999px; font-size: .8rem; font-weight: 700; background: rgba(0,0,0,.55); color: #fff; backdrop-filter: blur(6px); pointer-events: none; }
+  .ba .tag.l { left: 14px; } .ba .tag.r { right: 14px; background: rgba(255,255,255,.85); color: #111; }
+  .ba input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: ew-resize; }
+  .ba:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+  /* Пакеты */
+  .pk-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; }
+  .seg { display: inline-flex; padding: 4px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+  .seg button { min-height: 42px; padding: 0 18px; border-radius: 10px; font-weight: 600; color: var(--muted); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  .packs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 36px; }
+  .pack { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: 24px; background: var(--surface); border: 1px solid var(--line); transition: transform .3s var(--ease), box-shadow .3s; }
+  .pack:hover { transform: translateY(-4px); box-shadow: 0 24px 50px -28px rgba(0,0,0,.35); }
+  .pack.best { background: var(--dark); color: #eef5f3; border-color: transparent; }
+  .pack.best .muted, .pack.best li { color: #b6c7c3; }
+  .pack .badge { position: absolute; top: -12px; left: 28px; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 4px 10px; border-radius: 999px; background: var(--accent); color: var(--on-accent); }
+  .pack h3 { font-size: 1.35rem; }
+  .pack .muted { color: var(--muted); font-size: .92rem; }
+  .pack .price { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+  .pack .price small { font-size: .95rem; font-weight: 500; opacity: .7; letter-spacing: 0; }
+  .pack ul { list-style: none; padding: 0; display: grid; gap: 10px; font-size: .94rem; }
+  .pack li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; color: var(--muted); }
+  .pack li svg { width: 18px; height: 18px; color: var(--accent); margin-top: 3px; }
+  .pack .btn { margin-top: auto; }
+  .pack.best .btn-ghost { color: #fff; border-color: rgba(255,255,255,.25); }
+
+  /* Этапы */
+  .steps-sec { background: var(--sand); }
+  .timeline { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-top: 44px; list-style: none; padding: 0; }
+  .timeline::before { content: ''; position: absolute; left: 24px; right: 24px; top: 23px; height: 2px; background: var(--line); }
+  .timeline::after { content: ''; position: absolute; left: 24px; top: 23px; height: 2px; background: var(--accent); width: calc((100% - 48px) * var(--p, 0)); transition: width 1.4s var(--ease); }
+  .timeline li { position: relative; z-index: 1; }
+  .timeline .n { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 2px solid var(--line); font-family: var(--mono); font-weight: 600; transition: all .4s var(--ease); }
+  .timeline li.on .n { background: var(--accent); border-color: var(--accent); color: var(--on-accent); transform: scale(1.06); }
+  .timeline h3 { font-size: 1.05rem; margin-top: 16px; }
+  .timeline p { color: var(--muted); font-size: .9rem; margin-top: 6px; }
+  .timeline .d { font-family: var(--mono); font-size: .76rem; color: var(--accent-ink); margin-top: 8px; display: block; }
+
+  /* Квиз */
+  .quiz-sec .box { display: grid; grid-template-columns: .8fr 1.2fr; border-radius: 28px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 30px 70px -40px rgba(0,0,0,.35); }
+  .q-aside { background: var(--dark); color: #eef5f3; padding: clamp(24px, 4vw, 40px); display: flex; flex-direction: column; gap: 18px; }
+  .q-aside h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; letter-spacing: -0.035em; }
+  .q-aside p { color: #b6c7c3; }
+  .gifts { list-style: none; padding: 0; display: grid; gap: 10px; margin-top: auto; }
+  .gifts li { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.06); font-size: .92rem; }
+  .gifts li span { font-size: 1.3rem; }
+  .q-main { padding: clamp(20px, 4vw, 40px); display: flex; flex-direction: column; min-height: 520px; }
+  .q-prog { display: flex; align-items: center; gap: 14px; }
+  .q-prog .bar { flex: 1; height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+  .q-prog .bar i { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width .5s var(--ease); }
+  .q-prog span { font-family: var(--mono); font-size: .85rem; color: var(--muted); white-space: nowrap; }
+  .q-body { flex: 1; padding: 26px 0; }
+  .q-body h3 { font-size: 1.45rem; letter-spacing: -0.025em; }
+  .q-body .help { margin: 6px 0 20px; font-size: .92rem; }
+  .q-anim { animation: qin .4s var(--ease) both; }
+  @keyframes qin { from { opacity: 0; transform: translateY(12px); } }
+  .opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .opt { display: flex; align-items: center; gap: 14px; min-height: 68px; padding: 12px 16px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); text-align: left; transition: all .2s var(--ease); }
+  .opt:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
+  .opt[aria-pressed="true"], .opt[aria-checked="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--surface)); box-shadow: inset 0 0 0 1px var(--accent); }
+  .opt .em { font-size: 1.6rem; width: 44px; height: 44px; border-radius: 12px; background: var(--surface-2); display: grid; place-items: center; flex: none; }
+  .opt b { display: block; font-weight: 600; }
+  .opt small { color: var(--muted); font-size: .82rem; }
+  .area { text-align: center; padding: 10px 0; }
+  .area output { display: block; font-size: clamp(3rem, 8vw, 4.6rem); font-weight: 800; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+  .area output small { font-size: 1.4rem; color: var(--muted); font-weight: 600; }
+  .area input[type=range] { width: 100%; accent-color: var(--accent); height: 32px; }
+  .area .marks { display: flex; justify-content: space-between; color: var(--muted); font-size: .8rem; font-family: var(--mono); }
+  .q-nav { display: flex; justify-content: space-between; gap: 10px; }
+  .result { display: grid; gap: 16px; }
+  .est { padding: 20px; border-radius: 18px; background: color-mix(in srgb, var(--accent) 9%, var(--surface)); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line)); }
+  .est small { color: var(--muted); }
+  .est b { display: block; font-size: clamp(1.6rem, 4vw, 2.3rem); font-weight: 800; letter-spacing: -0.035em; margin: 4px 0; font-variant-numeric: tabular-nums; }
+  .est .meta { display: flex; gap: 18px; flex-wrap: wrap; font-size: .9rem; color: var(--muted); }
+  .mess { display: flex; gap: 8px; flex-wrap: wrap; }
+  .mess label { position: relative; }
+  .mess input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .mess span { display: inline-flex; align-items: center; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); font-weight: 500; font-size: .92rem; }
+  .mess input:checked + span { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent-ink); font-weight: 600; }
+  .mess input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .thanks { text-align: center; display: grid; gap: 12px; justify-items: center; padding: 40px 0; }
+  .thanks .c { width: 76px; height: 76px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent-ink); display: grid; place-items: center; }
+  .thanks .c svg { width: 38px; height: 38px; stroke-width: 2.4; }
+  .thanks .c path { stroke-dasharray: 24; animation: draw .6s .2s var(--ease) both; }
+  .confetti { position: fixed; top: -10px; width: 10px; height: 14px; z-index: 100; pointer-events: none; border-radius: 2px; }
+
+  /* FAQ */
+  .faq { display: grid; gap: 10px; margin-top: 32px; max-width: 820px; }
+  .faq details { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); transition: border-color .2s; }
+  .faq details[open] { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+  .faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 64px; padding: 14px 20px; font-weight: 600; font-size: 1.04rem; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; font-size: 1.5rem; font-weight: 400; color: var(--accent); transition: transform .3s var(--ease); flex: none; }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq details p { padding: 0 20px 18px; color: var(--muted); }
+  .final { text-align: center; background: var(--dark); color: #eef5f3; border-radius: 32px; padding: clamp(40px, 7vw, 80px) 24px; }
+  .final h2 { font-size: clamp(2rem, 4.4vw, 3rem); font-weight: 800; letter-spacing: -0.04em; }
+  .final p { color: #b6c7c3; margin: 12px auto 26px; max-width: 32rem; }
+  footer.f { padding: 28px 0 40px; color: var(--muted); font-size: .88rem; }
+  footer.f .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+  .rv { opacity: 0; transform: translateY(22px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+  .rv.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; } .timeline::after { transition: none; } }
+
+  @media (max-width: 960px) {
+    .hero .wrap, .quiz-sec .box { grid-template-columns: 1fr; }
+    .packs { grid-template-columns: 1fr; max-width: 520px; }
+    .timeline { grid-template-columns: 1fr; gap: 22px; }
+    .timeline::before, .timeline::after { left: 23px; right: auto; top: 24px; bottom: 24px; width: 2px; height: auto; }
+    .timeline::after { height: calc((100% - 48px) * var(--p, 0)); bottom: auto; transition: height 1.4s var(--ease); }
+    .timeline li { display: grid; grid-template-columns: 48px 1fr; column-gap: 16px; }
+    .timeline li > :not(.n) { grid-column: 2; } .timeline h3 { margin-top: 10px; }
+    .links { display: none; }
+    .gifts { margin-top: 0; }
+  }
+  @media (max-width: 560px) {
+    .opts { grid-template-columns: 1fr; }
+    .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; } .facts b { font-size: 1.3rem; }
+    .site-nav .btn span { display: none; }
+    .q-main { min-height: 0; }
+    .hero .cta .btn { flex: 1 1 100%; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"/></symbol>
+</defs></svg>
+
+<header class="topbar">
+  <a class="back" href="../../index.html#projects" aria-label="Портфолио"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-back"/></svg><span>Портфолио</span></a>
+  <span class="name">Лендинг с квизом</span>
+  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"/></svg><span>Написать</span></a>
+</header>
+
+<nav class="site-nav" aria-label="Разделы лендинга">
+  <div class="wrap">
+    <a class="brand" href="#top"><i aria-hidden="true"></i>Ровно</a>
+    <ul class="links"><li><a href="#prices">Цены</a></li><li><a href="#steps">Этапы</a></li><li><a href="#quiz">Расчёт</a></li><li><a href="#faq">Вопросы</a></li></ul>
+    <a class="btn btn-primary btn-sm" href="#quiz"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-phone"/></svg><span>Рассчитать стоимость</span></a>
+  </div>
+</nav>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow rv">Ремонт квартир под ключ</p>
+        <h1 class="rv" style="margin-top:14px">Ремонт <span>с фиксированной</span> сметой и сроком в договоре</h1>
+        <p class="lead rv">Своя бригада, закупка материалов и технадзор. Если выйдем за срок — платим неустойку за каждый день.</p>
+        <div class="cta rv"><a class="btn btn-primary btn-lg" href="#quiz">Рассчитать за 1 минуту<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn-ghost btn-lg" href="#prices">Смотреть цены</a></div>
+        <div class="facts rv"><div><b>3 года</b><span>гарантия на работы</span></div><div><b>0 ₽</b><span>замер и смета</span></div><div><b>5</b><span>этапов приёмки</span></div></div>
+      </div>
+      <div class="ba rv" id="ba" style="--x:50%">
+        <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="400" height="300" fill="#9a9690"/>
+          <rect y="0" width="400" height="212" fill="#a8a49d"/>
+          <path d="M60 40l14 30l-8 24M300 20l-10 40M320 140l20 18l-6 30" stroke="#7c7871" stroke-width="2" fill="none"/>
+          <rect x="230" y="50" width="110" height="100" fill="#cfd8de" stroke="#6f6b64" stroke-width="6"/><path d="M285 50v100M230 100h110" stroke="#6f6b64" stroke-width="4"/>
+          <rect x="248" y="70" width="20" height="16" fill="#fff" opacity=".5"/>
+          <path d="M120 0v38" stroke="#333" stroke-width="2"/><circle cx="120" cy="44" r="7" fill="#fff6c8"/>
+          <path d="M30 212v-60h4" stroke="#444" stroke-width="2" fill="none"/><rect x="26" y="146" width="16" height="10" fill="#555"/>
+          <rect y="212" width="400" height="88" fill="#86827b"/>
+          <path d="M0 240h400M0 270h400" stroke="#77736c" stroke-width="2"/>
+          <rect x="70" y="190" width="70" height="44" fill="#b48a5a"/><path d="M70 205h70" stroke="#94703f" stroke-width="3"/>
+          <rect x="120" y="166" width="50" height="40" fill="#c39b6a"/><path d="M120 180h50" stroke="#94703f" stroke-width="3"/>
+          <ellipse cx="300" cy="262" rx="40" ry="8" fill="#6f6b64" opacity=".6"/><path d="M280 262l10 -20h30l8 20z" fill="#d4d0c8"/>
+          <path d="M180 120q20 -10 40 4" stroke="#8a857e" stroke-width="10" opacity=".35" fill="none"/>
+        </svg>
+        <svg class="after" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="400" height="300" fill="#e9e2d6"/>
+          <rect y="0" width="400" height="212" fill="#e7ded0"/>
+          <rect x="0" y="0" width="160" height="212" fill="#7f9c8f"/>
+          <rect x="230" y="50" width="110" height="100" rx="2" fill="#cfe7f2" stroke="#fbfaf7" stroke-width="7"/><path d="M285 50v100" stroke="#fbfaf7" stroke-width="4"/>
+          <path d="M230 50h110v14h-110z" fill="#f6f1e8"/><rect x="222" y="44" width="10" height="120" fill="#f1e4cf"/><rect x="338" y="44" width="10" height="120" fill="#f1e4cf"/>
+          <rect x="40" y="56" width="66" height="46" fill="#f8f3ea" stroke="#3c4a44" stroke-width="3"/><path d="M48 92l16 -18l12 12l8 -8l14 14z" fill="#c78c5e"/>
+          <path d="M120 0v30" stroke="#222" stroke-width="2"/><path d="M104 30h32l-8 16h-16z" fill="#2f3b36"/><ellipse cx="120" cy="50" rx="18" ry="5" fill="#fff3c4" opacity=".7"/>
+          <rect y="212" width="400" height="88" fill="#c79f72"/>
+          <path d="M0 230h400M0 252h400M0 276h400" stroke="#b48b5e" stroke-width="1.5"/><path d="M40 212v18M140 230v22M90 252v24M260 212v18M330 230v22M200 252v24M370 276v24" stroke="#b48b5e" stroke-width="1.5"/>
+          <ellipse cx="120" cy="262" rx="110" ry="18" fill="#efe6d8"/>
+          <rect x="40" y="170" width="160" height="56" rx="12" fill="#3f5a52"/><rect x="40" y="150" width="160" height="34" rx="12" fill="#4c6b62"/><rect x="30" y="168" width="22" height="58" rx="8" fill="#3a544c"/><rect x="188" y="168" width="22" height="58" rx="8" fill="#3a544c"/>
+          <rect x="60" y="160" width="36" height="26" rx="6" fill="#e3b778"/><rect x="146" y="160" width="36" height="26" rx="6" fill="#d9d2c4"/>
+          <path d="M52 226v12M188 226v12" stroke="#2b2b2b" stroke-width="4"/>
+          <rect x="300" y="196" width="34" height="40" rx="4" fill="#d48a5c"/><path d="M317 196c-20 -30 -26 -60 -10 -80c6 26 4 50 10 80c4 -36 14 -56 30 -66c-6 30 -18 50 -30 66" fill="#4f7f5a"/>
+          <rect x="236" y="196" width="50" height="6" rx="3" fill="#7a5a3a"/><path d="M244 202l-6 36M278 202l6 36" stroke="#7a5a3a" stroke-width="4"/><circle cx="262" cy="190" r="6" fill="#f2efe8"/>
+        </svg>
+        <span class="tag l">До</span><span class="tag r">После</span>
+        <span class="handle" aria-hidden="true"></span>
+        <label class="sr-only" for="baRange">Сравнить до и после</label>
+        <input id="baRange" type="range" min="0" max="100" value="50">
+      </div>
+    </div>
+  </section>
+
+  <section id="prices">
+    <div class="wrap">
+      <div class="pk-head">
+        <div><p class="eyebrow rv">Цены</p><h2 class="t rv">Три пакета, без скрытых работ</h2></div>
+        <div class="seg rv" role="group" aria-label="Тип жилья" id="housing"><button type="button" data-h="new" aria-pressed="true">Новостройка</button><button type="button" data-h="old" aria-pressed="false">Вторичка</button></div>
+      </div>
+      <div class="packs" id="packs"></div>
+    </div>
+  </section>
+
+  <section class="steps-sec" id="steps">
+    <div class="wrap">
+      <p class="eyebrow rv">Как работаем</p><h2 class="t rv">Пять этапов, после каждого вы принимаете работу</h2>
+      <ol class="timeline" id="timeline">
+        <li><span class="n">01</span><h3>Замер и смета</h3><p>Инженер приезжает бесплатно, через 2 дня присылаем подробную смету.</p><span class="d">1–2 дня</span></li>
+        <li><span class="n">02</span><h3>Договор</h3><p>Фиксируем цену, сроки и неустойку. Оплата по этапам.</p><span class="d">1 день</span></li>
+        <li><span class="n">03</span><h3>Черновые работы</h3><p>Демонтаж, электрика, сантехника, стяжка, штукатурка.</p><span class="d">3–5 недель</span></li>
+        <li><span class="n">04</span><h3>Чистовая отделка</h3><p>Плитка, полы, покраска, двери, свет и розетки.</p><span class="d">3–4 недели</span></li>
+        <li><span class="n">05</span><h3>Приёмка и уборка</h3><p>Проверяем по чек-листу из 60 пунктов, сдаём чистую квартиру.</p><span class="d">2 дня</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <div class="wrap">
+      <div class="box rv">
+        <aside class="q-aside">
+          <p class="eyebrow" style="color:#5eead4">Расчёт за 1 минуту</p>
+          <h2>Ответьте на 5 вопросов и узнайте стоимость ремонта</h2>
+          <p>Покажем вилку цены и срок сразу, без звонка. Точную смету составит инженер после замера.</p>
+          <ul class="gifts"><li><span aria-hidden="true">📐</span>Дизайн-планировка в подарок</li><li><span aria-hidden="true">🧾</span>Смета с ценами материалов</li><li><span aria-hidden="true">🛡️</span>Гарантия 3 года в договоре</li></ul>
+        </aside>
+        <div class="q-main">
+          <div class="q-prog"><div class="bar"><i id="qBar" style="width:20%"></i></div><span id="qStep">Вопрос 1 из 5</span></div>
+          <div class="q-body" id="qBody" aria-live="polite"></div>
+          <div class="q-nav" id="qNav"><button class="btn btn-ghost" type="button" id="qBack">Назад</button><button class="btn btn-primary" type="button" id="qNext">Далее<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" style="padding-top:0">
+    <div class="wrap">
+      <p class="eyebrow rv">Вопросы</p><h2 class="t rv">Что обычно спрашивают</h2>
+      <div class="faq">
+        <details class="rv"><summary>Может ли смета вырасти в процессе?</summary><p>Нет. Цена работ фиксируется в договоре. Меняется только если вы сами добавляете работы: каждое изменение оформляем допсоглашением.</p></details>
+        <details class="rv"><summary>Как проходит оплата?</summary><p>Поэтапно: вы платите за этап после того, как приняли предыдущий. Предоплата только за материалы на первый этап.</p></details>
+        <details class="rv"><summary>Нужно ли мне быть на объекте?</summary><p>Нет. Каждый день прораб присылает фото и короткий отчёт в Telegram, а на приёмку этапа можно подключиться по видео.</p></details>
+        <details class="rv"><summary>Кто закупает материалы?</summary><p>Как вам удобнее: мы закупаем по оптовым ценам с чеками или вы покупаете сами по нашему списку.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap"><div class="final rv"><h2>Узнайте цену своего ремонта</h2><p>Пять вопросов, минута времени, и вы увидите вилку стоимости и срок.</p><a class="btn btn-primary btn-lg" href="#quiz">Пройти расчёт</a></div></div>
+  </section>
+</main>
+<footer class="f"><div class="wrap"><span>«Ровно»: демо-лендинг для портфолио</span><span>Цены и условия вымышлены</span></div></footer>
+
+<script src="../shared/fx.js"></script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const rub = n => (Math.round(n / 10000) * 10000).toLocaleString('ru-RU') + ' ₽';
+  const ico = id => `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#${id}"/></svg>`;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  /* До/после */
+  const ba = $('#ba'), range = $('#baRange');
+  const setX = v => { ba.style.setProperty('--x', v + '%'); range.value = v; };
+  range.addEventListener('input', () => setX(range.value));
+  if (!fx.reduce()) { // подсказка движением, пока пользователь не тронул
+    let t0 = null, touched = false; ba.addEventListener('pointerdown', () => touched = true, { once: true }); range.addEventListener('input', () => touched = true, { once: true });
+    const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); const run = now => { if (touched) return; t0 = t0 || now; const k = (now - t0) / 2400; if (k > 1) return setX(50); setX(50 + Math.sin(k * Math.PI * 2) * 22); requestAnimationFrame(run); }; setTimeout(() => requestAnimationFrame(run), 700); } }, { threshold: .5 });
+    io.observe(ba);
+  }
+
+  /* Пакеты */
+  const PACKS = [
+    { n: 'Косметический', d: 'Освежить квартиру без переделки', p: { new: 3500, old: 4200 }, f: ['Покраска стен и потолков', 'Замена напольного покрытия', 'Замена розеток и выключателей', 'Срок от 3 недель'] },
+    { n: 'Капитальный', d: 'Полный ремонт с инженерией', p: { new: 7900, old: 9500 }, best: true, f: ['Электрика и сантехника с нуля', 'Выравнивание стен и стяжка', 'Плитка в санузле и на кухне', 'Технадзор и фотоотчёты', 'Срок от 8 недель'] },
+    { n: 'Дизайнерский', d: 'Ремонт по дизайн-проекту', p: { new: 12500, old: 14000 }, f: ['Дизайн-проект и визуализация', 'Сложные потолки и подсветка', 'Авторский надзор дизайнера', 'Комплектация мебелью', 'Срок от 12 недель'] }
+  ];
+  let housing = 'new';
+  function renderPacks(anim) {
+    $('#packs').innerHTML = PACKS.map(p => `<article class="pack ${p.best ? 'best' : ''} ${anim ? '' : 'rv'}">${p.best ? '<span class="badge">Выбирают чаще</span>' : ''}<div><h3>${p.n}</h3><p class="muted">${p.d}</p></div>
+      <div class="price"><small>от </small><span class="pv" data-v="${p.p[housing]}">${p.p[housing]}</span> <small>₽/м²</small></div>
+      <ul>${p.f.map(x => `<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-check"/></svg>${x}</li>`).join('')}</ul>
+      <a class="btn ${p.best ? 'btn-primary' : 'btn-ghost'}" href="#quiz" data-pack="${p.n}">Рассчитать свой</a></article>`).join('');
+    document.querySelectorAll('.pv').forEach(el => { el.textContent = (+el.dataset.v).toLocaleString('ru-RU'); });
+  }
+  renderPacks();
+  $('#housing').addEventListener('click', e => {
+    const b = e.target.closest('[data-h]'); if (!b) return; const prev = housing; housing = b.dataset.h;
+    document.querySelectorAll('[data-h]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    document.querySelectorAll('.pv').forEach((el, i) => { const from = PACKS[i].p[prev], to = PACKS[i].p[housing], t0 = performance.now();
+      if (fx.reduce()) { el.textContent = to.toLocaleString('ru-RU'); return; }
+      const st = now => { const k = Math.min(1, (now - t0) / 500), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e).toLocaleString('ru-RU'); if (k < 1) requestAnimationFrame(st); }; requestAnimationFrame(st); });
+    quiz.a.housing = housing === 'new' ? 'new' : 'old';
+  });
+
+  /* Появление и шкала этапов */
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.rv').forEach((el, i) => { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
+  const tl = $('#timeline'), items = [...tl.children];
+  const tlio = new IntersectionObserver(es => { if (!es[0].isIntersecting) return; tlio.disconnect(); tl.style.setProperty('--p', 1);
+    items.forEach((li, i) => setTimeout(() => li.classList.add('on'), fx.reduce() ? 0 : 250 + i * 260)); }, { threshold: .4 });
+  tlio.observe(tl);
+
+  /* Квиз */
+  const Q = [
+    { k: 'housing', t: 'Где делаем ремонт?', h: 'От этого зависит объём черновых работ.', o: [['new', '🏢', 'Новостройка', 'Без отделки или white box'], ['old', '🏚️', 'Вторичка', 'Нужен демонтаж'], ['house', '🏡', 'Частный дом', 'Коттедж или таунхаус'], ['office', '💼', 'Офис / коммерция', 'Помещение под бизнес']] },
+    { k: 'area', t: 'Какая площадь?', h: 'Можно примерно, точную посчитаем на замере.', range: [20, 200] },
+    { k: 'type', t: 'Какой ремонт нужен?', h: 'Если сомневаетесь, выберите капитальный.', o: [['cosm', '🎨', 'Косметический', 'Обновить отделку'], ['cap', '🛠️', 'Капитальный', 'С заменой инженерии'], ['design', '✨', 'Дизайнерский', 'По дизайн-проекту'], ['dunno', '🤔', 'Пока не знаю', 'Поможем выбрать']] },
+    { k: 'extra', t: 'Что ещё нужно?', h: 'Можно выбрать несколько или пропустить.', multi: true, o: [['proj', '📐', 'Дизайн-проект', '+ 1 500 ₽/м²'], ['floor', '♨️', 'Тёплый пол', 'в санузле и на кухне'], ['ac', '❄️', 'Кондиционеры', 'с трассой в стене'], ['buy', '🚚', 'Закупка материалов', 'по оптовым ценам']] },
+    { k: 'when', t: 'Когда планируете начать?', h: 'Подберём бригаду под ваши сроки.', o: [['now', '⚡', 'Как можно скорее', 'в течение 2 недель'], ['month', '📅', 'В течение месяца', ''], ['later', '🗓️', 'Через 2–3 месяца', ''], ['look', '👀', 'Пока присматриваюсь', 'сравниваю цены']] }
+  ];
+  const quiz = { i: 0, a: { housing: 'new', area: 56, extra: [], type: null, when: null }, name: '', phone: '', mess: 'tg', done: false };
+  quiz.a.housing = null;
+  const base = { cosm: 3500, cap: 7900, design: 12500, dunno: 7900 }, hk = { new: 1, old: 1.2, house: 1.3, office: .95 };
+  function estimate() {
+    const a = quiz.a; let per = base[a.type || 'cap'] * (hk[a.housing || 'new']);
+    if (a.extra.includes('proj')) per += 1500; if (a.extra.includes('floor')) per += 600; if (a.extra.includes('ac')) per += 700;
+    const sum = per * a.area, weeks = Math.round(({ cosm: 3, cap: 8, design: 12, dunno: 8 }[a.type || 'cap']) + a.area / 40);
+    return { lo: sum * .92, hi: sum * 1.08, weeks };
+  }
+  function renderQuiz() {
+    const body = $('#qBody'), n = Q.length;
+    $('#qBack').hidden = quiz.i === 0 || quiz.done; $('#qNav').hidden = quiz.done;
+    if (quiz.done) { $('#qBar').style.width = '100%'; $('#qStep').textContent = 'Готово'; return; }
+    $('#qBar').style.width = Math.min(100, (quiz.i + 1) / (n + 1) * 100) + '%';
+    if (quiz.i < n) {
+      const q = Q[quiz.i]; $('#qStep').textContent = `Вопрос ${quiz.i + 1} из ${n}`;
+      let inner;
+      if (q.range) inner = `<div class="area"><output id="areaOut">${quiz.a.area} <small>м²</small></output><label class="sr-only" for="area">Площадь, м²</label><input type="range" id="area" min="${q.range[0]}" max="${q.range[1]}" step="1" value="${quiz.a.area}"><div class="marks"><span>${q.range[0]} м²</span><span>${q.range[1]}+ м²</span></div></div>`;
+      else inner = `<div class="opts" ${q.multi ? '' : 'role="radiogroup"'} aria-label="${q.t}">${q.o.map(([v, em, t, s]) => { const on = q.multi ? quiz.a[q.k].includes(v) : quiz.a[q.k] === v; return `<button type="button" class="opt" data-v="${v}" ${q.multi ? `aria-pressed="${on}"` : `role="radio" aria-checked="${on}"`}><span class="em" aria-hidden="true">${em}</span><span><b>${t}</b>${s ? `<small>${s}</small>` : ''}</span></button>`; }).join('')}</div>`;
+      body.innerHTML = `<div class="q-anim"><h3>${q.t}</h3><p class="help">${q.h}</p>${inner}</div>`;
+      const r = $('#area'); if (r) r.addEventListener('input', () => { quiz.a.area = +r.value; $('#areaOut').innerHTML = r.value + (r.value == 200 ? '+' : '') + ' <small>м²</small>'; });
+      const can = q.multi || q.range || quiz.a[q.k];
+      $('#qNext').setAttribute('aria-disabled', String(!can)); $('#qNext').firstChild.textContent = q.multi && !quiz.a.extra.length ? 'Пропустить' : 'Далее';
+    } else {
+      const e = estimate(); $('#qStep').textContent = 'Последний шаг';
+      body.innerHTML = `<div class="q-anim result"><h3>Ваш расчёт готов</h3>
+        <div class="est"><small>Ориентировочная стоимость работ</small><b>${rub(e.lo)} – ${rub(e.hi)}</b><div class="meta"><span>Срок: ${e.weeks}–${e.weeks + 2} недель</span><span>${quiz.a.area} м²</span></div></div>
+        <p class="help" style="margin:0">Оставьте контакты: пришлём подробную смету и запишем на бесплатный замер.</p>
+        <form id="qForm" novalidate style="display:grid;gap:12px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="qf"><div class="field"><label for="qName">Имя</label><input class="input" id="qName" autocomplete="given-name" value="${esc(quiz.name)}"><span class="error" id="eqName"></span></div>
+          <div class="field"><label for="qPhone">Телефон</label><input class="input num" id="qPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+375 29 123-45-67" value="${esc(quiz.phone)}"><span class="error" id="eqPhone"></span></div></div>
+          <div class="field"><span class="label">Куда прислать смету</span><div class="mess">${[['tg', 'Telegram'], ['viber', 'Viber'], ['wa', 'WhatsApp'], ['call', 'Позвоните мне']].map(([v, t]) => `<label><input type="radio" name="mess" value="${v}" ${quiz.mess === v ? 'checked' : ''}><span>${t}</span></label>`).join('')}</div></div>
+        </form></div>`;
+      $('#qNext').setAttribute('aria-disabled', 'false'); $('#qNext').firstChild.textContent = 'Получить смету';
+      $('#qName').addEventListener('input', ev => { quiz.name = ev.target.value; ev.target.removeAttribute('aria-invalid'); $('#eqName').textContent = ''; });
+      const ph = $('#qPhone'); ph.addEventListener('input', () => { ph.value = fmtPhone(ph.value); quiz.phone = ph.value; ph.removeAttribute('aria-invalid'); $('#eqPhone').textContent = ''; });
+      document.querySelectorAll('[name=mess]').forEach(r => r.addEventListener('change', () => quiz.mess = r.value));
+      $('#qForm').addEventListener('submit', ev => { ev.preventDefault(); next(); });
+    }
+  }
+  function fmtPhone(v) {
+    let d = v.replace(/\D/g, ''); if (!d) return v.startsWith('+') ? '+' : '';
+    if (d.startsWith('80')) { if (d.length === 2) return '+80'; d = '375' + d.slice(2); } else if (d[0] === '8' && d.length > 1) d = '7' + d.slice(1);
+    const g = (s, parts) => { let o = '', i = 0; parts.forEach(([n, sep]) => { const ch = s.slice(i, i + n); if (ch) o += (i ? sep : '') + ch; i += n; }); return o; };
+    if (d.startsWith('375')) return '+375' + (d.length > 3 ? ' ' + g(d.slice(3, 12), [[2, ''], [3, ' '], [2, '-'], [2, '-']]) : '');
+    if (d[0] === '7') return '+7' + (d.length > 1 ? ' ' + g(d.slice(1, 11), [[3, ''], [3, ' '], [2, '-'], [2, '-']]) : '');
+    return '+' + d.slice(0, 15);
+  }
+  const phoneOk = v => { const d = v.replace(/\D/g, ''); return d.startsWith('375') ? d.length === 12 : d[0] === '7' ? d.length === 11 : d.length >= 10; };
+  function next() {
+    if ($('#qNext').getAttribute('aria-disabled') === 'true') return;
+    if (quiz.i < Q.length) { quiz.i++; return renderQuiz(); }
+    let bad = false;
+    if (quiz.name.trim().length < 2) { $('#qName').setAttribute('aria-invalid', 'true'); $('#eqName').textContent = 'Введите имя'; bad = true; }
+    if (!phoneOk(quiz.phone)) { $('#qPhone').setAttribute('aria-invalid', 'true'); $('#eqPhone').textContent = 'Проверьте номер'; bad = true; }
+    if (bad) return $('[aria-invalid="true"]').focus();
+    const b = $('#qNext'); b.setAttribute('aria-busy', 'true');
+    setTimeout(() => { b.removeAttribute('aria-busy'); quiz.done = true; renderQuiz();
+      const where = { tg: 'в Telegram', viber: 'в Viber', wa: 'в WhatsApp', call: 'по телефону' }[quiz.mess];
+      $('#qBody').innerHTML = `<div class="thanks q-anim"><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5l10 -10"/></svg></span><h3>Спасибо, ${esc(quiz.name.trim())}!</h3><p class="help" style="max-width:26rem">Инженер свяжется с вами ${where} в течение 15 минут и пришлёт смету. Дизайн-планировка — в подарок.</p><button class="btn btn-ghost" type="button" id="qAgain">Пройти заново</button></div>`;
+      confetti();
+    }, fx.reduce() ? 0 : 800);
+  }
+  function confetti() {
+    if (fx.reduce()) return; const cols = ['#0f766e', '#2dd4bf', '#f59e0b', '#ef4444', '#6366f1'];
+    for (let i = 0; i < 70; i++) { const c = document.createElement('span'); c.className = 'confetti'; c.style.left = Math.random() * 100 + 'vw'; c.style.background = cols[i % cols.length]; document.body.appendChild(c);
+      c.animate([{ transform: `translate(0,0) rotate(0)` }, { transform: `translate(${(Math.random() - .5) * 200}px, ${innerHeight + 40}px) rotate(${Math.random() * 720}deg)` }], { duration: 1800 + Math.random() * 1400, delay: Math.random() * 300, easing: 'cubic-bezier(.25,.6,.4,1)' }).onfinish = () => c.remove(); }
+  }
+  $('#qBody').addEventListener('click', e => {
+    if (e.target.closest('#qAgain')) { quiz.i = 0; quiz.done = false; quiz.a = { housing: null, area: 56, extra: [], type: null, when: null }; return renderQuiz(); }
+    const o = e.target.closest('.opt'); if (!o) return; const q = Q[quiz.i];
+    if (q.multi) { const v = o.dataset.v, a = quiz.a.extra; quiz.a.extra = a.includes(v) ? a.filter(x => x !== v) : [...a, v]; o.setAttribute('aria-pressed', quiz.a.extra.includes(v)); $('#qNext').firstChild.textContent = quiz.a.extra.length ? 'Далее' : 'Пропустить'; }
+    else { quiz.a[q.k] = o.dataset.v; document.querySelectorAll('.opt').forEach(x => x.setAttribute('aria-checked', x === o)); $('#qNext').setAttribute('aria-disabled', 'false'); setTimeout(() => { if (Q[quiz.i] === q) next(); }, fx.reduce() ? 0 : 280); }
+  });
+  $('#qNext').addEventListener('click', next);
+  $('#qBack').addEventListener('click', () => { if (quiz.i > 0) { quiz.i--; renderQuiz(); } });
+  document.addEventListener('click', e => { const p = e.target.closest('[data-pack]'); if (p) { const t = { 'Косметический': 'cosm', 'Капитальный': 'cap', 'Дизайнерский': 'design' }[p.dataset.pack]; quiz.a.type = t; quiz.a.housing = housing; if (!quiz.done) { quiz.i = 0; renderQuiz(); } } });
+  renderQuiz();
+})();
+</script>
+<script type="application/json" id="case-data">{"title": "Лендинг с квизом для ремонта квартир", "task": "Превратить посетителя из рекламы в заявку: показать результат, снять страхи по цене и собрать контакт через короткий опрос.", "features": ["Слайдер «до/после» с мышью, пальцем и клавиатурой", "Пакеты с ценами, переключатель «новостройка / вторичка» с анимацией чисел", "Этапы работ с анимированной шкалой при прокрутке", "Квиз из 5 вопросов: прогресс, автопереход, расчёт вилки цены и срока", "Форма с маской телефона и выбором мессенджера", "FAQ-аккордеон, плавное появление блоков, учёт prefers-reduced-motion"], "stack": ["HTML", "CSS", "JavaScript", "SVG", "IntersectionObserver"], "note": "Квиз-лендинги дают больше заявок с рекламы, чем обычная форма. В рабочем проекте заявки уходят в Telegram или CRM, подключаются Яндекс Метрика и цели."}</script>
+<script src="../shared/about.js"></script>
+</body>
+</html>
