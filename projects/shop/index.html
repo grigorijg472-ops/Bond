@@ -53,14 +53,14 @@
   .cat-head h2 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); font-weight: 800; letter-spacing: -0.035em; }
   .tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 20px 0 24px; }
   .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-  .chip { min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); font-weight: 500; background: var(--surface); transition: all .2s var(--ease); }
+  .chip { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); font-weight: 500; background: var(--surface); transition: all .2s var(--ease); }
   .chip:hover { border-color: var(--muted); }
   .chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-  .chip sup { font-family: var(--mono); font-size: .7rem; opacity: .6; margin-left: 4px; }
+  .chip sup { font-family: var(--mono); font-size: .75rem; opacity: .6; margin-left: 4px; }
   .search { position: relative; margin-left: auto; min-width: 220px; flex: 0 1 280px; }
   .search .i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); width: 18px; height: 18px; }
   .search .input { padding-left: 40px; border-radius: 999px; min-height: 42px; }
-  .sort { width: auto; min-height: 42px; border-radius: 999px; padding: 0 36px 0 16px; appearance: none; background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='3'%3E%3Cpath d='M6 9l6 6l6 -6'/%3E%3C/svg%3E") no-repeat right 14px center; }
+  .sort { width: auto; min-height: 44px; border-radius: 999px; padding: 0 36px 0 16px; appearance: none; background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='3'%3E%3Cpath d='M6 9l6 6l6 -6'/%3E%3C/svg%3E") no-repeat right 14px center; }
 
   .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; padding-bottom: 80px; }
   .card { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; transition: transform .3s var(--ease), box-shadow .3s, border-color .3s; }
@@ -68,11 +68,11 @@
   .card .art { position: relative; aspect-ratio: 1 / 1; display: grid; place-items: center; background: var(--bgc); cursor: pointer; border: 0; width: 100%; }
   .card .art svg { width: 58%; transition: transform .5s var(--ease); filter: drop-shadow(0 16px 18px rgba(0,0,0,.16)); }
   .card:hover .art svg { transform: translateY(-6px) rotate(-3deg) scale(1.03); }
-  .card .flag { position: absolute; left: 12px; top: 12px; font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; background: var(--surface); color: var(--ink); padding: 4px 10px; border-radius: 999px; }
+  .card .flag { position: absolute; left: 12px; top: 12px; font-size: .75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; background: var(--surface); color: var(--ink); padding: 4px 10px; border-radius: 999px; }
   .card .quick { position: absolute; right: 12px; bottom: 12px; font-size: .8rem; font-weight: 600; background: var(--surface); padding: 6px 12px; border-radius: 999px; opacity: 0; transform: translateY(6px); transition: all .25s var(--ease); }
   .card:hover .quick, .card .art:focus-visible .quick { opacity: 1; transform: none; }
   .card .body { display: flex; flex-direction: column; gap: 8px; padding: 16px; flex: 1; }
-  .card .origin { font-family: var(--mono); font-size: .74rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .card .origin { font-family: var(--mono); font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
   .card h3 { font-size: 1.08rem; font-weight: 700; letter-spacing: -0.01em; }
   .card .notes { font-size: .88rem; color: var(--muted); }
   .card .foot { margin-top: auto; padding-top: 8px; display: grid; gap: 10px; }
@@ -178,6 +178,7 @@
     .pd { width: 100vw; max-width: 100vw; max-height: 92dvh; margin: auto 0 0; border-radius: 24px 24px 0 0; overflow: auto; }
   }
   @media (prefers-reduced-motion: reduce) { .bean, .eyebrow i { animation: none; } }
+  .seg button{position:relative}.seg button::after{content:"";position:absolute;inset:-5px 0}
 </style>
 </head>
 <body>
@@ -199,7 +200,7 @@
 <header class="topbar">
   <a class="back" href="../../index.html#projects" aria-label="Портфолио"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-back"/></svg><span>Портфолио</span></a>
   <span class="name">Интернет-магазин</span>
-  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"/></svg><span>Написать</span></a>
+  <a class="write" aria-label="Написать в Telegram" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"/></svg><span>Написать</span></a>
 </header>
 
 <div class="shop-head">

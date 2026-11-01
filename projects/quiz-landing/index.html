@@ -62,7 +62,7 @@
   .pack:hover { transform: translateY(-4px); box-shadow: 0 24px 50px -28px rgba(0,0,0,.35); }
   .pack.best { background: var(--dark); color: #eef5f3; border-color: transparent; }
   .pack.best .muted, .pack.best li { color: #b6c7c3; }
-  .pack .badge { position: absolute; top: -12px; left: 28px; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 4px 10px; border-radius: 999px; background: var(--accent); color: var(--on-accent); }
+  .pack .badge { position: absolute; top: -12px; left: 28px; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 4px 10px; border-radius: 999px; background: var(--accent); color: var(--on-accent); }
   .pack h3 { font-size: 1.35rem; }
   .pack .muted { color: var(--muted); font-size: .92rem; }
   .pack .price { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
@@ -183,14 +183,14 @@
 <header class="topbar">
   <a class="back" href="../../index.html#projects" aria-label="Портфолио"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-back"/></svg><span>Портфолио</span></a>
   <span class="name">Лендинг с квизом</span>
-  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"/></svg><span>Написать</span></a>
+  <a class="write" aria-label="Написать в Telegram" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"/></svg><span>Написать</span></a>
 </header>
 
 <nav class="site-nav" aria-label="Разделы лендинга">
   <div class="wrap">
     <a class="brand" href="#top"><i aria-hidden="true"></i>Ровно</a>
     <ul class="links"><li><a href="#prices">Цены</a></li><li><a href="#steps">Этапы</a></li><li><a href="#quiz">Расчёт</a></li><li><a href="#faq">Вопросы</a></li></ul>
-    <a class="btn btn-primary btn-sm" href="#quiz"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-phone"/></svg><span>Рассчитать стоимость</span></a>
+    <a class="btn btn-primary btn-sm" href="#quiz" aria-label="Рассчитать стоимость"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-phone"/></svg><span>Рассчитать стоимость</span></a>
   </div>
 </nav>
 
@@ -199,7 +199,7 @@
     <div class="wrap">
       <div>
         <p class="eyebrow rv">Ремонт квартир под ключ</p>
-        <h1 class="rv" style="margin-top:14px">Ремонт <span>с фиксированной</span> сметой и сроком в договоре</h1>
+        <h1 class="rv" style="margin-top:14px">Ремонт <span>по смете</span>, которая не растёт</h1>
         <p class="lead rv">Своя бригада, закупка материалов и технадзор. Если выйдем за срок — платим неустойку за каждый день.</p>
         <div class="cta rv"><a class="btn btn-primary btn-lg" href="#quiz">Рассчитать за 1 минуту<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn-ghost btn-lg" href="#prices">Смотреть цены</a></div>
         <div class="facts rv"><div><b>3 года</b><span>гарантия на работы</span></div><div><b>0 ₽</b><span>замер и смета</span></div><div><b>5</b><span>этапов приёмки</span></div></div>
@@ -257,7 +257,7 @@
 
   <section class="steps-sec" id="steps">
     <div class="wrap">
-      <p class="eyebrow rv">Как работаем</p><h2 class="t rv">Пять этапов, после каждого вы принимаете работу</h2>
+      <p class="eyebrow rv">Как работаем</p><h2 class="t rv">Пять этапов с приёмкой</h2>
       <ol class="timeline" id="timeline">
         <li><span class="n">01</span><h3>Замер и смета</h3><p>Инженер приезжает бесплатно, через 2 дня присылаем подробную смету.</p><span class="d">1–2 дня</span></li>
         <li><span class="n">02</span><h3>Договор</h3><p>Фиксируем цену, сроки и неустойку. Оплата по этапам.</p><span class="d">1 день</span></li>
@@ -273,7 +273,7 @@
       <div class="box rv">
         <aside class="q-aside">
           <p class="eyebrow" style="color:#5eead4">Расчёт за 1 минуту</p>
-          <h2>Ответьте на 5 вопросов и узнайте стоимость ремонта</h2>
+          <h2>Узнайте стоимость за 5 вопросов</h2>
           <p>Покажем вилку цены и срок сразу, без звонка. Точную смету составит инженер после замера.</p>
           <ul class="gifts"><li><span aria-hidden="true">📐</span>Дизайн-планировка в подарок</li><li><span aria-hidden="true">🧾</span>Смета с ценами материалов</li><li><span aria-hidden="true">🛡️</span>Гарантия 3 года в договоре</li></ul>
         </aside>

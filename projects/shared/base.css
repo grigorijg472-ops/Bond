@@ -103,7 +103,7 @@ p { text-wrap: pretty; }
 .btn-ghost:hover { border-color: var(--muted); background: var(--surface-2); }
 .btn-quiet { color: var(--muted); }
 .btn-quiet:hover { color: var(--ink); background: var(--surface-2); }
-.btn-sm { min-height: 40px; padding: 0 14px; border-radius: 10px; font-size: .9rem; }
+.btn-sm { min-height: 44px; padding: 0 14px; border-radius: 10px; font-size: .9rem; }
 .btn-icon { width: 44px; min-height: 44px; padding: 0; }
 .btn[aria-busy="true"] { pointer-events: none; }
 .btn[aria-busy="true"]::after {
@@ -217,3 +217,7 @@ p { text-wrap: pretty; }
 .btn:not([disabled]):not([aria-disabled="true"]):active { transform: translateY(1px) scale(.96); transition-duration: .08s; }
 .topbar .about:active, .case-close:active { transform: scale(.93); }
 .topbar .about, .case-close { position: relative; overflow: hidden; transition: color .2s var(--ease), background-color .2s, transform .15s var(--ease); }
+
+/* Доступность: зона нажатия не меньше 44px */
+.btn { min-height: 44px; }
+.topbar .write { min-width: 44px; justify-content: center; }

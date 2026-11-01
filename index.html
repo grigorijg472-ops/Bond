@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Яков Григорьевич, веб-разработчик</title>
-<meta name="description" content="Веб-разработчик из Беларуси. Онлайн-запись, интернет-магазины, CRM, квиз-лендинги и Telegram-боты для бизнеса. Живые демо проектов.">
+<meta name="description" content="Веб-разработчик из Минска. Онлайн-запись, интернет-магазины, CRM, квиз-лендинги и Telegram-боты для бизнеса. Все проекты можно открыть и попробовать.">
 <meta name="theme-color" content="#05070c">
 <meta property="og:title" content="Яков Григорьевич, веб-разработчик">
 <meta property="og:description" content="Онлайн-запись, интернет-магазины, CRM, квиз-лендинги и Telegram-боты для бизнеса.">
@@ -187,17 +187,13 @@ footer nav{display:flex;gap:var(--sp-1)}
 @keyframes caret{50%{opacity:0}}
 
 /* Бегущая строка */
-.caps-wrap{position:relative;z-index:1;padding:28px 0;border-block:1px solid var(--border);background:linear-gradient(180deg,rgba(11,15,23,.35),rgba(11,15,23,.7))}
-.caps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.cap{position:relative;display:flex;align-items:center;gap:14px;min-width:0;padding:16px 18px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.02);overflow:hidden;transition:border-color .3s,background .3s,transform .4s cubic-bezier(.16,1,.3,1)}
-.cap::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(34,211,238,.16) 50%,transparent 70%);transform:translateX(-120%);animation:capSweep 8s cubic-bezier(.4,0,.2,1) infinite;animation-delay:calc(var(--i) * .35s);pointer-events:none}
-.cap-n{flex:none;font-size:12px;color:var(--accent);opacity:.8;letter-spacing:.05em}
-.cap-t{font-size:clamp(15px,1.15vw,18px);font-weight:500;color:#d5dde7;line-height:1.25}
-.cap:hover{border-color:rgba(34,211,238,.45);background:rgba(34,211,238,.06);transform:translateY(-3px)}
-.cap:hover .cap-t{color:#fff}
-@keyframes capSweep{0%{transform:translateX(-120%)}18%,100%{transform:translateX(120%)}}
-@media (max-width:900px){.caps{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:640px){.caps{display:flex;flex-wrap:wrap;gap:8px}.cap{flex:1 1 auto;padding:10px 14px;gap:8px;border-radius:999px}.cap-n{font-size:11px}.cap-t{font-size:14px;white-space:nowrap}}
+.caps-wrap{position:relative;z-index:1;padding:48px 0;background:#070a11}
+.caps{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 32px}
+.cap{position:relative}
+.cap-t{display:inline-block;font-size:clamp(20px,2.3vw,32px);font-weight:300;letter-spacing:-.02em;line-height:1.25;color:#e6edf5;opacity:.5;transition:opacity .3s,color .3s;animation:capWave 9s cubic-bezier(.4,0,.2,1) infinite;animation-delay:calc(var(--i) * .4s)}
+.cap:hover .cap-t{opacity:1;color:var(--accent);animation-play-state:paused}
+@keyframes capWave{0%,16%,100%{opacity:.5;transform:none}7%{opacity:1;transform:translateY(-3px)}}
+@media (max-width:640px){.caps-wrap{padding:32px 0}.caps{gap:6px 18px}.cap-t{font-size:19px}}
 
 /* Проекты с превью */
 .sec-head h2 sup,.chip sup{font-size:11px;margin-left:5px;opacity:.6;font-family:"JetBrains Mono",monospace}
@@ -264,8 +260,8 @@ footer nav{display:flex;gap:var(--sp-1)}
 #briefText:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(34,211,238,.15)}
 
 @media (max-width:1024px){.pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.pgrid .project,.pgrid .project.feat{grid-column:span 1}.steps{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:40px}.steps::before,.steps .fill{display:none}.faq-grid{grid-template-columns:1fr;gap:var(--sp-8)}}
-@media (max-width:640px){.pgrid{grid-template-columns:1fr}.sec-sub{margin-top:calc(var(--sp-4) * -1)}.steps{grid-template-columns:1fr;row-gap:28px;padding-left:0}.steps::before,.steps .fill{display:block;left:27px;right:auto;top:28px;bottom:28px;width:2px;height:auto}.steps .fill{transform-origin:top;transform:scaleY(var(--p,0))}.step{display:grid;grid-template-columns:56px 1fr;column-gap:var(--sp-4)}.step>:not(.dot2){grid-column:2}.step h3{margin-top:12px}.term{font-size:13px}.qa summary{padding:var(--sp-4);font-size:16px}.qa-a p{padding:0 var(--sp-4) var(--sp-4)}.caps-wrap{padding:20px 0}}
-@media (prefers-reduced-motion:reduce){.hero-title .ln-in,.hero-title .ln-in.grad{animation:none}.cap::before{animation:none;display:none}.caret{animation:none}.live i{animation:none}.magnet{translate:none}.pgrid .project:hover{transform:none}.project:hover .p-shot img{transform:none}}
+@media (max-width:640px){.pgrid{grid-template-columns:1fr}.sec-sub{margin-top:calc(var(--sp-4) * -1)}.steps{grid-template-columns:1fr;row-gap:28px;padding-left:0}.steps::before,.steps .fill{display:block;left:27px;right:auto;top:28px;bottom:28px;width:2px;height:auto}.steps .fill{transform-origin:top;transform:scaleY(var(--p,0))}.step{display:grid;grid-template-columns:56px 1fr;column-gap:var(--sp-4)}.step>:not(.dot2){grid-column:2}.step h3{margin-top:12px}.term{font-size:13px}.qa summary{padding:var(--sp-4);font-size:16px}.qa-a p{padding:0 var(--sp-4) var(--sp-4)}}
+@media (prefers-reduced-motion:reduce){.hero-title .ln-in,.hero-title .ln-in.grad{animation:none}.cap-t{animation:none;opacity:.8}.caret{animation:none}.live i{animation:none}.magnet{translate:none}.pgrid .project:hover{transform:none}.project:hover .p-shot img{transform:none}}
 
 /* Цена */
 .price-note{position:relative;margin-top:var(--sp-6,24px);display:flex;align-items:center;gap:20px;padding:20px 24px;border:1px solid rgba(52,211,153,.35);border-radius:18px;background:linear-gradient(110deg,rgba(52,211,153,.10),rgba(34,211,238,.05) 60%,transparent);overflow:hidden}
@@ -275,10 +271,47 @@ footer nav{display:flex;gap:var(--sp-1)}
 .price-note .btn{flex:none}
 @media (max-width:760px){.price-note{flex-direction:column;align-items:flex-start;gap:14px;padding:18px}.price-note .btn{width:100%;justify-content:center}}
 
+/* taste-skill: без номеров и моно-подписей */
+.svc{grid-template-columns:1fr 1.4fr 32px}
+.p-top{justify-content:flex-start}
+.p-cat{font-size:13px}
+.sec-head h2 sup,.chip sup{font-family:inherit}
+.stack small{text-transform:none;letter-spacing:0;font-size:13px;color:var(--muted)}
+.dot2 .icon{font-size:22px;width:22px;height:22px}
+.dur{font-size:13px}
+.pn-badge{font-size:16px}
+@media (max-width:640px){.svc{grid-template-columns:1fr}.svc p{grid-column:auto}}
+/* showreel */
+.reel-btn{margin-top:28px;display:inline-flex;align-items:center;gap:16px;padding:8px 20px 8px 8px;border-radius:14px;border:1px solid var(--border);background:color-mix(in srgb,var(--surface) 70%,transparent);color:var(--fg);font:inherit;cursor:pointer;text-align:left;transition:border-color .2s var(--ease),background-color .2s var(--ease),transform .2s var(--ease)}
+.reel-btn:hover{border-color:var(--border-strong);background:var(--surface-2)}
+.reel-btn:active{transform:scale(.98)}
+.reel-btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.reel-thumb{position:relative;width:112px;aspect-ratio:16/9;border-radius:9px;overflow:hidden;flex:none;background:var(--surface-2)}
+.reel-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease)}
+.reel-btn:hover .reel-thumb img{transform:scale(1.06)}
+.reel-play{position:absolute;inset:0;margin:auto;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 50%,transparent);transition:transform .25s var(--ease)}
+.reel-play .icon{width:15px;height:15px;margin-left:2px}
+.reel-btn:hover .reel-play{transform:scale(1.1)}
+@media (prefers-reduced-motion:no-preference){.reel-play{animation:reelPulse 2.4s var(--ease) infinite}}
+@keyframes reelPulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 45%,transparent)}70%,100%{box-shadow:0 0 0 12px transparent}}
+.reel-txt{display:flex;flex-direction:column;gap:2px}
+.reel-txt b{font-weight:600;font-size:1rem}
+.reel-txt small{color:var(--muted);font-size:.875rem}
+.reel-dlg{margin:auto;padding:0;border:1px solid var(--border-strong);border-radius:18px;background:#000;width:min(1100px,94vw);overflow:visible;color:var(--fg)}
+.reel-dlg::backdrop{background:rgb(3 5 9 / .82);backdrop-filter:blur(6px)}
+.reel-dlg video{display:block;width:100%;height:auto;border-radius:17px}
+.reel-x{position:absolute;top:-52px;right:0;width:44px;height:44px;border-radius:50%;border:1px solid var(--border-strong);background:var(--surface);color:var(--fg);display:grid;place-items:center;cursor:pointer}
+.reel-x .icon{transform:rotate(45deg);width:20px;height:20px}
+.reel-x:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){.reel-dlg[open]{animation:reelIn .32s var(--ease)}.reel-dlg[open]::backdrop{animation:reelFade .32s ease-out}}
+@keyframes reelIn{from{opacity:0;transform:translateY(12px) scale(.97)}}
+@keyframes reelFade{from{opacity:0}}
+@media (max-width:560px){.reel-btn{display:flex;width:100%}}
+
 </style>
 </head>
 <body class="no-js">
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="i-app-window" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM80,84A12,12,0,1,1,68,72,12,12,0,0,1,80,84Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,120,84Z"/></symbol><symbol id="i-arrow-right" viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></symbol><symbol id="i-arrow-up-right" viewBox="0 0 256 256"><path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"/></symbol><symbol id="i-calculator" viewBox="0 0 256 256"><path d="M80,120h96a8,8,0,0,0,8-8V64a8,8,0,0,0-8-8H80a8,8,0,0,0-8,8v48A8,8,0,0,0,80,120Zm8-48h80v32H88ZM200,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V40A16,16,0,0,0,200,24Zm0,192H56V40H200ZM100,148a12,12,0,1,1-12-12A12,12,0,0,1,100,148Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,140,148Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,180,148Zm-80,40a12,12,0,1,1-12-12A12,12,0,0,1,100,188Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,140,188Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,180,188Z"/></symbol><symbol id="i-chart-bar" viewBox="0 0 256 256"><path d="M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z"/></symbol><symbol id="i-check" viewBox="0 0 256 256"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></symbol><symbol id="i-code" viewBox="0 0 256 256"><path d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"/></symbol><symbol id="i-copy" viewBox="0 0 256 256"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></symbol><symbol id="i-envelope-simple" viewBox="0 0 256 256"><path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48ZM203.43,64,128,133.15,52.57,64ZM216,192H40V74.19l82.59,75.71a8,8,0,0,0,10.82,0L216,74.19V192Z"/></symbol><symbol id="i-file-text" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/></symbol><symbol id="i-gear-six" viewBox="0 0 256 256"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm109.94-52.79a8,8,0,0,0-3.89-5.4l-29.83-17-.12-33.62a8,8,0,0,0-2.83-6.08,111.91,111.91,0,0,0-36.72-20.67,8,8,0,0,0-6.46.59L128,41.85,97.88,25a8,8,0,0,0-6.47-.6A112.1,112.1,0,0,0,54.73,45.15a8,8,0,0,0-2.83,6.07l-.15,33.65-29.83,17a8,8,0,0,0-3.89,5.4,106.47,106.47,0,0,0,0,41.56,8,8,0,0,0,3.89,5.4l29.83,17,.12,33.62a8,8,0,0,0,2.83,6.08,111.91,111.91,0,0,0,36.72,20.67,8,8,0,0,0,6.46-.59L128,214.15,158.12,231a7.91,7.91,0,0,0,3.9,1,8.09,8.09,0,0,0,2.57-.42,112.1,112.1,0,0,0,36.68-20.73,8,8,0,0,0,2.83-6.07l.15-33.65,29.83-17a8,8,0,0,0,3.89-5.4A106.47,106.47,0,0,0,237.94,107.21Zm-15,34.91-28.57,16.25a8,8,0,0,0-3,3c-.58,1-1.19,2.06-1.81,3.06a7.94,7.94,0,0,0-1.22,4.21l-.15,32.25a95.89,95.89,0,0,1-25.37,14.3L134,199.13a8,8,0,0,0-3.91-1h-.19c-1.21,0-2.43,0-3.64,0a8.08,8.08,0,0,0-4.1,1l-28.84,16.1A96,96,0,0,1,67.88,201l-.11-32.2a8,8,0,0,0-1.22-4.22c-.62-1-1.23-2-1.8-3.06a8.09,8.09,0,0,0-3-3.06l-28.6-16.29a90.49,90.49,0,0,1,0-28.26L61.67,97.63a8,8,0,0,0,3-3c.58-1,1.19-2.06,1.81-3.06a7.94,7.94,0,0,0,1.22-4.21l.15-32.25a95.89,95.89,0,0,1,25.37-14.3L122,56.87a8,8,0,0,0,4.1,1c1.21,0,2.43,0,3.64,0a8.08,8.08,0,0,0,4.1-1l28.84-16.1A96,96,0,0,1,188.12,55l.11,32.2a8,8,0,0,0,1.22,4.22c.62,1,1.23,2,1.8,3.06a8.09,8.09,0,0,0,3,3.06l28.6,16.29A90.49,90.49,0,0,1,222.9,142.12Z"/></symbol><symbol id="i-github-logo" viewBox="0 0 256 256"><path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"/></symbol><symbol id="i-layout" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V96H40V56ZM40,112H96v88H40Zm176,88H112V112H216v88Z"/></symbol><symbol id="i-lightning" viewBox="0 0 256 256"><path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"/></symbol><symbol id="i-map-trifold" viewBox="0 0 256 256"><path d="M228.92,49.69a8,8,0,0,0-6.86-1.45L160.93,63.52,99.58,32.84a8,8,0,0,0-5.52-.6l-64,16A8,8,0,0,0,24,56V200a8,8,0,0,0,9.94,7.76l61.13-15.28,61.35,30.68A8.15,8.15,0,0,0,160,224a8,8,0,0,0,1.94-.24l64-16A8,8,0,0,0,232,200V56A8,8,0,0,0,228.92,49.69ZM104,52.94l48,24V203.06l-48-24ZM40,62.25l48-12v127.5l-48,12Zm176,131.5-48,12V78.25l48-12Z"/></symbol><symbol id="i-planet" viewBox="0 0 256 256"><path d="M245.11,60.68c-7.65-13.19-27.84-16.16-58.5-8.66A95.93,95.93,0,0,0,32,128a98,98,0,0,0,.78,12.31C5.09,169,5.49,186,10.9,195.32,16,204.16,26.64,208,40.64,208a124.11,124.11,0,0,0,28.79-4A95.93,95.93,0,0,0,224,128a97.08,97.08,0,0,0-.77-12.25c12.5-13,20.82-25.35,23.65-35.92C248.83,72.51,248.24,66.07,245.11,60.68ZM128,48a80.11,80.11,0,0,1,78,62.2c-17.06,16.06-40.15,32.53-62.07,45.13C116.38,171.14,92.48,181,73.42,186.4A79.94,79.94,0,0,1,128,48ZM24.74,187.29c-1.46-2.51-.65-7.24,2.22-13a79.05,79.05,0,0,1,10.29-15.05,96,96,0,0,0,18,31.32C38,193.46,27.24,191.61,24.74,187.29ZM128,208a79.45,79.45,0,0,1-38.56-9.94,370,370,0,0,0,62.43-28.86c21.58-12.39,40.68-25.82,56.07-39.08A80.07,80.07,0,0,1,128,208ZM231.42,75.69c-1.7,6.31-6.19,13.53-12.63,21.13a95.69,95.69,0,0,0-18-31.35c14.21-2.35,27.37-2.17,30.5,3.24C232.19,70.28,232.24,72.63,231.42,75.69Z"/></symbol><symbol id="i-robot" viewBox="0 0 256 256"><path d="M200,48H136V16a8,8,0,0,0-16,0V48H56A32,32,0,0,0,24,80V192a32,32,0,0,0,32,32H200a32,32,0,0,0,32-32V80A32,32,0,0,0,200,48Zm16,144a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V80A16,16,0,0,1,56,64H200a16,16,0,0,1,16,16Zm-52-56H92a28,28,0,0,0,0,56h72a28,28,0,0,0,0-56Zm-24,16v24H116V152ZM80,164a12,12,0,0,1,12-12h8v24H92A12,12,0,0,1,80,164Zm84,12h-8V152h8a12,12,0,0,1,0,24ZM72,108a12,12,0,1,1,12,12A12,12,0,0,1,72,108Zm88,0a12,12,0,1,1,12,12A12,12,0,0,1,160,108Z"/></symbol><symbol id="i-telegram-logo" viewBox="0 0 256 256"><path d="M228.88,26.19a9,9,0,0,0-9.16-1.57L17.06,103.93a14.22,14.22,0,0,0,2.43,27.21L72,141.45V200a15.92,15.92,0,0,0,10,14.83,15.91,15.91,0,0,0,17.51-3.73l25.32-26.26L165,220a15.88,15.88,0,0,0,10.51,4,16.3,16.3,0,0,0,5-.79,15.85,15.85,0,0,0,10.67-11.63L231.77,35A9,9,0,0,0,228.88,26.19Zm-61.14,36L78.15,126.35l-49.6-9.73ZM88,200V152.52l24.79,21.74Zm87.53,8L92.85,135.5l119-85.29Z"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M16 3v4M8 3v4M4 11h16M8 15h2M14 15h2"/></g></symbol><symbol id="i-bag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.3 8h11.4a2 2 0 0 1 2 2.3l-1.3 8.7a3 3 0 0 1-3 2.5H8.6a3 3 0 0 1-3-2.5l-1.3-8.7A2 2 0 0 1 6.3 8z"/><path d="M9 11V6a3 3 0 0 1 6 0v5"/></g></symbol><symbol id="i-kanban" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/></g></symbol><symbol id="i-target" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></g></symbol><symbol id="i-fish" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-6 11-6c4 0 7 3 8 6c-1 3-4 6-8 6c-7 0-11-6-11-6z"/><path d="M2 12l-0 0M5 9l-3-3v12l3-3"/><circle cx="16" cy="11" r=".6" fill="currentColor"/></g></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="i-app-window" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM80,84A12,12,0,1,1,68,72,12,12,0,0,1,80,84Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,120,84Z"/></symbol><symbol id="i-arrow-right" viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></symbol><symbol id="i-arrow-up-right" viewBox="0 0 256 256"><path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"/></symbol><symbol id="i-calculator" viewBox="0 0 256 256"><path d="M80,120h96a8,8,0,0,0,8-8V64a8,8,0,0,0-8-8H80a8,8,0,0,0-8,8v48A8,8,0,0,0,80,120Zm8-48h80v32H88ZM200,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V40A16,16,0,0,0,200,24Zm0,192H56V40H200ZM100,148a12,12,0,1,1-12-12A12,12,0,0,1,100,148Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,140,148Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,180,148Zm-80,40a12,12,0,1,1-12-12A12,12,0,0,1,100,188Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,140,188Zm40,0a12,12,0,1,1-12-12A12,12,0,0,1,180,188Z"/></symbol><symbol id="i-chart-bar" viewBox="0 0 256 256"><path d="M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z"/></symbol><symbol id="i-check" viewBox="0 0 256 256"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></symbol><symbol id="i-code" viewBox="0 0 256 256"><path d="M69.12,94.15,28.5,128l40.62,33.85a8,8,0,1,1-10.24,12.29l-48-40a8,8,0,0,1,0-12.29l48-40a8,8,0,0,1,10.24,12.3Zm176,27.7-48-40a8,8,0,1,0-10.24,12.3L227.5,128l-40.62,33.85a8,8,0,1,0,10.24,12.29l48-40a8,8,0,0,0,0-12.29ZM162.73,32.48a8,8,0,0,0-10.25,4.79l-64,176a8,8,0,0,0,4.79,10.26A8.14,8.14,0,0,0,96,224a8,8,0,0,0,7.52-5.27l64-176A8,8,0,0,0,162.73,32.48Z"/></symbol><symbol id="i-copy" viewBox="0 0 256 256"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></symbol><symbol id="i-envelope-simple" viewBox="0 0 256 256"><path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48ZM203.43,64,128,133.15,52.57,64ZM216,192H40V74.19l82.59,75.71a8,8,0,0,0,10.82,0L216,74.19V192Z"/></symbol><symbol id="i-file-text" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/></symbol><symbol id="i-gear-six" viewBox="0 0 256 256"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm109.94-52.79a8,8,0,0,0-3.89-5.4l-29.83-17-.12-33.62a8,8,0,0,0-2.83-6.08,111.91,111.91,0,0,0-36.72-20.67,8,8,0,0,0-6.46.59L128,41.85,97.88,25a8,8,0,0,0-6.47-.6A112.1,112.1,0,0,0,54.73,45.15a8,8,0,0,0-2.83,6.07l-.15,33.65-29.83,17a8,8,0,0,0-3.89,5.4,106.47,106.47,0,0,0,0,41.56,8,8,0,0,0,3.89,5.4l29.83,17,.12,33.62a8,8,0,0,0,2.83,6.08,111.91,111.91,0,0,0,36.72,20.67,8,8,0,0,0,6.46-.59L128,214.15,158.12,231a7.91,7.91,0,0,0,3.9,1,8.09,8.09,0,0,0,2.57-.42,112.1,112.1,0,0,0,36.68-20.73,8,8,0,0,0,2.83-6.07l.15-33.65,29.83-17a8,8,0,0,0,3.89-5.4A106.47,106.47,0,0,0,237.94,107.21Zm-15,34.91-28.57,16.25a8,8,0,0,0-3,3c-.58,1-1.19,2.06-1.81,3.06a7.94,7.94,0,0,0-1.22,4.21l-.15,32.25a95.89,95.89,0,0,1-25.37,14.3L134,199.13a8,8,0,0,0-3.91-1h-.19c-1.21,0-2.43,0-3.64,0a8.08,8.08,0,0,0-4.1,1l-28.84,16.1A96,96,0,0,1,67.88,201l-.11-32.2a8,8,0,0,0-1.22-4.22c-.62-1-1.23-2-1.8-3.06a8.09,8.09,0,0,0-3-3.06l-28.6-16.29a90.49,90.49,0,0,1,0-28.26L61.67,97.63a8,8,0,0,0,3-3c.58-1,1.19-2.06,1.81-3.06a7.94,7.94,0,0,0,1.22-4.21l.15-32.25a95.89,95.89,0,0,1,25.37-14.3L122,56.87a8,8,0,0,0,4.1,1c1.21,0,2.43,0,3.64,0a8.08,8.08,0,0,0,4.1-1l28.84-16.1A96,96,0,0,1,188.12,55l.11,32.2a8,8,0,0,0,1.22,4.22c.62,1,1.23,2,1.8,3.06a8.09,8.09,0,0,0,3,3.06l28.6,16.29A90.49,90.49,0,0,1,222.9,142.12Z"/></symbol><symbol id="i-github-logo" viewBox="0 0 256 256"><path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"/></symbol><symbol id="i-layout" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V96H40V56ZM40,112H96v88H40Zm176,88H112V112H216v88Z"/></symbol><symbol id="i-lightning" viewBox="0 0 256 256"><path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"/></symbol><symbol id="i-map-trifold" viewBox="0 0 256 256"><path d="M228.92,49.69a8,8,0,0,0-6.86-1.45L160.93,63.52,99.58,32.84a8,8,0,0,0-5.52-.6l-64,16A8,8,0,0,0,24,56V200a8,8,0,0,0,9.94,7.76l61.13-15.28,61.35,30.68A8.15,8.15,0,0,0,160,224a8,8,0,0,0,1.94-.24l64-16A8,8,0,0,0,232,200V56A8,8,0,0,0,228.92,49.69ZM104,52.94l48,24V203.06l-48-24ZM40,62.25l48-12v127.5l-48,12Zm176,131.5-48,12V78.25l48-12Z"/></symbol><symbol id="i-planet" viewBox="0 0 256 256"><path d="M245.11,60.68c-7.65-13.19-27.84-16.16-58.5-8.66A95.93,95.93,0,0,0,32,128a98,98,0,0,0,.78,12.31C5.09,169,5.49,186,10.9,195.32,16,204.16,26.64,208,40.64,208a124.11,124.11,0,0,0,28.79-4A95.93,95.93,0,0,0,224,128a97.08,97.08,0,0,0-.77-12.25c12.5-13,20.82-25.35,23.65-35.92C248.83,72.51,248.24,66.07,245.11,60.68ZM128,48a80.11,80.11,0,0,1,78,62.2c-17.06,16.06-40.15,32.53-62.07,45.13C116.38,171.14,92.48,181,73.42,186.4A79.94,79.94,0,0,1,128,48ZM24.74,187.29c-1.46-2.51-.65-7.24,2.22-13a79.05,79.05,0,0,1,10.29-15.05,96,96,0,0,0,18,31.32C38,193.46,27.24,191.61,24.74,187.29ZM128,208a79.45,79.45,0,0,1-38.56-9.94,370,370,0,0,0,62.43-28.86c21.58-12.39,40.68-25.82,56.07-39.08A80.07,80.07,0,0,1,128,208ZM231.42,75.69c-1.7,6.31-6.19,13.53-12.63,21.13a95.69,95.69,0,0,0-18-31.35c14.21-2.35,27.37-2.17,30.5,3.24C232.19,70.28,232.24,72.63,231.42,75.69Z"/></symbol><symbol id="i-robot" viewBox="0 0 256 256"><path d="M200,48H136V16a8,8,0,0,0-16,0V48H56A32,32,0,0,0,24,80V192a32,32,0,0,0,32,32H200a32,32,0,0,0,32-32V80A32,32,0,0,0,200,48Zm16,144a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V80A16,16,0,0,1,56,64H200a16,16,0,0,1,16,16Zm-52-56H92a28,28,0,0,0,0,56h72a28,28,0,0,0,0-56Zm-24,16v24H116V152ZM80,164a12,12,0,0,1,12-12h8v24H92A12,12,0,0,1,80,164Zm84,12h-8V152h8a12,12,0,0,1,0,24ZM72,108a12,12,0,1,1,12,12A12,12,0,0,1,72,108Zm88,0a12,12,0,1,1,12,12A12,12,0,0,1,160,108Z"/></symbol><symbol id="i-telegram-logo" viewBox="0 0 256 256"><path d="M228.88,26.19a9,9,0,0,0-9.16-1.57L17.06,103.93a14.22,14.22,0,0,0,2.43,27.21L72,141.45V200a15.92,15.92,0,0,0,10,14.83,15.91,15.91,0,0,0,17.51-3.73l25.32-26.26L165,220a15.88,15.88,0,0,0,10.51,4,16.3,16.3,0,0,0,5-.79,15.85,15.85,0,0,0,10.67-11.63L231.77,35A9,9,0,0,0,228.88,26.19Zm-61.14,36L78.15,126.35l-49.6-9.73ZM88,200V152.52l24.79,21.74Zm87.53,8L92.85,135.5l119-85.29Z"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M16 3v4M8 3v4M4 11h16M8 15h2M14 15h2"/></g></symbol><symbol id="i-bag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.3 8h11.4a2 2 0 0 1 2 2.3l-1.3 8.7a3 3 0 0 1-3 2.5H8.6a3 3 0 0 1-3-2.5l-1.3-8.7A2 2 0 0 1 6.3 8z"/><path d="M9 11V6a3 3 0 0 1 6 0v5"/></g></symbol><symbol id="i-kanban" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/></g></symbol><symbol id="i-target" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></g></symbol><symbol id="i-fish" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-6 11-6c4 0 7 3 8 6c-1 3-4 6-8 6c-7 0-11-6-11-6z"/><path d="M2 12l-0 0M5 9l-3-3v12l3-3"/><circle cx="16" cy="11" r=".6" fill="currentColor"/></g></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" fill="currentColor"/></symbol></defs></svg>
 <a class="skip" href="#main">Перейти к содержимому</a>
 <canvas id="bg" aria-hidden="true"></canvas>
 <div class="glow a" aria-hidden="true"></div><div class="glow b" aria-hidden="true"></div>
@@ -303,20 +336,19 @@ footer nav{display:flex;gap:var(--sp-1)}
   <section class="hero" id="top" style="padding-top:var(--sp-12)">
     <div class="container hero-grid">
       <div>
-        <span class="badge reveal mono"><span class="dot" aria-hidden="true"></span>Открыт для новых проектов</span>
         <h1 class="hero-title"><span class="ln"><span class="ln-in">Яков</span></span><span class="ln"><span class="ln-in grad">Григорьевич</span></span></h1>
-        <p class="lead reveal">Веб-разработчик из Беларуси. Делаю сайты и сервисы, которые приносят заявки и экономят время: на JavaScript, React и Python.</p>
-        <p class="term mono reveal"><span class="pr" aria-hidden="true">~$</span> делаю: <span class="typed" id="typed" data-words='["онлайн-запись для салонов","интернет-магазины","CRM и админ-панели","квиз-лендинги под рекламу","Telegram-ботов","3D-сцены на WebGL"]'>онлайн-запись, магазины, CRM и ботов</span><span class="caret" aria-hidden="true"></span></p>
+        <p class="lead reveal">Веб-разработчик из Минска. Делаю сайты и сервисы для бизнеса на JavaScript, React и Python: онлайн-запись, магазины, CRM и Telegram-ботов. Сейчас беру новые проекты.</p>
         <div class="cta reveal">
           <a class="btn btn-primary magnet" href="#projects">Смотреть работы<svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
           <a class="btn btn-secondary magnet" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-telegram-logo"/></svg>Написать в Telegram</a>
         </div>
+        <button class="reel-btn reveal" id="reelOpen" type="button" aria-haspopup="dialog"><span class="reel-thumb"><img src="assets/showreel-poster.webp" alt="" width="160" height="90" loading="lazy" decoding="async"><span class="reel-play" aria-hidden="true"><svg class="icon"><use href="#i-play"/></svg></span></span><span class="reel-txt"><b>Шоурил</b><small>Все проекты за 24 секунды</small></span></button>
       </div>
 
       <aside class="card-contact reveal" aria-label="Контакты">
         <div class="cc-head">
           <span class="tile"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg></span>
-          <div><small class="mono">stack</small><strong>Full-stack разработчик</strong></div>
+          <div><small>stack</small><strong>Full-stack разработчик</strong></div>
         </div>
         <a class="row" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer">
           <span class="tile"><svg class="icon" aria-hidden="true"><use href="#i-telegram-logo"/></svg></span>
@@ -337,12 +369,12 @@ footer nav{display:flex;gap:var(--sp-1)}
     </div>
   </section>
 
-  <div class="caps-wrap"><div class="container"><ul class="caps reveal" aria-label="Что я делаю"><li class="cap" style="--i:0"><span class="cap-n mono">01</span><span class="cap-t">Онлайн-запись</span></li><li class="cap" style="--i:1"><span class="cap-n mono">02</span><span class="cap-t">Интернет-магазины</span></li><li class="cap" style="--i:2"><span class="cap-n mono">03</span><span class="cap-t">CRM и дашборды</span></li><li class="cap" style="--i:3"><span class="cap-n mono">04</span><span class="cap-t">Квиз-лендинги</span></li><li class="cap" style="--i:4"><span class="cap-n mono">05</span><span class="cap-t">Telegram-боты</span></li><li class="cap" style="--i:5"><span class="cap-n mono">06</span><span class="cap-t">Калькуляторы</span></li><li class="cap" style="--i:6"><span class="cap-n mono">07</span><span class="cap-t">3D и WebGL</span></li><li class="cap" style="--i:7"><span class="cap-n mono">08</span><span class="cap-t">Автоматизация</span></li></ul></div></div>
+  <div class="caps-wrap"><div class="container"><ul class="caps reveal" aria-label="Что я делаю"><li class="cap" style="--i:0"><span class="cap-t">Онлайн-запись</span></li><li class="cap" style="--i:1"><span class="cap-t">Интернет-магазины</span></li><li class="cap" style="--i:2"><span class="cap-t">CRM и дашборды</span></li><li class="cap" style="--i:3"><span class="cap-t">Квиз-лендинги</span></li><li class="cap" style="--i:4"><span class="cap-t">Telegram-боты</span></li><li class="cap" style="--i:5"><span class="cap-t">Калькуляторы</span></li><li class="cap" style="--i:6"><span class="cap-t">3D и WebGL</span></li><li class="cap" style="--i:7"><span class="cap-t">Автоматизация</span></li></ul></div></div>
 
   <section id="projects">
     <div class="container">
       <div class="sec-head">
-        <div><p class="eyebrow mono">Портфолио</p><h2>Проекты, которые можно потрогать</h2></div>
+        <div><h2>Проекты, которые можно потрогать</h2></div>
         <div class="filters" role="group" aria-label="Фильтр проектов">
           <button class="chip" type="button" data-filter="all" aria-pressed="true">Все<sup>8</sup></button>
           <button class="chip" type="button" data-filter="business" aria-pressed="false">Для бизнеса<sup>6</sup></button>
@@ -350,23 +382,23 @@ footer nav{display:flex;gap:var(--sp-1)}
           <button class="chip" type="button" data-filter="visual" aria-pressed="false">3D и графика<sup>2</sup></button>
         </div>
       </div>
-      <p class="sec-sub reveal">Каждый проект — рабочее демо: выбирайте время, оформляйте заказ, двигайте заявки. Так же будет работать и ваш сайт.</p>
+      <p class="sec-sub reveal">Все проекты работают: можно выбрать время записи, оформить заказ или перетащить заявку. Так же будет работать и ваш сайт.</p>
 
       <div class="grid pgrid" id="grid">
         <article class="project reveal feat" data-cat="business app" style="--c:#e3a857">
-          <div class="p-shot"><img src="assets/previews/booking.webp" alt="" width="960" height="600" loading="lazy" decoding="async"><span class="live mono"><i aria-hidden="true"></i>живое демо</span></div>
+          <div class="p-shot"><img src="assets/previews/booking.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></div>
           <div class="p-body">
-            <div class="p-top"><span class="p-cat mono"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Салоны · клиники · сервисы</span><span class="p-num mono">01</span></div>
+            <div class="p-top"><span class="p-cat"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Салоны · клиники · сервисы</span></div>
             <h3>Онлайн-запись</h3>
-            <p>Клиент сам выбирает услугу, мастера и свободное время. Владелец получает запись в Telegram, клиент — напоминание в календаре.</p>
+            <p>Клиент сам выбирает услугу, мастера и свободное время. Запись приходит владельцу в Telegram, а клиенту остаётся напоминание в календаре.</p>
             <ul class="tags"><li>Расписание</li><li>Напоминания</li><li>Telegram</li></ul>
             <a class="p-link" href="projects/booking/index.html">Открыть демо<svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
           </div>
         </article>
         <article class="project reveal feat" data-cat="business" style="--c:#8ea0ff">
-          <div class="p-shot"><img src="assets/previews/shop.webp" alt="" width="960" height="600" loading="lazy" decoding="async"><span class="live mono"><i aria-hidden="true"></i>живое демо</span></div>
+          <div class="p-shot"><img src="assets/previews/shop.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></div>
           <div class="p-body">
-            <div class="p-top"><span class="p-cat mono"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg>Магазины и бренды</span><span class="p-num mono">02</span></div>
+            <div class="p-top"><span class="p-cat"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg>Магазины и бренды</span></div>
             <h3>Интернет-магазин</h3>
             <p>Каталог с фильтрами и поиском, корзина с промокодом и оформление заказа. Заказ сразу приходит владельцу.</p>
             <ul class="tags"><li>Каталог</li><li>Корзина</li><li>Оформление заказа</li></ul>
@@ -374,9 +406,9 @@ footer nav{display:flex;gap:var(--sp-1)}
           </div>
         </article>
         <article class="project reveal" data-cat="app business" style="--c:#a48bff">
-          <div class="p-shot"><img src="assets/previews/crm.webp" alt="" width="960" height="600" loading="lazy" decoding="async"><span class="live mono"><i aria-hidden="true"></i>живое демо</span></div>
+          <div class="p-shot"><img src="assets/previews/crm.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></div>
           <div class="p-body">
-            <div class="p-top"><span class="p-cat mono"><svg class="icon" aria-hidden="true"><use href="#i-kanban"/></svg>Отделы продаж</span><span class="p-num mono">03</span></div>
+            <div class="p-top"><span class="p-cat"><svg class="icon" aria-hidden="true"><use href="#i-kanban"/></svg>Отделы продаж</span></div>
             <h3>CRM и панель заявок</h3>
             <p>Все заявки в одном месте: канбан с перетаскиванием, график выручки, воронка и источники клиентов.</p>
             <ul class="tags"><li>Дашборд</li><li>Канбан</li><li>SVG-графики</li></ul>
@@ -384,9 +416,9 @@ footer nav{display:flex;gap:var(--sp-1)}
           </div>
         </article>
         <article class="project reveal" data-cat="business" style="--c:#2dd4bf">
-          <div class="p-shot"><img src="assets/previews/quiz.webp" alt="" width="960" height="600" loading="lazy" decoding="async"><span class="live mono"><i aria-hidden="true"></i>живое демо</span></div>
+          <div class="p-shot"><img src="assets/previews/quiz.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></div>
           <div class="p-body">
-            <div class="p-top"><span class="p-cat mono"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg>Реклама и заявки</span><span class="p-num mono">04</span></div>
+            <div class="p-top"><span class="p-cat"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg>Реклама и заявки</span></div>
             <h3>Лендинг с квизом</h3>
             <p>Продающая страница для ремонта: слайдер «до/после», пакеты цен и квиз, который считает стоимость и собирает контакт.</p>
             <ul class="tags"><li>Квиз</li><li>До / после</li><li>Анимации</li></ul>
@@ -394,29 +426,29 @@ footer nav{display:flex;gap:var(--sp-1)}
           </div>
         </article>
         <article class="project reveal" data-cat="app business" style="--c:#c084fc">
-          <div class="p-shot"><img src="assets/previews/bot.webp" alt="" width="960" height="600" loading="lazy" decoding="async"><span class="live mono"><i aria-hidden="true"></i>живое демо</span></div>
+          <div class="p-shot"><img src="assets/previews/bot.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></div>
           <div class="p-body">
-            <div class="p-top"><span class="p-cat mono"><svg class="icon" aria-hidden="true"><use href="#i-robot"/></svg>Боты · автоматизация</span><span class="p-num mono">05</span></div>
+            <div class="p-top"><span class="p-cat"><svg class="icon" aria-hidden="true"><use href="#i-robot"/></svg>Боты · автоматизация</span></div>
             <h3>AI чат-бот</h3>
-            <p>Демо чат-бота для бизнеса: ответы по сценарию, тексты для соцсетей, расчёт стоимости и напоминания.</p>
+            <p>Демо чат-бота для бизнеса: отвечает по сценарию, пишет посты для соцсетей, считает стоимость и ставит напоминания.</p>
             <ul class="tags"><li>Chat UI</li><li>Сценарии</li><li>AI-тексты</li></ul>
             <a class="p-link" href="projects/telegram-bot/index.html">Открыть демо<svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
           </div>
         </article>
         <article class="project reveal" data-cat="app business" style="--c:#22d3ee">
-          <div class="p-shot"><img src="assets/previews/calc.webp" alt="" width="960" height="600" loading="lazy" decoding="async"><span class="live mono"><i aria-hidden="true"></i>живое демо</span></div>
+          <div class="p-shot"><img src="assets/previews/calc.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></div>
           <div class="p-body">
-            <div class="p-top"><span class="p-cat mono"><svg class="icon" aria-hidden="true"><use href="#i-calculator"/></svg>Инструменты продаж</span><span class="p-num mono">06</span></div>
+            <div class="p-top"><span class="p-cat"><svg class="icon" aria-hidden="true"><use href="#i-calculator"/></svg>Инструменты продаж</span></div>
             <h3>Калькулятор стоимости</h3>
-            <p>Считает цену и срок разработки по типу проекта, функциям и срочности. Помогает начать разговор о бюджете.</p>
+            <p>Считает цену сайта в белорусских рублях и срок по типу проекта, функциям и срочности.</p>
             <ul class="tags"><li>Расчёты</li><li>Смета</li><li>UX</li></ul>
             <a class="p-link" href="projects/dev-cost-calculator.html">Открыть демо<svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>
           </div>
         </article>
         <article class="project reveal" data-cat="visual" style="--c:#38bdf8">
-          <div class="p-shot"><img src="assets/previews/aquarium.webp" alt="" width="960" height="600" loading="lazy" decoding="async"><span class="live mono"><i aria-hidden="true"></i>живое демо</span></div>
+          <div class="p-shot"><img src="assets/previews/aquarium.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></div>
           <div class="p-body">
-            <div class="p-top"><span class="p-cat mono"><svg class="icon" aria-hidden="true"><use href="#i-fish"/></svg>3D · WebGL</span><span class="p-num mono">07</span></div>
+            <div class="p-top"><span class="p-cat"><svg class="icon" aria-hidden="true"><use href="#i-fish"/></svg>3D · WebGL</span></div>
             <h3>3D-аквариум</h3>
             <p>Живой аквариум в браузере: рыбы со своим поведением, растения, пузырьки, кормление и режим «ночь».</p>
             <ul class="tags"><li>Three.js</li><li>WebGL</li><li>Шейдеры</li></ul>
@@ -424,9 +456,9 @@ footer nav{display:flex;gap:var(--sp-1)}
           </div>
         </article>
         <article class="project reveal" data-cat="visual" style="--c:#818cf8">
-          <div class="p-shot"><img src="assets/previews/portfolio3d.webp" alt="" width="960" height="600" loading="lazy" decoding="async"><span class="live mono"><i aria-hidden="true"></i>живое демо</span></div>
+          <div class="p-shot"><img src="assets/previews/portfolio3d.webp" alt="" width="960" height="600" loading="lazy" decoding="async"></div>
           <div class="p-body">
-            <div class="p-top"><span class="p-cat mono"><svg class="icon" aria-hidden="true"><use href="#i-planet"/></svg>3D · WebGL</span><span class="p-num mono">08</span></div>
+            <div class="p-top"><span class="p-cat"><svg class="icon" aria-hidden="true"><use href="#i-planet"/></svg>3D · WebGL</span></div>
             <h3>3D-портфолио</h3>
             <p>Портфолио на Three.js: звёздное поле, вращающаяся сфера и частицы, которые реагируют на курсор.</p>
             <ul class="tags"><li>Three.js</li><li>WebGL</li><li>Simplex Noise</li></ul>
@@ -440,21 +472,21 @@ footer nav{display:flex;gap:var(--sp-1)}
   <section id="services">
     <div class="container">
       <div class="sec-head">
-        <div><p class="eyebrow mono">Услуги</p><h2>Чем могу помочь</h2></div>
+        <div><h2>Чем могу помочь</h2></div>
         <p>Пишу чистый код и слежу за тем, чтобы сайт быстро грузился и был удобен на телефоне.</p>
       </div>
       <ol class="services">
-        <li class="svc reveal"><span class="num mono">01</span><h3>Лендинги и квизы</h3><p>Продающие страницы под рекламу: квизы, калькуляторы, формы заявок с отправкой в Telegram и аналитикой.</p><svg class="icon" aria-hidden="true"><use href="#i-layout"/></svg></li>
-        <li class="svc reveal"><span class="num mono">02</span><h3>Магазины и онлайн-запись</h3><p>Каталог, корзина и оформление заказа. Запись на услуги с выбором времени и уведомлениями владельцу.</p><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg></li>
-        <li class="svc reveal"><span class="num mono">03</span><h3>CRM и личные кабинеты</h3><p>Панели заявок, дашборды, внутренние инструменты и кабинеты для клиентов.</p><svg class="icon" aria-hidden="true"><use href="#i-kanban"/></svg></li>
-        <li class="svc reveal"><span class="num mono">04</span><h3>Боты и автоматизация</h3><p>Telegram-боты, парсеры и скрипты на Python, которые снимают рутину с команды.</p><svg class="icon" aria-hidden="true"><use href="#i-robot"/></svg></li>
+        <li class="svc reveal"><h3>Лендинги и квизы</h3><p>Продающие страницы под рекламу: квизы, калькуляторы, формы заявок с отправкой в Telegram и аналитикой.</p><svg class="icon" aria-hidden="true"><use href="#i-layout"/></svg></li>
+        <li class="svc reveal"><h3>Магазины и онлайн-запись</h3><p>Каталог, корзина и оформление заказа. Запись на услуги с выбором времени и уведомлениями владельцу.</p><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg></li>
+        <li class="svc reveal"><h3>CRM и личные кабинеты</h3><p>Панели заявок, дашборды, внутренние инструменты и кабинеты для клиентов.</p><svg class="icon" aria-hidden="true"><use href="#i-kanban"/></svg></li>
+        <li class="svc reveal"><h3>Боты и автоматизация</h3><p>Telegram-боты, парсеры и скрипты на Python, которые снимают рутину с команды.</p><svg class="icon" aria-hidden="true"><use href="#i-robot"/></svg></li>
       </ol>
-      <div class="price-note reveal"><span class="pn-badge mono">до 90 BYN</span><p><b>Цена под ваш бюджет.</b> Считаю в белорусских рублях, любой сайт — не дороже 90 BYN. Обсудим задачу и подберём удобную цену.</p><a class="btn btn-secondary magnet" href="projects/dev-cost-calculator.html">Посчитать за минуту<svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></div>
+      <div class="price-note reveal"><span class="pn-badge">до 90 BYN</span><p><b>Цена под ваш бюджет.</b> Считаю в белорусских рублях, любой сайт стоит не дороже 90 BYN. Обсудим задачу и подберём удобную цену.</p><a class="btn btn-secondary magnet" href="projects/dev-cost-calculator.html">Посчитать за минуту<svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></div>
       <div class="stack reveal">
-        <div><small class="mono">Frontend</small><span>HTML, CSS, JavaScript, React, Vue, Tailwind</span></div>
-        <div><small class="mono">Backend</small><span>Node.js, Express, Python, REST API, PostgreSQL</span></div>
-        <div><small class="mono">Автоматизация</small><span>Selenium, BeautifulSoup, Pandas</span></div>
-        <div><small class="mono">Инструменты</small><span>Git, Figma, VS Code</span></div>
+        <div><small>Frontend</small><span>HTML, CSS, JavaScript, React, Vue, Tailwind</span></div>
+        <div><small>Backend</small><span>Node.js, Express, Python, REST API, PostgreSQL</span></div>
+        <div><small>Автоматизация</small><span>Selenium, BeautifulSoup, Pandas</span></div>
+        <div><small>Инструменты</small><span>Git, Figma, VS Code</span></div>
       </div>
     </div>
   </section>
@@ -462,25 +494,25 @@ footer nav{display:flex;gap:var(--sp-1)}
   <section id="process">
     <div class="container">
       <div class="sec-head">
-        <div><p class="eyebrow mono">Процесс</p><h2>Как я работаю</h2></div>
+        <div><h2>Как я работаю</h2></div>
         <p>Без долгих созвонов и сюрпризов в смете. На каждом этапе вы видите результат.</p>
       </div>
       <ol class="steps" id="steps"><span class="fill" aria-hidden="true"></span>
-        <li class="step reveal"><span class="dot2 mono">01</span><h3>Обсуждение</h3><p>Переписываемся в Telegram или созваниваемся. Разбираюсь в задаче, предлагаю решение и подбираю цену под ваш бюджет.</p><span class="dur mono">1 день</span></li>
-        <li class="step reveal"><span class="dot2 mono">02</span><h3>Прототип</h3><p>Показываю структуру и дизайн ключевых экранов. Правим до того, как начнётся код: так дешевле.</p><span class="dur mono">2–5 дней</span></li>
-        <li class="step reveal"><span class="dot2 mono">03</span><h3>Разработка</h3><p>Собираю сайт и присылаю промежуточные версии по ссылке. Вы видите прогресс, а не ждёте вслепую.</p><span class="dur mono">1–4 недели</span></li>
-        <li class="step reveal"><span class="dot2 mono">04</span><h3>Запуск</h3><p>Подключаю домен, хостинг, формы и аналитику. Передаю доступы и показываю, как всем пользоваться.</p><span class="dur mono">1–2 дня</span></li>
+        <li class="step reveal"><span class="dot2" aria-hidden="true"><svg class="icon"><use href="#i-telegram-logo"/></svg></span><h3>Обсуждение</h3><p>Переписываемся в Telegram или созваниваемся. Разбираюсь в задаче, предлагаю решение и подбираю цену под ваш бюджет.</p><span class="dur">1 день</span></li>
+        <li class="step reveal"><span class="dot2" aria-hidden="true"><svg class="icon"><use href="#i-layout"/></svg></span><h3>Прототип</h3><p>Показываю структуру и дизайн ключевых экранов. Правим до того, как начнётся код: так дешевле.</p><span class="dur">2–5 дней</span></li>
+        <li class="step reveal"><span class="dot2" aria-hidden="true"><svg class="icon"><use href="#i-code"/></svg></span><h3>Разработка</h3><p>Собираю сайт и присылаю промежуточные версии по ссылке. Прогресс видно с первых дней.</p><span class="dur">1–4 недели</span></li>
+        <li class="step reveal"><span class="dot2" aria-hidden="true"><svg class="icon"><use href="#i-lightning"/></svg></span><h3>Запуск</h3><p>Подключаю домен, хостинг, формы и аналитику. Передаю доступы и показываю, как всем пользоваться.</p><span class="dur">1–2 дня</span></li>
       </ol>
     </div>
   </section>
 
   <section id="faq">
     <div class="container faq-grid">
-      <div><p class="eyebrow mono">Вопросы</p><h2>Частые вопросы</h2><p class="faq-note">Не нашли ответ? Напишите в <a class="inline-link" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer">Telegram</a>, отвечу.</p></div>
+      <div><h2>Частые вопросы</h2><p class="faq-note">Не нашли ответ? Напишите в <a class="inline-link" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer">Telegram</a>, отвечу.</p></div>
       <div class="faq">
-        <details class="qa reveal"><summary>Сколько стоит сайт?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Недорого: цены в белорусских рублях, и любой сайт — не дороже 90 BYN. Цену подбираю под задачу и бюджет, называю до старта и не меняю. Прикинуть можно в <a class="inline-link" href="projects/dev-cost-calculator.html">калькуляторе</a>.</p></div></details>
-        <details class="qa reveal"><summary>Сколько времени занимает разработка?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Лендинг обычно занимает 1–2 недели, магазин или сервис с личным кабинетом — от 3–4 недель. Срок называю заранее.</p></div></details>
-        <details class="qa reveal"><summary>Что нужно от меня для старта?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Пара предложений о задаче, примеры сайтов, которые нравятся, и тексты или фото, если они уже есть. Если нет — помогу со структурой и текстами.</p></div></details>
+        <details class="qa reveal"><summary>Сколько стоит сайт?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Недорого. Цены в белорусских рублях, любой сайт стоит не дороже 90 BYN. Цену подбираю под задачу и бюджет, называю до старта и потом не меняю. Прикинуть можно в <a class="inline-link" href="projects/dev-cost-calculator.html">калькуляторе</a>.</p></div></details>
+        <details class="qa reveal"><summary>Сколько времени занимает разработка?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Лендинг обычно занимает 1–2 недели, магазин или сервис с личным кабинетом от 3–4 недель. Срок называю заранее.</p></div></details>
+        <details class="qa reveal"><summary>Что нужно от меня для старта?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Пара предложений о задаче, примеры сайтов, которые нравятся, и тексты или фото, если они уже есть. Если их нет, помогу со структурой и текстами.</p></div></details>
         <details class="qa reveal"><summary>Смогу ли я сам менять сайт?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Да. Подключу простую админку, чтобы вы сами меняли тексты, цены и фото без программиста.</p></div></details>
         <details class="qa reveal"><summary>Можно ли доработать уже готовый сайт?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Да: ускорить загрузку, сделать адаптив под телефоны, добавить онлайн-запись, оплату, квиз или отправку заявок в Telegram.</p></div></details>
       </div>
@@ -490,9 +522,8 @@ footer nav{display:flex;gap:var(--sp-1)}
   <section id="contact">
     <div class="container">
       <div class="contact reveal">
-        <p class="eyebrow mono">Контакты</p>
         <h2>Есть задача? Обсудим</h2>
-        <p>Отметьте, что нужно, и добавьте пару слов о задаче. Текст скопируется — останется вставить его в чат.</p>
+        <p>Отметьте, что нужно, и добавьте пару слов о задаче. Текст скопируется, и его останется вставить в чат.</p>
         <div class="brief">
           <div class="brief-chips" role="group" aria-label="Что нужно сделать">
             <button class="bchip" type="button" aria-pressed="false">Лендинг</button><button class="bchip" type="button" aria-pressed="false">Интернет-магазин</button><button class="bchip" type="button" aria-pressed="false">Онлайн-запись</button><button class="bchip" type="button" aria-pressed="false">CRM или кабинет</button><button class="bchip" type="button" aria-pressed="false">Telegram-бот</button><button class="bchip" type="button" aria-pressed="false">Доработать сайт</button>
@@ -775,6 +806,20 @@ footer nav{display:flex;gap:var(--sp-1)}
     if (document.hidden) { cancelAnimationFrame(raf); raf = null; }
     else if (!raf) { last = performance.now(); raf = requestAnimationFrame(draw); }
   });
+})();
+</script>
+<dialog class="reel-dlg" id="reelDlg" aria-label="Шоурил портфолио">
+  <button class="reel-x" id="reelClose" type="button" aria-label="Закрыть"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
+  <video id="reelVid" src="assets/showreel.mp4" poster="assets/showreel-poster.webp" controls playsinline preload="none" width="1920" height="1080"></video>
+</dialog>
+<script>
+(() => {
+  const d = document.getElementById('reelDlg'), v = document.getElementById('reelVid'), b = document.getElementById('reelOpen');
+  if (!d || !b || typeof d.showModal !== 'function') { if (b) b.hidden = true; return; }
+  b.addEventListener('click', () => { d.showModal(); v.currentTime = 0; v.play().catch(() => {}); });
+  document.getElementById('reelClose').addEventListener('click', () => d.close());
+  d.addEventListener('click', e => { if (e.target === d) d.close(); });
+  d.addEventListener('close', () => { v.pause(); b.focus(); });
 })();
 </script>
 </body>

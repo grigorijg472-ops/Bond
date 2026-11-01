@@ -44,6 +44,7 @@
   .chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 25%, transparent); }
   .chip:hover, .chip.on { border-color: var(--c); background: rgba(24,26,30,.95); }
   .chip[hidden] { display: none; }
+  .chip::after { content: ""; position: absolute; inset: -4px -2px; } /* зона нажатия 44px */
 
   .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 12; display: flex; align-items: end; justify-content: space-between; gap: 24px;
     padding: 0 clamp(20px, 6vw, 96px) max(24px, env(safe-area-inset-bottom)); pointer-events: none; }
@@ -81,7 +82,7 @@
 <header class="topbar">
   <a class="back" href="../../index.html#projects" aria-label="Портфолио"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path><path d="M5 12l6 6"></path><path d="M5 12l6 -6"></path></svg><span>Портфолио</span></a>
   <span class="name">3D Portfolio</span>
-  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg><span>Написать</span></a>
+  <a class="write" aria-label="Написать в Telegram" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg><span>Написать</span></a>
 </header>
 
 <ul class="chips" id="chips" aria-label="Навыки">

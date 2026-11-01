@@ -46,7 +46,7 @@
   .msg.me { align-self: flex-end; background: var(--out); border-bottom-right-radius: 5px; }
   .msg p + p, .msg ul + p, .msg p + ul { margin-top: 6px; }
   .msg ul { padding-left: 18px; display: grid; gap: 2px; }
-  .msg time { display: block; text-align: right; font-size: .7rem; color: rgba(232,238,244,.5); margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .msg time { display: block; text-align: right; font-size: .75rem; color: rgba(232,238,244,.68); margin-top: 2px; font-variant-numeric: tabular-nums; }
   .msg .link { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 12px; border-radius: 10px; background: rgba(94,181,247,.16); color: var(--accent-ink); text-decoration: none; font-weight: 600; font-size: .92rem; min-height: 40px; }
   .msg .link:hover { background: rgba(94,181,247,.26); }
   .typing { align-self: flex-start; background: var(--in); border-radius: 16px; border-bottom-left-radius: 5px; padding: 12px 14px; display: flex; gap: 5px; }
@@ -55,7 +55,7 @@
   @keyframes blink { 0%, 60%, 100% { opacity: .35; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
   .quick { display: flex; gap: 8px; padding: 10px 14px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--line); background: var(--surface); }
   .quick::-webkit-scrollbar { display: none; }
-  .quick button { flex: none; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); font-size: .9rem; color: var(--ink); transition: border-color .2s, background-color .2s, transform .15s; }
+  .quick button { flex: none; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2); font-size: .9rem; color: var(--ink); transition: border-color .2s, background-color .2s, transform .15s; }
   .quick button:hover { border-color: var(--accent); }
   .quick button:active { transform: scale(.97); }
   .compose { display: flex; gap: 10px; padding: 10px 14px 14px; background: var(--surface); }
@@ -87,7 +87,7 @@
 <header class="topbar">
   <a class="back" href="../../index.html#projects" aria-label="Портфолио"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l14 0"></path><path d="M5 12l6 6"></path><path d="M5 12l6 -6"></path></svg><span>Портфолио</span></a>
   <span class="name">AI Chat Bot</span>
-  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg><span>Написать</span></a>
+  <a class="write" aria-label="Написать в Telegram" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"></path></svg><span>Написать</span></a>
 </header>
 
 <div class="wrap">

@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="../shared/base.css">
 <style>
   :root { --accent: #6a46e5; --accent-ink: #5534c9; --on-accent: #fff; --bg: #f3f3f6; --surface: #fff; --surface-2: #f0eff4; --line: #e3e2ea;
-    --s-new: #3b82f6; --s-work: #f59e0b; --s-bill: #8b5cf6; --s-paid: #10b981; --s-lost: #9ca3af; --good: #0f9f6e; --bad: #d64545; }
+    --s-new: #3b82f6; --s-work: #f59e0b; --s-bill: #8b5cf6; --s-paid: #10b981; --s-lost: #9ca3af; --good: #0b7a55; --bad: #c03434; }
   @media (prefers-color-scheme: dark) { :root { --accent: #a48bff; --accent-ink: #b9a6ff; --on-accent: #160d33; --bg: #0e0e12; --surface: #16161c; --surface-2: #1d1d25; --line: #2a2a34; --good: #34d399; --bad: #f87171; } }
   body { overflow-x: hidden; }
   .app { display: grid; grid-template-columns: 232px minmax(0, 1fr); min-height: calc(100dvh - 60px); }
@@ -34,7 +34,7 @@
   .head p { color: var(--muted); font-size: .92rem; }
   .head-r { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .seg { display: inline-flex; padding: 3px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
-  .seg button { min-height: 38px; padding: 0 14px; border-radius: 9px; font-weight: 600; font-size: .88rem; color: var(--muted); }
+  .seg button { min-height: 44px; padding: 0 14px; border-radius: 9px; font-weight: 600; font-size: .88rem; color: var(--muted); }
   .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
@@ -97,7 +97,7 @@
   .lead .ft { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; gap: 8px; }
   .lead .sum { font-family: var(--mono); font-weight: 600; font-size: .86rem; white-space: nowrap; }
   .lead .src-chip { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .src-chip { font-size: .7rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .src-chip { font-size: .75rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
   .table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
   table { width: 100%; border-collapse: collapse; font-size: .9rem; min-width: 760px; }
   th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
@@ -167,7 +167,7 @@
 <header class="topbar">
   <a class="back" href="../../index.html#projects" aria-label="Портфолио"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-back"/></svg><span>Портфолио</span></a>
   <span class="name">CRM и заявки</span>
-  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"/></svg><span>Написать</span></a>
+  <a class="write" aria-label="Написать в Telegram" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"/></svg><span>Написать</span></a>
 </header>
 
 <div class="app">

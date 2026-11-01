@@ -66,7 +66,7 @@
   .pick .d { font-size: .86rem; color: var(--muted); }
   .pick .p { text-align: right; font-family: var(--mono); font-weight: 600; white-space: nowrap; }
   .pick .p small { display: block; font-weight: 500; color: var(--muted); font-size: .78rem; }
-  .tag { font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent-ink); }
+  .tag { font-size: .75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent-ink); }
 
   /* Мастера */
   .masters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
@@ -81,9 +81,9 @@
   .days-wrap { position: relative; margin: 0 -4px; }
   .days { display: flex; gap: 8px; overflow-x: auto; padding: 4px 4px 12px; scroll-snap-type: x proximity; scrollbar-width: thin; }
   .day { flex: none; width: 68px; min-height: 76px; border-radius: 14px; border: 1px solid var(--line); display: grid; place-items: center; align-content: center; gap: 2px; scroll-snap-align: start; background: var(--surface); transition: all .2s var(--ease); }
-  .day small { font-size: .74rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .day small { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
   .day b { font-size: 1.35rem; font-weight: 700; line-height: 1; }
-  .day em { font-style: normal; font-size: .7rem; color: var(--muted); }
+  .day em { font-style: normal; font-size: .75rem; color: var(--muted); }
   .day:hover:not([disabled]) { border-color: color-mix(in srgb, var(--muted) 60%, var(--line)); }
   .day[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
   .day[aria-pressed="true"] small, .day[aria-pressed="true"] em { color: inherit; opacity: .85; }
@@ -149,7 +149,7 @@
   .tg-top .bot svg { width: 18px; height: 18px; }
   .tg-msg { background: #182533; border: 1px solid #22303f; border-radius: 4px 14px 14px 14px; padding: 12px 14px; font-size: .92rem; line-height: 1.55; white-space: pre-line; max-width: 440px; }
   .tg-msg b { color: #fff; }
-  .tg-msg .t { display: block; text-align: right; font-size: .72rem; color: #6d8396; margin-top: 4px; }
+  .tg-msg .t { display: block; text-align: right; font-size: .75rem; color: #6d8396; margin-top: 4px; }
 
   /* Мои записи */
   dialog.mine-dlg { width: min(520px, calc(100vw - 32px)); margin: auto; padding: 0; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); color: var(--ink); box-shadow: 0 24px 64px -16px rgba(0,0,0,.35); }
@@ -209,7 +209,7 @@
 <header class="topbar">
   <a class="back" href="../../index.html#projects" aria-label="Портфолио"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-back"/></svg><span>Портфолио</span></a>
   <span class="name">Онлайн-запись</span>
-  <a class="write" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"/></svg><span>Написать</span></a>
+  <a class="write" aria-label="Написать в Telegram" href="https://t.me/Bond8848" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4"/></svg><span>Написать</span></a>
 </header>
 
 <main class="page">
