@@ -219,5 +219,14 @@
 <script type="application/json" id="case-data">{"title": "Калькулятор стоимости", "task": "Дать клиенту примерную цену и срок за минуту, чтобы разговор о бюджете начинался не вслепую.", "features": ["Тип проекта, функции и срочность, сумма и срок пересчитываются сразу.", "Разбивка по пунктам, копирование сметы одним нажатием.", "На телефоне итог закреплён внизу экрана."], "stack": ["JavaScript", "HTML", "CSS"], "note": "Цены ориентировочные, в белорусских рублях, с потолком 90 BYN. Точную цену подбираем под задачу и бюджет клиента."}</script>
 <script src="shared/fx.js"></script>
 <script src="shared/about.js"></script>
+<script>window.TOUR_STEPS = [
+ {say:'Тип проекта: интернет-магазин', el:function(){var i=document.querySelector('input[name=type][value=ecommerce]');return i&&i.closest('label');}, wait:800},
+ {say:'Добавляем CMS', el:function(){var i=document.querySelector('input[name=f][value=cms]');return i&&i.closest('label');}, wait:700},
+ {say:'Добавляем SEO', el:function(){var i=document.querySelector('input[name=f][value=seo]');return i&&i.closest('label');}, wait:700},
+ {say:'Срочность: срочно', el:function(){var i=document.querySelector('input[name=urgency][value=fast]');return i&&i.closest('label');}, wait:800},
+ {say:'Смотрим итог', el:'#total', wait:1500},
+ {say:'Готово: цена и срок посчитаны'}
+];</script>
+<script src="shared/tour.js"></script>
 </body>
 </html>

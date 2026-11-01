@@ -478,5 +478,18 @@ ${items.join('\n')}
 </script>
 <script type="application/json" id="case-data">{"title": "Интернет-магазин обжарщика кофе", "task": "Показать товар вкусно и довести покупателя от каталога до оплаченного заказа без лишних шагов.", "features": ["Каталог с категориями, поиском и сортировкой", "Выбор веса и помола, цена пересчитывается сразу", "Карточка товара с профилем вкуса", "Корзина с количеством, промокодом и шкалой до бесплатной доставки", "Оформление: проверка полей, способы доставки и оплаты", "Анимация добавления в корзину, данные корзины сохраняются в браузере", "Пример уведомления о заказе в Telegram"], "stack": ["HTML", "CSS", "JavaScript", "SVG", "LocalStorage"], "note": "В рабочем магазине подключаются платёжный сервис (bePaid, ЮKassa, Stripe), админка для товаров и отправка заказов в Telegram или CRM."}</script>
 <script src="../shared/about.js"></script>
+<script>window.TOUR_STEPS = [
+ {say:'Выбираем вес: 1 кг', el:'[data-w="1000"][data-id="ethiopia"]'},
+ {say:'Добавляем в корзину', el:'[data-add="ethiopia"]', wait:900},
+ {say:'Открываем корзину', el:'#cartBtn', wait:800},
+ {say:'Переходим к оформлению', el:'#toCheckout'},
+ {say:'Вводим имя', el:'#cName', type:'Алексей'},
+ {say:'Вводим телефон', el:'#cPhone', type:'375291234567'},
+ {say:'Выбираем самовывоз', el:function(){var i=document.querySelector('input[name=ship][value=pickup]');return i&&i.closest('label');}},
+ {say:'Оплата при получении', el:function(){var i=document.querySelector('input[name=pay][value=cash]');return i&&i.closest('label');}},
+ {say:'Подтверждаем заказ', el:'#placeOrder', wait:1400},
+ {say:'Готово: заказ принят'}
+];</script>
+<script src="../shared/tour.js"></script>
 </body>
 </html>

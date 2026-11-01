@@ -307,6 +307,12 @@ footer nav{display:flex;gap:var(--sp-1)}
 @keyframes reelIn{from{opacity:0;transform:translateY(12px) scale(.97)}}
 @keyframes reelFade{from{opacity:0}}
 @media (max-width:560px){.reel-btn{display:flex;width:100%}}
+/* 3D-фигуры в первом экране (assets/hero3d.js) */
+.hero{position:relative;isolation:isolate}
+.hero>.container{position:relative;z-index:1}
+.hero3d{position:absolute;left:0;top:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.2s ease;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 80%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 80%,transparent 100%)}
+.hero3d.on{opacity:1}
+@media (max-width:860px){.hero3d{display:none}}
 
 </style>
 </head>
@@ -334,6 +340,7 @@ footer nav{display:flex;gap:var(--sp-1)}
 
 <main id="main">
   <section class="hero" id="top" style="padding-top:var(--sp-12)">
+    <canvas class="hero3d" id="hero3d" aria-hidden="true"></canvas>
     <div class="container hero-grid">
       <div>
         <h1 class="hero-title"><span class="ln"><span class="ln-in">Яков</span></span><span class="ln"><span class="ln-in grad">Григорьевич</span></span></h1>
@@ -708,6 +715,16 @@ footer nav{display:flex;gap:var(--sp-1)}
     const done = () => { const t = document.getElementById('toast'); t.textContent = 'Текст скопирован, вставьте его в чат'; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600); };
     if (navigator.clipboard) navigator.clipboard.writeText(msg).then(done, () => {}); 
   });
+
+  // 3D-фигуры в первом экране: грузим после загрузки страницы, только на больших экранах и если есть WebGL
+  (() => {
+    const c = document.getElementById('hero3d');
+    if (!c || innerWidth <= 860 || navigator.connection?.saveData) return;
+    try { const g = document.createElement('canvas'); if (!(g.getContext('webgl2') || g.getContext('webgl'))) return; } catch (e) { return; }
+    const go = () => import('./assets/hero3d.js').catch(() => c.remove());
+    const idle = window.requestIdleCallback || (f => setTimeout(f, 300));
+    if (document.readyState === 'complete') idle(go); else addEventListener('load', () => idle(go), { once: true });
+  })();
 
   // Background: falling glyphs + network (как в исходной версии, оптимизировано для телефонов)
   const canvas = document.getElementById('bg'), ctx = canvas.getContext('2d', { alpha: true });

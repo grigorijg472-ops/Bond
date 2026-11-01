@@ -197,5 +197,12 @@
 <script type="application/json" id="case-data">{"title": "AI Chat Bot", "task": "Показать, как мог бы выглядеть диалог бота для бизнеса: вопросы об услугах, расчёт цены, переход к заказу.", "features": ["Распознавание намерений по ключевым словам.", "Индикатор набора текста и быстрые ответы.", "Сценарий расчёта цены со ссылкой на калькулятор."], "stack": ["JavaScript", "HTML", "CSS"], "note": "Это демо в браузере с заготовленными ответами. Нейросети и сервера здесь нет. Рабочий бот строится на Telegram Bot API и бэкенде."}</script>
 <script src="../shared/fx.js"></script>
 <script src="../shared/about.js"></script>
+<script>window.TOUR_STEPS = [
+ {say:'Нажимаем быстрый ответ', el:'#quick button', wait:2600},
+ {say:'Пишем свой вопрос', el:'#text', type:'Сколько стоит лендинг?'},
+ {say:'Отправляем', el:'#send', wait:3000},
+ {say:'Готово: бот ответил по сценарию'}
+];</script>
+<script src="../shared/tour.js"></script>
 </body>
 </html>
