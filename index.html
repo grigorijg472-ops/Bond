@@ -307,12 +307,6 @@ footer nav{display:flex;gap:var(--sp-1)}
 @keyframes reelIn{from{opacity:0;transform:translateY(12px) scale(.97)}}
 @keyframes reelFade{from{opacity:0}}
 @media (max-width:560px){.reel-btn{display:flex;width:100%}}
-/* 3D-фигуры в первом экране (assets/hero3d.js) */
-.hero{position:relative;isolation:isolate}
-.hero>.container{position:relative;z-index:1}
-.hero3d{position:absolute;left:0;top:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.2s ease;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 80%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 80%,transparent 100%)}
-.hero3d.on{opacity:1}
-@media (max-width:860px){.hero3d{display:none}}
 
 </style>
 </head>
@@ -340,7 +334,6 @@ footer nav{display:flex;gap:var(--sp-1)}
 
 <main id="main">
   <section class="hero" id="top" style="padding-top:var(--sp-12)">
-    <canvas class="hero3d" id="hero3d" aria-hidden="true"></canvas>
     <div class="container hero-grid">
       <div>
         <h1 class="hero-title"><span class="ln"><span class="ln-in">Яков</span></span><span class="ln"><span class="ln-in grad">Григорьевич</span></span></h1>
@@ -349,7 +342,7 @@ footer nav{display:flex;gap:var(--sp-1)}
           <a class="btn btn-primary magnet" href="#projects">Смотреть работы<svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
           <a class="btn btn-secondary magnet" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer"><svg class="icon" aria-hidden="true"><use href="#i-telegram-logo"/></svg>Написать в Telegram</a>
         </div>
-        <button class="reel-btn reveal" id="reelOpen" type="button" aria-haspopup="dialog"><span class="reel-thumb"><img src="assets/showreel-poster.webp" alt="" width="160" height="90" loading="lazy" decoding="async"><span class="reel-play" aria-hidden="true"><svg class="icon"><use href="#i-play"/></svg></span></span><span class="reel-txt"><b>Шоурил</b><small>Как работают проекты, 34 секунды</small></span></button>
+        <button class="reel-btn reveal" id="reelOpen" type="button" aria-haspopup="dialog"><span class="reel-thumb"><img src="assets/showreel-poster.webp?v=3" alt="" width="160" height="90" loading="lazy" decoding="async"><span class="reel-play" aria-hidden="true"><svg class="icon"><use href="#i-play"/></svg></span></span><span class="reel-txt"><b>Шоурил</b><small>Как работают проекты, 33 секунды</small></span></button>
       </div>
 
       <aside class="card-contact reveal" aria-label="Контакты">
@@ -716,16 +709,6 @@ footer nav{display:flex;gap:var(--sp-1)}
     if (navigator.clipboard) navigator.clipboard.writeText(msg).then(done, () => {}); 
   });
 
-  // 3D-фигуры в первом экране: грузим после загрузки страницы, только на больших экранах и если есть WebGL
-  (() => {
-    const c = document.getElementById('hero3d');
-    if (!c || innerWidth <= 860 || navigator.connection?.saveData) return;
-    try { const g = document.createElement('canvas'); if (!(g.getContext('webgl2') || g.getContext('webgl'))) return; } catch (e) { return; }
-    const go = () => import('./assets/hero3d.js').catch(() => c.remove());
-    const idle = window.requestIdleCallback || (f => setTimeout(f, 300));
-    if (document.readyState === 'complete') idle(go); else addEventListener('load', () => idle(go), { once: true });
-  })();
-
   // Background: falling glyphs + network (как в исходной версии, оптимизировано для телефонов)
   const canvas = document.getElementById('bg'), ctx = canvas.getContext('2d', { alpha: true });
   const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*()'.split('');
@@ -827,7 +810,7 @@ footer nav{display:flex;gap:var(--sp-1)}
 </script>
 <dialog class="reel-dlg" id="reelDlg" aria-label="Шоурил портфолио">
   <button class="reel-x" id="reelClose" type="button" aria-label="Закрыть"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
-  <video id="reelVid" src="assets/showreel.mp4" poster="assets/showreel-poster.webp" controls playsinline preload="none" width="1920" height="1080"></video>
+  <video id="reelVid" src="assets/showreel.mp4?v=3" poster="assets/showreel-poster.webp?v=3" controls playsinline preload="none" width="1920" height="1080"></video>
 </dialog>
 <script>
 (() => {
