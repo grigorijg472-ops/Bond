@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Калькулятор стоимости разработки сайта</title>
-<meta name="description" content="Прикиньте стоимость сайта в белорусских рублях (не дороже 90 BYN) и сроки: выберите тип проекта, функции и срочность. Итог пересчитывается сразу.">
+<meta name="description" content="Прикиньте стоимость сайта в белорусских рублях (не дороже 90 BYN): выберите тип проекта, функции и срочность. Итог пересчитывается сразу.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
@@ -91,7 +91,7 @@
 <main class="page">
   <div class="head">
     <h1>Сколько стоит ваш сайт</h1>
-    <p>Выберите тип проекта и функции. Цена в белорусских рублях и срок пересчитываются сразу. Потолок — 90 BYN за сайт.</p>
+    <p>Выберите тип проекта и функции. Цена в белорусских рублях пересчитывается сразу. Потолок — 90 BYN за сайт.</p>
   </div>
 
   <div class="calc">
@@ -132,7 +132,6 @@
       <p class="lab" id="resLab">Ориентировочная стоимость</p>
       <p class="total" aria-live="polite" aria-atomic="true"><span id="total" class="num">30</span><span class="cur">BYN</span></p>
       <ul class="rows" id="rows"></ul>
-      <div class="time"><span>Примерный срок</span><b id="time">1-2 недели</b></div>
       <div class="btns">
         <a class="btn btn-primary" href="https://t.me/Bond8848" target="_blank" rel="noopener">Обсудить проект <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17 7l-10 10"></path><path d="M8 7l9 0l0 9"></path></svg></a>
         <button class="btn btn-ghost" id="copy" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"></path><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"></path></svg><span>Скопировать смету</span></button>
@@ -147,10 +146,10 @@
 <script>
 (() => {
   const TYPES = {
-    landing: { name: 'Лендинг', base: 30, time: '1-2 недели' },
-    webapp: { name: 'Веб-приложение', base: 50, time: '3-6 недель' },
-    automation: { name: 'Автоматизация', base: 40, time: '1-3 недели' },
-    ecommerce: { name: 'Интернет-магазин', base: 60, time: '4-8 недель' }
+    landing: { name: 'Лендинг', base: 30 },
+    webapp: { name: 'Веб-приложение', base: 50 },
+    automation: { name: 'Автоматизация', base: 40 },
+    ecommerce: { name: 'Интернет-магазин', base: 60 }
   };
   const URG = { normal: { m: 1, t: '', label: '' }, fast: { m: 1.1, t: ', ускоренно', label: 'Срочность +10%' }, veryfast: { m: 1.2, t: ', максимально сжато', label: 'Срочность +20%' } };
   const $ = id => document.getElementById(id);
@@ -188,7 +187,6 @@
     if (s.urg.m > 1) add(s.urg.label, '+' + fmt(s.subtotal * (s.urg.m - 1)) + ' BYN');
     if (s.raw > s.total) add('Потолок цены 90 BYN', '−' + fmt(s.raw - s.total) + ' BYN', 'cap');
     add('Итого', fmt(s.total) + ' BYN', 'sum');
-    $('time').textContent = s.type.time + s.urg.t;
     animate(s.total);
   }
 
@@ -199,7 +197,7 @@
     s.feats.forEach(f => lines.push('- ' + f.title + ': ' + (f.price ? '+' + fmt(f.price) + ' BYN' : 'входит')));
     if (s.urg.m > 1) lines.push('- ' + s.urg.label + ': +' + fmt(s.subtotal * (s.urg.m - 1)) + ' BYN');
     if (s.raw > s.total) lines.push('- Потолок цены 90 BYN: −' + fmt(s.raw - s.total) + ' BYN');
-    lines.push('Итого: ' + fmt(s.total) + ' BYN', 'Срок: ' + s.type.time + s.urg.t);
+    lines.push('Итого: ' + fmt(s.total) + ' BYN', 'Срок обговорим в чате.');
     const text = lines.join('\n'), btn = $('copy'), label = btn.querySelector('span');
     let ok = false;
     try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
@@ -216,7 +214,7 @@
   render();
 })();
 </script>
-<script type="application/json" id="case-data">{"title": "Калькулятор стоимости", "task": "Дать клиенту примерную цену и срок за минуту, чтобы разговор о бюджете начинался не вслепую.", "features": ["Тип проекта, функции и срочность, сумма и срок пересчитываются сразу.", "Разбивка по пунктам, копирование сметы одним нажатием.", "На телефоне итог закреплён внизу экрана."], "stack": ["JavaScript", "HTML", "CSS"], "note": "Цены ориентировочные, в белорусских рублях, с потолком 90 BYN. Точную цену подбираем под задачу и бюджет клиента."}</script>
+<script type="application/json" id="case-data">{"title": "Калькулятор стоимости", "task": "Дать клиенту примерную цену за минуту, чтобы разговор о бюджете начинался не вслепую.", "features": ["Тип проекта, функции и срочность, сумма пересчитывается сразу.", "Разбивка по пунктам, копирование сметы одним нажатием.", "На телефоне итог закреплён внизу экрана."], "stack": ["JavaScript", "HTML", "CSS"], "note": "Цены ориентировочные, в белорусских рублях, с потолком 90 BYN. Точную цену подбираем под задачу и бюджет клиента."}</script>
 <script src="shared/fx.js"></script>
 <script src="shared/about.js"></script>
 <script>window.TOUR_STEPS = [
@@ -225,7 +223,7 @@
  {say:'Добавляем SEO', el:function(){var i=document.querySelector('input[name=f][value=seo]');return i&&i.closest('label');}, wait:700},
  {say:'Срочность: срочно', el:function(){var i=document.querySelector('input[name=urgency][value=fast]');return i&&i.closest('label');}, wait:800},
  {say:'Смотрим итог', el:'#total', wait:1500},
- {say:'Готово: цена и срок посчитаны'}
+ {say:'Готово: цена посчитана'}
 ];</script>
 <script src="shared/tour.js"></script>
 </body>
