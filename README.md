@@ -17,7 +17,7 @@
 | [CRM «Дубрава»](https://grigorijg472-ops.github.io/Bond/projects/crm/index.html) | Панель заявок: метрики и графики, воронка, канбан с перетаскиванием, таблица, карточка клиента | JavaScript, SVG, Drag and Drop |
 | [Лендинг с квизом «Ровно»](https://grigorijg472-ops.github.io/Bond/projects/quiz-landing/index.html) | Лендинг ремонта: слайдер «до/после», тарифы, квиз из 5 шагов с расчётом сметы и заявкой | JavaScript, CSS |
 | [AI Chat Bot](https://grigorijg472-ops.github.io/Bond/projects/telegram-bot/index.html) | Демо диалога бота: услуги, расчёт цены, переход к заказу. Ответы заготовленные, без сервера | JavaScript |
-| [Dev Cost Calculator](https://grigorijg472-ops.github.io/Bond/projects/dev-cost-calculator.html) | Считает ориентировочную стоимость и срок разработки сайта | JavaScript |
+| [Dev Cost Calculator](https://grigorijg472-ops.github.io/Bond/projects/dev-cost-calculator.html) | Считает ориентировочную стоимость сайта в белорусских рублях (не дороже 90 BYN) и срок | JavaScript |
 
 ### 3D и графика
 

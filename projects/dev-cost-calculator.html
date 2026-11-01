@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Калькулятор стоимости разработки сайта</title>
-<meta name="description" content="Прикиньте стоимость и сроки разработки: выберите тип проекта, функции и срочность. Итог пересчитывается сразу.">
+<meta name="description" content="Прикиньте стоимость сайта в белорусских рублях (не дороже 90 BYN) и сроки: выберите тип проекта, функции и срочность. Итог пересчитывается сразу.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
@@ -52,6 +52,7 @@
   .rows li span:last-child { font-family: var(--mono); font-weight: 500; white-space: nowrap; }
   .rows li.sum { margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--line); font-weight: 600; }
   .rows li.sum span:first-child { color: var(--ink); }
+  .rows li.cap span { color: #34d399 !important; }
   .time { margin-top: 20px; padding: 14px 16px; border-radius: 12px; background: var(--surface-2); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
   .time span { color: var(--muted); font-size: .88rem; }
   .time b { font-weight: 700; }
@@ -90,7 +91,7 @@
 <main class="page">
   <div class="head">
     <h1>Сколько стоит ваш сайт</h1>
-    <p>Выберите тип проекта и функции. Ориентировочная цена и срок пересчитываются сразу.</p>
+    <p>Выберите тип проекта и функции. Цена в белорусских рублях и срок пересчитываются сразу. Потолок — 90 BYN за сайт.</p>
   </div>
 
   <div class="calc">
@@ -98,22 +99,22 @@
       <fieldset>
         <legend><small>01</small>Тип проекта</legend>
         <div class="opts" id="types">
-          <label class="opt"><input type="radio" name="type" value="landing" checked><span class="box"><b>Лендинг</b><span class="sub">Одна страница с заявкой</span><span class="price">от 30 000 ₽</span></span></label>
-          <label class="opt"><input type="radio" name="type" value="webapp"><span class="box"><b>Веб-приложение</b><span class="sub">Интерфейс с логикой и данными</span><span class="price">от 80 000 ₽</span></span></label>
-          <label class="opt"><input type="radio" name="type" value="automation"><span class="box"><b>Автоматизация</b><span class="sub">Скрипты, парсеры, боты</span><span class="price">от 50 000 ₽</span></span></label>
-          <label class="opt"><input type="radio" name="type" value="ecommerce"><span class="box"><b>Интернет-магазин</b><span class="sub">Каталог, корзина, оплата</span><span class="price">от 120 000 ₽</span></span></label>
+          <label class="opt"><input type="radio" name="type" value="landing" checked><span class="box"><b>Лендинг</b><span class="sub">Одна страница с заявкой</span><span class="price">от 30 BYN</span></span></label>
+          <label class="opt"><input type="radio" name="type" value="webapp"><span class="box"><b>Веб-приложение</b><span class="sub">Интерфейс с логикой и данными</span><span class="price">от 50 BYN</span></span></label>
+          <label class="opt"><input type="radio" name="type" value="automation"><span class="box"><b>Автоматизация</b><span class="sub">Скрипты, парсеры, боты</span><span class="price">от 40 BYN</span></span></label>
+          <label class="opt"><input type="radio" name="type" value="ecommerce"><span class="box"><b>Интернет-магазин</b><span class="sub">Каталог, корзина, оплата</span><span class="price">от 60 BYN</span></span></label>
         </div>
       </fieldset>
 
       <fieldset>
         <legend><small>02</small>Функционал</legend>
         <div class="feat" id="feats">
-          <label class="opt"><input type="checkbox" name="f" value="adaptive" data-price="15000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Адаптивный дизайн</b><br><span class="sub">Корректно выглядит на всех устройствах</span></span><span class="price">+15 000 ₽</span></span></label>
-          <label class="opt"><input type="checkbox" name="f" value="cms" data-price="25000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Панель управления</b><br><span class="sub">Редактирование контента без разработчика</span></span><span class="price">+25 000 ₽</span></span></label>
-          <label class="opt"><input type="checkbox" name="f" value="auth" data-price="30000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Авторизация пользователей</b><br><span class="sub">Регистрация, вход, личный кабинет</span></span><span class="price">+30 000 ₽</span></span></label>
-          <label class="opt"><input type="checkbox" name="f" value="api" data-price="20000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Интеграция с API</b><br><span class="sub">Подключение внешних сервисов</span></span><span class="price">+20 000 ₽</span></span></label>
-          <label class="opt"><input type="checkbox" name="f" value="database" data-price="35000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>База данных</b><br><span class="sub">Хранение и обработка данных</span></span><span class="price">+35 000 ₽</span></span></label>
-          <label class="opt"><input type="checkbox" name="f" value="seo" data-price="15000"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>SEO-оптимизация</b><br><span class="sub">Настройка под поисковые системы</span></span><span class="price">+15 000 ₽</span></span></label>
+          <label class="opt"><input type="checkbox" name="f" value="adaptive" data-price="0"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Адаптивный дизайн</b><br><span class="sub">Корректно выглядит на всех устройствах</span></span><span class="price">входит</span></span></label>
+          <label class="opt"><input type="checkbox" name="f" value="cms" data-price="10"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Панель управления</b><br><span class="sub">Редактирование контента без разработчика</span></span><span class="price">+10 BYN</span></span></label>
+          <label class="opt"><input type="checkbox" name="f" value="auth" data-price="5"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Авторизация пользователей</b><br><span class="sub">Регистрация, вход, личный кабинет</span></span><span class="price">+5 BYN</span></span></label>
+          <label class="opt"><input type="checkbox" name="f" value="api" data-price="5"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>Интеграция с API</b><br><span class="sub">Подключение внешних сервисов</span></span><span class="price">+5 BYN</span></span></label>
+          <label class="opt"><input type="checkbox" name="f" value="database" data-price="5"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>База данных</b><br><span class="sub">Хранение и обработка данных</span></span><span class="price">+5 BYN</span></span></label>
+          <label class="opt"><input type="checkbox" name="f" value="seo" data-price="5"><span class="box"><span class="tick"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12l5 5l10 -10"></path></svg></span><span><b>SEO-оптимизация</b><br><span class="sub">Настройка под поисковые системы</span></span><span class="price">+5 BYN</span></span></label>
         </div>
       </fieldset>
 
@@ -121,22 +122,22 @@
         <legend><small>03</small>Срочность</legend>
         <div class="opts three" id="urg">
           <label class="opt"><input type="radio" name="urgency" value="normal" checked><span class="box"><b>Стандарт</b><span class="sub">Без наценки</span></span></label>
-          <label class="opt"><input type="radio" name="urgency" value="fast"><span class="box"><b>Срочно</b><span class="sub">+30% к стоимости</span></span></label>
-          <label class="opt"><input type="radio" name="urgency" value="veryfast"><span class="box"><b>Очень срочно</b><span class="sub">+50% к стоимости</span></span></label>
+          <label class="opt"><input type="radio" name="urgency" value="fast"><span class="box"><b>Срочно</b><span class="sub">+10% к стоимости</span></span></label>
+          <label class="opt"><input type="radio" name="urgency" value="veryfast"><span class="box"><b>Очень срочно</b><span class="sub">+20% к стоимости</span></span></label>
         </div>
       </fieldset>
     </div>
 
     <aside class="result" aria-labelledby="resLab">
       <p class="lab" id="resLab">Ориентировочная стоимость</p>
-      <p class="total" aria-live="polite" aria-atomic="true"><small>от</small><span id="total" class="num">30 000</span><span class="cur">₽</span></p>
+      <p class="total" aria-live="polite" aria-atomic="true"><span id="total" class="num">30</span><span class="cur">BYN</span></p>
       <ul class="rows" id="rows"></ul>
       <div class="time"><span>Примерный срок</span><b id="time">1-2 недели</b></div>
       <div class="btns">
         <a class="btn btn-primary" href="https://t.me/Bond8848" target="_blank" rel="noopener">Обсудить проект <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M17 7l-10 10"></path><path d="M8 7l9 0l0 9"></path></svg></a>
         <button class="btn btn-ghost" id="copy" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"></path><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"></path></svg><span>Скопировать смету</span></button>
       </div>
-      <p class="note">Точная цена определяется после разбора задачи и технического задания.</p>
+      <p class="note">Цены в белорусских рублях. Любой сайт — не дороже 90 BYN. Это ориентир: точную цену подберём под вашу задачу и бюджет, часто выходит дешевле.</p>
     </aside>
   </div>
 </main>
@@ -146,12 +147,12 @@
 <script>
 (() => {
   const TYPES = {
-    landing: { name: 'Лендинг', base: 30000, time: '1-2 недели' },
-    webapp: { name: 'Веб-приложение', base: 80000, time: '3-6 недель' },
-    automation: { name: 'Автоматизация', base: 50000, time: '1-3 недели' },
-    ecommerce: { name: 'Интернет-магазин', base: 120000, time: '4-8 недель' }
+    landing: { name: 'Лендинг', base: 30, time: '1-2 недели' },
+    webapp: { name: 'Веб-приложение', base: 50, time: '3-6 недель' },
+    automation: { name: 'Автоматизация', base: 40, time: '1-3 недели' },
+    ecommerce: { name: 'Интернет-магазин', base: 60, time: '4-8 недель' }
   };
-  const URG = { normal: { m: 1, t: '', label: '' }, fast: { m: 1.3, t: ', ускоренно', label: 'Срочность +30%' }, veryfast: { m: 1.5, t: ', максимально сжато', label: 'Срочность +50%' } };
+  const URG = { normal: { m: 1, t: '', label: '' }, fast: { m: 1.1, t: ', ускоренно', label: 'Срочность +10%' }, veryfast: { m: 1.2, t: ', максимально сжато', label: 'Срочность +20%' } };
   const $ = id => document.getElementById(id);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fmt = n => new Intl.NumberFormat('ru-RU').format(Math.round(n)).replace(/\u00a0|\u202f/g, ' ');
@@ -162,28 +163,31 @@
     const from = shown, t0 = performance.now(), dur = reduce ? 0 : 380;
     const step = now => {
       const k = dur ? Math.min((now - t0) / dur, 1) : 1, e = 1 - Math.pow(1 - k, 3);
-      shown = from + (to - from) * e; $('total').textContent = fmt(shown); $('miniTotal').textContent = 'от ' + fmt(shown) + ' ₽';
-      if (k < 1) raf = requestAnimationFrame(step); else { shown = to; $('total').textContent = fmt(to); $('miniTotal').textContent = 'от ' + fmt(to) + ' ₽'; }
+      shown = from + (to - from) * e; $('total').textContent = fmt(shown); $('miniTotal').textContent = fmt(shown) + ' BYN';
+      if (k < 1) raf = requestAnimationFrame(step); else { shown = to; $('total').textContent = fmt(to); $('miniTotal').textContent = fmt(to) + ' BYN'; }
     };
     raf = requestAnimationFrame(step);
   }
 
+  const CAP = 90; // потолок цены в BYN
   function state() {
     const type = TYPES[document.querySelector('input[name=type]:checked').value];
     const urg = URG[document.querySelector('input[name=urgency]:checked').value];
     const feats = [...document.querySelectorAll('input[name=f]:checked')].map(i => ({ title: i.closest('.opt').querySelector('b').textContent, price: +i.dataset.price }));
     const subtotal = type.base + feats.reduce((s, f) => s + f.price, 0);
-    return { type, urg, feats, subtotal, total: subtotal * urg.m };
+    const raw = Math.round(subtotal * urg.m);
+    return { type, urg, feats, subtotal, raw, total: Math.min(raw, CAP) };
   }
 
   function render() {
     const s = state(); last = s;
     const rows = $('rows'); rows.replaceChildren();
     const add = (a, b, cls) => { const li = document.createElement('li'); if (cls) li.className = cls; const x = document.createElement('span'), y = document.createElement('span'); x.textContent = a; y.textContent = b; li.append(x, y); rows.appendChild(li); };
-    add(s.type.name, fmt(s.type.base) + ' ₽');
-    s.feats.forEach(f => add(f.title, '+' + fmt(f.price) + ' ₽'));
-    if (s.urg.m > 1) add(s.urg.label, '+' + fmt(s.subtotal * (s.urg.m - 1)) + ' ₽');
-    add('Итого', fmt(s.total) + ' ₽', 'sum');
+    add(s.type.name, fmt(s.type.base) + ' BYN');
+    s.feats.forEach(f => add(f.title, f.price ? '+' + fmt(f.price) + ' BYN' : 'входит'));
+    if (s.urg.m > 1) add(s.urg.label, '+' + fmt(s.subtotal * (s.urg.m - 1)) + ' BYN');
+    if (s.raw > s.total) add('Потолок цены 90 BYN', '−' + fmt(s.raw - s.total) + ' BYN', 'cap');
+    add('Итого', fmt(s.total) + ' BYN', 'sum');
     $('time').textContent = s.type.time + s.urg.t;
     animate(s.total);
   }
@@ -191,10 +195,11 @@
   document.querySelectorAll('input').forEach(i => i.addEventListener('change', render));
 
   $('copy').addEventListener('click', async () => {
-    const s = last, lines = ['Смета: ' + s.type.name, '- Базовая стоимость: ' + fmt(s.type.base) + ' ₽'];
-    s.feats.forEach(f => lines.push('- ' + f.title + ': +' + fmt(f.price) + ' ₽'));
-    if (s.urg.m > 1) lines.push('- ' + s.urg.label + ': +' + fmt(s.subtotal * (s.urg.m - 1)) + ' ₽');
-    lines.push('Итого: от ' + fmt(s.total) + ' ₽', 'Срок: ' + s.type.time + s.urg.t);
+    const s = last, lines = ['Смета: ' + s.type.name, '- Базовая стоимость: ' + fmt(s.type.base) + ' BYN'];
+    s.feats.forEach(f => lines.push('- ' + f.title + ': ' + (f.price ? '+' + fmt(f.price) + ' BYN' : 'входит')));
+    if (s.urg.m > 1) lines.push('- ' + s.urg.label + ': +' + fmt(s.subtotal * (s.urg.m - 1)) + ' BYN');
+    if (s.raw > s.total) lines.push('- Потолок цены 90 BYN: −' + fmt(s.raw - s.total) + ' BYN');
+    lines.push('Итого: ' + fmt(s.total) + ' BYN', 'Срок: ' + s.type.time + s.urg.t);
     const text = lines.join('\n'), btn = $('copy'), label = btn.querySelector('span');
     let ok = false;
     try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
@@ -211,7 +216,7 @@
   render();
 })();
 </script>
-<script type="application/json" id="case-data">{"title": "Калькулятор стоимости", "task": "Дать клиенту примерную цену и срок за минуту, чтобы разговор о бюджете начинался не вслепую.", "features": ["Тип проекта, функции и срочность, сумма и срок пересчитываются сразу.", "Разбивка по пунктам, копирование сметы одним нажатием.", "На телефоне итог закреплён внизу экрана."], "stack": ["JavaScript", "HTML", "CSS"], "note": "Цены ориентировочные. Точная оценка делается после технического задания."}</script>
+<script type="application/json" id="case-data">{"title": "Калькулятор стоимости", "task": "Дать клиенту примерную цену и срок за минуту, чтобы разговор о бюджете начинался не вслепую.", "features": ["Тип проекта, функции и срочность, сумма и срок пересчитываются сразу.", "Разбивка по пунктам, копирование сметы одним нажатием.", "На телефоне итог закреплён внизу экрана."], "stack": ["JavaScript", "HTML", "CSS"], "note": "Цены ориентировочные, в белорусских рублях, с потолком 90 BYN. Точную цену подбираем под задачу и бюджет клиента."}</script>
 <script src="shared/fx.js"></script>
 <script src="shared/about.js"></script>
 </body>

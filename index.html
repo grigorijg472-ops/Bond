@@ -267,6 +267,14 @@ footer nav{display:flex;gap:var(--sp-1)}
 @media (max-width:640px){.pgrid{grid-template-columns:1fr}.sec-sub{margin-top:calc(var(--sp-4) * -1)}.steps{grid-template-columns:1fr;row-gap:28px;padding-left:0}.steps::before,.steps .fill{display:block;left:27px;right:auto;top:28px;bottom:28px;width:2px;height:auto}.steps .fill{transform-origin:top;transform:scaleY(var(--p,0))}.step{display:grid;grid-template-columns:56px 1fr;column-gap:var(--sp-4)}.step>:not(.dot2){grid-column:2}.step h3{margin-top:12px}.term{font-size:13px}.qa summary{padding:var(--sp-4);font-size:16px}.qa-a p{padding:0 var(--sp-4) var(--sp-4)}.caps-wrap{padding:20px 0}}
 @media (prefers-reduced-motion:reduce){.hero-title .ln-in,.hero-title .ln-in.grad{animation:none}.cap::before{animation:none;display:none}.caret{animation:none}.live i{animation:none}.magnet{translate:none}.pgrid .project:hover{transform:none}.project:hover .p-shot img{transform:none}}
 
+/* Цена */
+.price-note{position:relative;margin-top:var(--sp-6,24px);display:flex;align-items:center;gap:20px;padding:20px 24px;border:1px solid rgba(52,211,153,.35);border-radius:18px;background:linear-gradient(110deg,rgba(52,211,153,.10),rgba(34,211,238,.05) 60%,transparent);overflow:hidden}
+.price-note p{margin:0;flex:1;color:#c3cdd9;line-height:1.5}
+.price-note p b{color:#fff;font-weight:600}
+.pn-badge{flex:none;padding:10px 14px;border-radius:12px;background:rgba(52,211,153,.14);color:#34d399;font-size:15px;font-weight:600;white-space:nowrap;box-shadow:0 0 24px rgba(52,211,153,.18)}
+.price-note .btn{flex:none}
+@media (max-width:760px){.price-note{flex-direction:column;align-items:flex-start;gap:14px;padding:18px}.price-note .btn{width:100%;justify-content:center}}
+
 </style>
 </head>
 <body class="no-js">
@@ -433,7 +441,7 @@ footer nav{display:flex;gap:var(--sp-1)}
     <div class="container">
       <div class="sec-head">
         <div><p class="eyebrow mono">Услуги</p><h2>Чем могу помочь</h2></div>
-        <p>Пишу чистый код и слежу за тем, чтобы сайт быстро грузился и был удобен на телефоне. <a class="inline-link" href="projects/dev-cost-calculator.html">Посчитать примерную стоимость →</a></p>
+        <p>Пишу чистый код и слежу за тем, чтобы сайт быстро грузился и был удобен на телефоне.</p>
       </div>
       <ol class="services">
         <li class="svc reveal"><span class="num mono">01</span><h3>Лендинги и квизы</h3><p>Продающие страницы под рекламу: квизы, калькуляторы, формы заявок с отправкой в Telegram и аналитикой.</p><svg class="icon" aria-hidden="true"><use href="#i-layout"/></svg></li>
@@ -441,6 +449,7 @@ footer nav{display:flex;gap:var(--sp-1)}
         <li class="svc reveal"><span class="num mono">03</span><h3>CRM и личные кабинеты</h3><p>Панели заявок, дашборды, внутренние инструменты и кабинеты для клиентов.</p><svg class="icon" aria-hidden="true"><use href="#i-kanban"/></svg></li>
         <li class="svc reveal"><span class="num mono">04</span><h3>Боты и автоматизация</h3><p>Telegram-боты, парсеры и скрипты на Python, которые снимают рутину с команды.</p><svg class="icon" aria-hidden="true"><use href="#i-robot"/></svg></li>
       </ol>
+      <div class="price-note reveal"><span class="pn-badge mono">до 90 BYN</span><p><b>Цена под ваш бюджет.</b> Считаю в белорусских рублях, любой сайт — не дороже 90 BYN. Обсудим задачу и подберём удобную цену.</p><a class="btn btn-secondary magnet" href="projects/dev-cost-calculator.html">Посчитать за минуту<svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></div>
       <div class="stack reveal">
         <div><small class="mono">Frontend</small><span>HTML, CSS, JavaScript, React, Vue, Tailwind</span></div>
         <div><small class="mono">Backend</small><span>Node.js, Express, Python, REST API, PostgreSQL</span></div>
@@ -457,7 +466,7 @@ footer nav{display:flex;gap:var(--sp-1)}
         <p>Без долгих созвонов и сюрпризов в смете. На каждом этапе вы видите результат.</p>
       </div>
       <ol class="steps" id="steps"><span class="fill" aria-hidden="true"></span>
-        <li class="step reveal"><span class="dot2 mono">01</span><h3>Обсуждение</h3><p>Переписываемся в Telegram или созваниваемся. Разбираюсь в задаче, предлагаю решение, называю цену и срок.</p><span class="dur mono">1 день</span></li>
+        <li class="step reveal"><span class="dot2 mono">01</span><h3>Обсуждение</h3><p>Переписываемся в Telegram или созваниваемся. Разбираюсь в задаче, предлагаю решение и подбираю цену под ваш бюджет.</p><span class="dur mono">1 день</span></li>
         <li class="step reveal"><span class="dot2 mono">02</span><h3>Прототип</h3><p>Показываю структуру и дизайн ключевых экранов. Правим до того, как начнётся код: так дешевле.</p><span class="dur mono">2–5 дней</span></li>
         <li class="step reveal"><span class="dot2 mono">03</span><h3>Разработка</h3><p>Собираю сайт и присылаю промежуточные версии по ссылке. Вы видите прогресс, а не ждёте вслепую.</p><span class="dur mono">1–4 недели</span></li>
         <li class="step reveal"><span class="dot2 mono">04</span><h3>Запуск</h3><p>Подключаю домен, хостинг, формы и аналитику. Передаю доступы и показываю, как всем пользоваться.</p><span class="dur mono">1–2 дня</span></li>
@@ -469,7 +478,7 @@ footer nav{display:flex;gap:var(--sp-1)}
     <div class="container faq-grid">
       <div><p class="eyebrow mono">Вопросы</p><h2>Частые вопросы</h2><p class="faq-note">Не нашли ответ? Напишите в <a class="inline-link" href="https://t.me/Bond8848" target="_blank" rel="noopener noreferrer">Telegram</a>, отвечу.</p></div>
       <div class="faq">
-        <details class="qa reveal"><summary>Сколько стоит сайт?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Зависит от задачи. Примерную цену можно посчитать в <a class="inline-link" href="projects/dev-cost-calculator.html">калькуляторе</a>, точную назову после короткого обсуждения и зафиксирую до старта.</p></div></details>
+        <details class="qa reveal"><summary>Сколько стоит сайт?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Недорого: цены в белорусских рублях, и любой сайт — не дороже 90 BYN. Цену подбираю под задачу и бюджет, называю до старта и не меняю. Прикинуть можно в <a class="inline-link" href="projects/dev-cost-calculator.html">калькуляторе</a>.</p></div></details>
         <details class="qa reveal"><summary>Сколько времени занимает разработка?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Лендинг обычно занимает 1–2 недели, магазин или сервис с личным кабинетом — от 3–4 недель. Срок называю заранее.</p></div></details>
         <details class="qa reveal"><summary>Что нужно от меня для старта?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Пара предложений о задаче, примеры сайтов, которые нравятся, и тексты или фото, если они уже есть. Если нет — помогу со структурой и текстами.</p></div></details>
         <details class="qa reveal"><summary>Смогу ли я сам менять сайт?<svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary><div class="qa-a"><p>Да. Подключу простую админку, чтобы вы сами меняли тексты, цены и фото без программиста.</p></div></details>
